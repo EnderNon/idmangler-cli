@@ -44,7 +44,7 @@ Inside the "ids":[] array, set it up in the following structure.
 **{"id": "$ID","base": $BASE,"roll": $ROLL}**  
 **ID** is stored as a string corresponding to the Wynntils internal ID string of any roll. See here for a list: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json .  
 **BASE** is the base roll. The default base data is defined in (WARNING: EXTREMELY MASSIVE TEXT FILE) https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json .  
-Beautify it then look for `ITEMNAME > base > IDENTIFICATION > raw` for default value. This base value defines the listed ID ranges.  
+Beautify it then look for `ITEMNAME > identifications > IDENTIFICATIONNAME > raw` for default value. This base value defines the listed ID ranges.  
 **ROLL** defines the actual rolled value for the Identification. The formula is `BASE * ROLL / 100`. Most values are in the range 30-130 due to how Wynncraft handles many Identifications as 30-130 percent of a base stat. Thus, if you are trying to find the ROLL value, try your desired roll **(NOT the roll percentage 1-100)** divided by the BASE then round it to the nearest integer. This value is optional, and you should only exclude it when it is a fixed value e.g. Skill Points.
 
 ## Rerolls
