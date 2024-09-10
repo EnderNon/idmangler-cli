@@ -1,10 +1,10 @@
 use idmangler_lib::{
     data_transformer::{
-        decode, enddata::EndData, identdata::IdentificationData, namedata::NameData,
+        enddata::EndData, identdata::IdentificationData, namedata::NameData,
         powderdata::PowderData, rerolldata::RerollData, shinydata::ShinyData, startdata::StartData,
         typedata::TypeData, DataEncoder,
     },
-    encoding::{decode_string, encode_string},
+    encoding::{encode_string},
     types::{
         itemtype::ItemType,
         powder::Powders,
@@ -19,7 +19,6 @@ use std::panic;
 use std::env;
 use serde_json;
 use serde::Deserialize;
-use base64::engine::{general_purpose, Engine};
 
 // structs
 #[derive(Deserialize)]
@@ -37,22 +36,39 @@ struct Identificationer {
 #[derive(Deserialize)]
 struct jsonconfig {
     name: String,
+    shiny: Option<shinyjson>,
     ids: Vec<Identificationer>,
     powder_limit: u8,
     powders: Vec<Powder>,
     rerolls:Option<u8>
 }
 
+#[derive(Deserialize)]
+struct shinystruct{
+    id: u8,
+    key:String
+}
+#[derive(Deserialize)]
+struct shinyjson {
+    key: String,
+    value: u8
+}
+
+
 fn main() {
     // enable fancypanic when building for release
-    fancypanic();
+    // fancypanic();
 
     // newest json reading code
     let json_config: jsonconfig = serde_json::from_reader(
         fs::File::open("values.json").expect(ERROR[1]))
         .expect(ERROR[2]);
-    let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json").expect(ERROR[3]))
+    let idsmap: HashMap<String, u8> = serde_json::from_reader(
+        fs::File::open("id_keys.json").expect(ERROR[3]))
         .expect(ERROR[4]);
+    let json_shiny: Vec<shinystruct> = serde_json::from_reader(
+        fs::File::open("shiny_stats.json").expect(ERROR[5]))
+        .expect(ERROR[6]);
     // println!("{:?}",idsmap.get("airDamage"));
 
 
@@ -77,7 +93,6 @@ fn main() {
         let id_roll = eachid.roll;
 
         idvec.push(
-            (
                 Stat {
                     kind: match id_id {
                         Some(ide) => *ide,
@@ -89,7 +104,6 @@ fn main() {
                         None => RollType::PreIdentified
                     }
                 }
-                )
         );
 
         // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
@@ -122,32 +136,32 @@ fn main() {
         // no need to return to variable or i'll need to rematch AGAIN
         match eachpowder.r#type {
             'E' | 'e' => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::EARTH,powdertier))
                 }
             },
             'T' | 't' => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER,powdertier))
                 }
             },
             'W' | 'w' => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::WATER,powdertier))
                 }
             },
             'F' | 'f' => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::FIRE,powdertier))
                 }
             },
             'A' | 'a' => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::AIR,powdertier))
                 }
             },
             _ => {
-                for i in 0..powderamount {
+                for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER,powdertier))
                 }
             }
@@ -157,9 +171,6 @@ fn main() {
         // println!("amount {}",powderamount);
     }
     // println!("{:?}",powdervec);
-
-
-
 
     // old powder data encode kinda, takes data from new encode
     PowderData {
@@ -179,15 +190,31 @@ fn main() {
         None => pass()
     }
 
-
-
-    ShinyData {
-        id: 2,
-        val: i64::MAX as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
-        // u16::MAX is the max value of unsigned 16bit value
+    let mut realshinykey:u8;
+    if let Some(shiny) = json_config.shiny {
+        if let ref shinykey = shiny.key {
+            if let shinyvalue = shiny.value{
+                    realshinykey = 1;
+                    for i in json_shiny {
+                        if i.key == shiny.key {
+                            realshinykey = i.id;
+                            println!("shiny key {}",shiny.key);
+                        }
+                    }
+                    println!("realshinykey: {}",realshinykey);
+                    println!("shinyvalue: {}",shinyvalue);
+                    ShinyData {
+                    id: realshinykey,
+                    val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
+                    // u16::MAX is the max value of unsigned 16bit value
+                    }
+                    .encode(ver, &mut out)
+                    .unwrap();
+            }
+        }
     }
-        .encode(ver, &mut out)
-        .unwrap();
+
+
 
 
     // prints (Water,6) 255 times
@@ -208,11 +235,10 @@ fn main() {
     // println!();
 
     // decode test
-    let input = "󰀀󰄀󰉁󶹴󶡲󶅣󶥴󶔠󴉡󶱬󶥳󷑡󰀃󰠁󰀞󾠇󵠑󳱩󳢠󱽴󴠧󷄡󱹵󳫠󰢂󱌨󵴅󲠞􏿮";
-    let bytes = decode_string(&input);
-    let mut bytes_iter = bytes.into_iter();
-
-    let out = decode(&mut bytes_iter).unwrap();
+    //let input = "󰀀󰄀󰉁󶹴󶡲󶅣󶥴󶔠󴉡󶱬󶥳󷑡󰀃󰠁󰀞󾠇󵠑󳱩󳢠󱽴󴠧󷄡󱹵󳫠󰢂󱌨󵴅󲠞􏿮";
+    //let bytes = decode_string(&input);
+    //let mut bytes_iter = bytes.into_iter();
+    //let out = decode(&mut bytes_iter).unwrap();
 
     // println!("{:#?}", out);
 }
@@ -229,12 +255,14 @@ fn pass() {
 
 }
 
-const ERROR: [&'static str; 5] = [
+const ERROR: [&'static str; 7] = [
     "Error 0: what did you even do to get this? ",
     "Error 1: json config file is missing, reobtain it from the values.json I have sent you. ",
     "Error 2: json config is broken. Reread the example data or reobtain it from the values.json I have sent you. ",
     "Error 3: Identifications hashmap not found. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory.",
-    "Error 4: Identifications hashhmap is corrupt. Reobtain it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory."
+    "Error 4: Identifications hashhmap is corrupt. Reobtain it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory.",
+    "Error 5: Shiny data json is missing. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/a8469fad2f3bd0fc0fe2678eeb812d7877c9e61b/Data-Storage/shiny_stats.json",
+    "Error 6: Shiny data json is corrupt. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/a8469fad2f3bd0fc0fe2678eeb812d7877c9e61b/Data-Storage/shiny_stats.json"
 ];
 const _BOIL: [&'static str; 3] = [
     "0",

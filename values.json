@@ -4,7 +4,10 @@
     "There are also some values you cannot increase beyond a limit."
   ],
   "name":"Singularity",
-
+  "shiny": {
+    "key": "mobsKilled",
+    "value": 69
+  },
   "ids": [
     {"id": "mainAttackDamage","base": 320,"roll": 69},
     {"id": "healthRegenRaw", "base":250 , "roll":130  },
