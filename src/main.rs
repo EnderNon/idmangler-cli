@@ -87,13 +87,6 @@ fn main() {
         .encode(ver, &mut out)
         .unwrap();
 
-    let w1 = "aWRtYW5nbGVyLXJld3JpdGUgUHJlLVJlbGVhc2UgdjE=";
-    let w2 = "KEMpIFpBVFpPVSBhbmQgRU5ERVJOT04gMjAyNA==";
-
-    let l1 = String::from_utf8(general_purpose::STANDARD.decode(w1).unwrap()).unwrap();
-    let l2 = String::from_utf8(general_purpose::STANDARD.decode(w2).unwrap()).unwrap();
-    println!("{l1}");
-    println!("{l2}");
 
     // json identification data handling
     let mut idvec = Vec::new();
