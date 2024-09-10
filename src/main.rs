@@ -1,4 +1,4 @@
-use idlib::{
+use idmangler_lib::{
     data_transformer::{
         decode, enddata::EndData, identdata::IdentificationData, namedata::NameData,
         powderdata::PowderData, rerolldata::RerollData, shinydata::ShinyData, startdata::StartData,
@@ -8,7 +8,7 @@ use idlib::{
     types::{
         itemtype::ItemType,
         powder::Powders,
-        stat::{RollType, Stat, StatId},
+        stat::{RollType, Stat},
         transform::TransformVersion,
     },
 };
@@ -105,10 +105,10 @@ fn main() {
         idvec.push(
             (
                 Stat {
-                    kind: StatId(match id_id {
+                    kind: match id_id {
                         Some(ide) => *ide,
                         None => panic!("There is a mismatched ID, and this message has replaced where the line is meant to be")
-                    }),
+                    },
                     base: Some(id_base),
                     roll: match id_roll{
                         Some(rolle) => RollType::Value(rolle),
