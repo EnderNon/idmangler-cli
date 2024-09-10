@@ -54,25 +54,6 @@ fn main() {
     let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json").expect(ERROR[3]))
         .expect(ERROR[4]);
     // println!("{:?}",idsmap.get("airDamage"));
-    // below is no longer needed as ive merged it
-    //let imported2: jsoned = serde_json::from_reader(importedjson)
-    //    .expect("this json sucks");
-
-    // read the file and stuff
-    // thanks to https://stackoverflow.com/a/52964674
-    // obselete do not use
-    //let file = fs::File::open("values.json")
-    //    .expect("where file?");
-    //let thejson: serde_json::Value = serde_json::from_reader(file)
-    //    .expect("where proper json format?");
-    //let powders = thejson.get("powders").expect("e").get("a");
-    //let powders2 = serde_json::json!(powders);
-    //println!("powders: {:?}",powders);
-    //println!("powders2: {}",powders2);
-    //println!("name is {}", thejson);
-
-    // let fuy = thejson.get("a");
-    // println!("{:#?}",fuy);
 
 
 
