@@ -3,6 +3,6 @@ yeah basically this generates fake items by loading from a json. Effectively a w
 
 how to use:
 
-use cargo run --releade to build and run
+use cargo run --release to build and run
 
-read the provided config markdown to understand how to edit values.json
+read the provided config markdown file to understand how to edit values.json
