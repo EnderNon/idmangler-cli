@@ -265,8 +265,3 @@ const ERROR: [&'static str; 7] = [
     "Error 5: Shiny data json is missing. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/a8469fad2f3bd0fc0fe2678eeb812d7877c9e61b/Data-Storage/shiny_stats.json and move it to this directory. ",
     "Error 6: Shiny data json is corrupt. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/a8469fad2f3bd0fc0fe2678eeb812d7877c9e61b/Data-Storage/shiny_stats.json and move it to this directory. "
 ];
-const _BOIL: [&'static str; 3] = [
-    "0",
-    "reobtain it from the config.json I have sent you. ",
-    "Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory."
-];
