@@ -1,4 +1,10 @@
 # idmangler-cli
+
+# THIS REPO IS OUTDATED
+
+# MOVED TO https://git.frfrnocap.men/endernon/idmangler-cli
+
+
 yeah basically this generates fake items by loading from a json. Effectively a wrapper for [zatzou's idmangler-lib](https://github.com/Zatzou/idmangler-lib).
 
 how to use:
