@@ -62,7 +62,7 @@ fn main() {
 
     // newest json reading code
     let json_config: jsonconfig = serde_json::from_reader(
-        fs::File::open("values.json").expect(ERROR[1]))
+        fs::File::open("../config.json").expect(ERROR[1]))
         .expect(ERROR[2]);
     let idsmap: HashMap<String, u8> = serde_json::from_reader(
         fs::File::open("id_keys.json").expect(ERROR[3]))
@@ -258,8 +258,8 @@ fn pass() {
 
 const ERROR: [&'static str; 7] = [
     "Error 0: what did you even do to get this? ",
-    "Error 1: json config file is missing, reobtain it from the values.json I have sent you. ",
-    "Error 2: json config is broken. Reread the example data or reobtain it from the values.json I have sent you. ",
+    "Error 1: json config file is missing, reobtain it from the config.json I have sent you. ",
+    "Error 2: json config is broken. Reread the example data or get it from  ",
     "Error 3: Identifications hashmap not found. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory.",
     "Error 4: Identifications hashhmap is corrupt. Reobtain it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory.",
     "Error 5: Shiny data json is missing. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/a8469fad2f3bd0fc0fe2678eeb812d7877c9e61b/Data-Storage/shiny_stats.json",
@@ -267,6 +267,6 @@ const ERROR: [&'static str; 7] = [
 ];
 const _BOIL: [&'static str; 3] = [
     "0",
-    "reobtain it from the values.json I have sent you. ",
+    "reobtain it from the config.json I have sent you. ",
     "Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory."
 ];
