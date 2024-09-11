@@ -35,6 +35,7 @@ struct Identificationer {
 }
 #[derive(Deserialize)]
 struct jsonconfig {
+    debug:Option<bool>,
     name: String,
     shiny: Option<shinyjson>,
     ids: Vec<Identificationer>,
