@@ -1,15 +1,15 @@
 use idmangler_lib::{
-    data_transformer::{
-        enddata::EndData, identdata::IdentificationData, namedata::NameData,
-        powderdata::PowderData, rerolldata::RerollData, shinydata::ShinyData, startdata::StartData,
-        typedata::TypeData, DataEncoder,
-    },
+
+        EndData, IdentificationData, NameData,
+        PowderData, RerollData, ShinyData, StartData,
+        TypeData, DataEncoder,
+
     encoding::{encode_string},
     types::{
-        itemtype::ItemType,
-        powder::Powders,
-        stat::{RollType, Stat},
-        transform::TransformVersion,
+        ItemType,
+        Powders,
+        {RollType, Stat},
+        TransformVersion,
     },
 };
 
