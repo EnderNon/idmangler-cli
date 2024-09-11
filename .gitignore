@@ -20,3 +20,5 @@ target/
 .idea/
 
 releases
+id_keys.json
+shiny_stats.json
