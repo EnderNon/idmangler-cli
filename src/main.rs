@@ -199,11 +199,11 @@ fn main() {
                     for i in json_shiny {
                         if i.key == shiny.key {
                             realshinykey = i.id;
-                            println!("shiny key {}",shiny.key);
+                            // println!("shiny key {}",shiny.key);
                         }
                     }
-                    println!("realshinykey: {}",realshinykey);
-                    println!("shinyvalue: {}",shinyvalue);
+                    // println!("realshinykey: {}",realshinykey);
+                    // println!("shinyvalue: {}",shinyvalue);
                     ShinyData {
                     id: realshinykey,
                     val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,

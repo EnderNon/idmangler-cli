@@ -16,7 +16,7 @@
     {"id": "walkSpeed", "base":-40 , "roll":69},
     {"id": "mainAttackDamage", "base":15, "roll":130 },
     {"id": "rawMainAttackDamage", "base":444 , "roll":130 },
-    {"id": "rawSpellDamage", "base":222  , "roll":130  },
+    {"id": "rawSpellDamage", "base":222  , "roll":30  },
     {"id": "spellDamage", "base":10  , "roll":130  }
   ],
   "powder_limit": 255,

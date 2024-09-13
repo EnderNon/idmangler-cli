@@ -13,3 +13,6 @@ Move the program to some folder. Download these three files and place them next 
 https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json  
 https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
 read the provided config markdown file to understand how to edit config.json
+
+
+
