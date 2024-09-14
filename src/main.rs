@@ -60,6 +60,8 @@ fn main() {
     // enable fancypanic when building for release
     // fancypanic();
 
+
+
     // newest json reading code
     let json_config: jsonconfig = serde_json::from_reader(
         fs::File::open("config.json").expect(ERROR[1]))
@@ -72,7 +74,13 @@ fn main() {
         .expect(ERROR[6]);
     // println!("{:?}",idsmap.get("airDamage"));
 
-
+    let mut debugMode = false;
+    if let Some(debuggering) = json_config.debug {
+        if debuggering == true {
+            debugMode = true;
+            println!("Debug mode enabled");
+        }
+    };
 
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
@@ -140,38 +148,60 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::EARTH,powdertier))
                 }
+                if debugMode {
+                    println!("Powder type: Earth");
+                }
             },
             'T' | 't' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER,powdertier))
+                }
+                if debugMode {
+                    println!("Powder type: Thunder");
                 }
             },
             'W' | 'w' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::WATER,powdertier))
                 }
+                if debugMode {
+                    println!("Powder type: Water");
+                }
             },
             'F' | 'f' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::FIRE,powdertier))
+                }
+                if debugMode {
+                    println!("Powder type: Fire");
                 }
             },
             'A' | 'a' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::AIR,powdertier))
                 }
+                if debugMode {
+                    println!("Powder type: Air");
+                }
             },
             _ => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER,powdertier))
                 }
+                if debugMode {
+                    println!("Powder type: Broken, fallback Thunder");
+                }
             }
         };
 
-        // println!("tier {}",powdertier);
-        // println!("amount {}",powderamount);
+        if debugMode {
+            println!("Powder tier: {}",powdertier);
+            println!("Powder amount: {}",powderamount);
+        }
     }
-    // println!("{:?}",powdervec);
+    if debugMode {
+        println!("Powders Vec: {:?}",powdervec);
+    }
 
     // old powder data encode kinda, takes data from new encode
     PowderData {
@@ -186,6 +216,9 @@ fn main() {
         Some(i) => {
             if i != 0 {
                 RerollData(i).encode(ver, &mut out).unwrap();
+                if debugMode {
+                    println!("Rerolls: {}",i)
+                }
             }
         },
         None => pass()
@@ -195,22 +228,27 @@ fn main() {
     if let Some(shiny) = json_config.shiny {
         if let ref shinykey = shiny.key {
             if let shinyvalue = shiny.value{
-                    realshinykey = 1;
-                    for i in json_shiny {
-                        if i.key == shiny.key {
-                            realshinykey = i.id;
-                            // println!("shiny key {}",shiny.key);
+                realshinykey = 1;
+                for i in json_shiny {
+                    if i.key == shiny.key {
+                        realshinykey = i.id;
+                        if debugMode {
+                            println!("shiny key {}", shiny.key);
                         }
                     }
-                    // println!("realshinykey: {}",realshinykey);
-                    // println!("shinyvalue: {}",shinyvalue);
-                    ShinyData {
-                    id: realshinykey,
-                    val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
-                    // u16::MAX is the max value of unsigned 16bit value
-                    }
-                    .encode(ver, &mut out)
-                    .unwrap();
+                }
+                if debugMode {
+                    println!("realshinykey: {}", realshinykey);
+                    println!("shinyvalue: {}", shinyvalue);
+                }
+
+                ShinyData {
+                id: realshinykey,
+                val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
+                // u16::MAX is the max value of unsigned 16bit value
+                }
+                .encode(ver, &mut out)
+                .unwrap();
             }
         }
     }
