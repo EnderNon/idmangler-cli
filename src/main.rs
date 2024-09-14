@@ -52,7 +52,7 @@ struct shinystruct{
 #[derive(Deserialize)]
 struct shinyjson {
     key: String,
-    value: u8
+    value: u64
 }
 
 
