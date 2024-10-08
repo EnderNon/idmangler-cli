@@ -17,54 +17,57 @@ use std::collections::HashMap;
 use std::fs;
 use std::panic;
 use std::env;
+use std::string::ToString;
 use serde_json;
-use serde::Deserialize;
+mod structures;
+use crate::structures::*;
 
-// structs
-#[derive(Deserialize)]
-struct Powder {
-    r#type: char,
-    tier: u8,
-    amount: Option<u8>
-}
-#[derive(Deserialize)]
-struct Identificationer {
-    id: String,
-    base: i32,
-    roll: Option<u8>
-}
-#[derive(Deserialize)]
-struct jsonconfig {
-    debug:Option<bool>,
-    name: String,
-    shiny: Option<shinyjson>,
-    ids: Vec<Identificationer>,
-    powder_limit: u8,
-    powders: Vec<Powder>,
-    rerolls:Option<u8>
-}
 
-#[derive(Deserialize)]
-struct shinystruct{
-    id: u8,
-    key:String
-}
-#[derive(Deserialize)]
-struct shinyjson {
-    key: String,
-    value: i64
+
+
+
+
+
+
+
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Path for config path
+    #[arg(short, long)]
+    configpath: Option<String>,
+
+    /// Enable debug mode
+    #[arg(short, long, default_value_t = false)]
+    debugmode: bool,
 }
 
+// const fallbackconfigpath: String = "config.json".to_owned();
 
 fn main() {
     // enable fancypanic when building for release
     // fancypanic();
+    let args = Args::parse();
+
+
+
+    let mut debugMode = false;
+    if args.debugmode == true {
+        debugMode = true;
+        println!("Debug mode enabled");
+    };
+    let mut configpath:String = String::from("config.json");
+    if let Some(configpathargs) = args.configpath {
+        configpath = configpathargs;
+    }
 
 
 
     // newest json reading code
     let json_config: jsonconfig = serde_json::from_reader(
-        fs::File::open("config.json").expect(ERROR[1]))
+        fs::File::open(configpath).expect(ERROR[1]))
         .expect(ERROR[2]);
     let idsmap: HashMap<String, u8> = serde_json::from_reader(
         fs::File::open("id_keys.json").expect(ERROR[3]))
@@ -74,13 +77,6 @@ fn main() {
         .expect(ERROR[6]);
     // println!("{:?}",idsmap.get("airDamage"));
 
-    let mut debugMode = false;
-    if let Some(debuggering) = json_config.debug {
-        if debuggering == true {
-            debugMode = true;
-            println!("Debug mode enabled");
-        }
-    };
 
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
