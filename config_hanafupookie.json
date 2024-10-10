@@ -1,0 +1,25 @@
+{
+  "READMEFIRST": [
+    "Refer to config.md to understand how to apply the data shown here.",
+    "There are also some values you cannot increase beyond a limit."
+  ],
+  "name":"Hanafubuki",
+  "shiny": {
+    "key": "playersKilled",
+    "value": 9223372036854775807
+  },
+  "ids": [
+    {"id": "3rdSpellCost","base": -25,"roll": 70},
+    {"id": "4thSpellCost", "base":-15 , "roll":70  },
+    {"id": "earthDefence", "base":25 , "roll": 130 },
+    {"id": "elementalDamage", "base":256 , "roll":130},
+    {"id": "jumpHeight", "base":3, "roll":130 },
+    {"id": "rawStrength", "base":15}
+  ],
+  "powder_limit": 255,
+  "powders": [
+
+
+  ],
+  "rerolls": 255
+}
