@@ -1,5 +1,5 @@
-cargo build --target x86_64-unknown-linux-gnu --package idmanglercli --bin idmanglercli
-cargo build --target x86_64-pc-windows-gnu --package idmanglercli --bin idmanglercli
+cargo build --target x86_64-unknown-linux-gnu --package idmanglercli --bin idmanglercli --release
+cargo build --target x86_64-pc-windows-gnu --package idmanglercli --bin idmanglercli --release
 
 mkdir -p product
 
