@@ -8,7 +8,6 @@ use idmangler_lib::{
 };
 
 use std::collections::HashMap;
-use std::env;
 use std::fs;
 use std::panic;
 use std::string::ToString;
@@ -102,15 +101,11 @@ fn main() {
     let mut powdervec = Vec::new();
     for eachpowder in json_config.powders {
         let powdertier = eachpowder.tier; // get the powder tier
-        let powderamount: u8 = match eachpowder.amount {
-            // get amount of powder if exists, otherwise 1
-            Some(amount) => amount, // good,
-            None => 1,              // bad,
-        };
+        let powderamount: u8 = eachpowder.amount.unwrap_or_else(|| 1);
         // match for the powder type
         // no need to return to variable or i'll need to rematch AGAIN
-        match eachpowder.r#type {
-            'E' | 'e' => {
+        match eachpowder.r#type.to_ascii_lowercase() {
+            'e' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::EARTH, powdertier))
                 }
@@ -118,7 +113,7 @@ fn main() {
                     println!("Powder type: Earth");
                 }
             }
-            'T' | 't' => {
+            't' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER, powdertier))
                 }
@@ -126,7 +121,7 @@ fn main() {
                     println!("Powder type: Thunder");
                 }
             }
-            'W' | 'w' => {
+            'w' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::WATER, powdertier))
                 }
@@ -134,7 +129,7 @@ fn main() {
                     println!("Powder type: Water");
                 }
             }
-            'F' | 'f' => {
+            'f' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::FIRE, powdertier))
                 }
@@ -142,7 +137,7 @@ fn main() {
                     println!("Powder type: Fire");
                 }
             }
-            'A' | 'a' => {
+            'a' => {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::AIR, powdertier))
                 }
@@ -193,6 +188,7 @@ fn main() {
     if let Some(shiny) = json_config.shiny {
         if let ref shinykey = shiny.key {
             if let shinyvalue = shiny.value {
+
                 realshinykey = 1;
                 for i in json_shiny {
                     if i.key == shiny.key {
@@ -214,6 +210,7 @@ fn main() {
                 }
                 .encode(ver, &mut out)
                 .unwrap();
+
             }
         }
     }
