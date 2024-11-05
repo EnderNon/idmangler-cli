@@ -13,10 +13,10 @@ pub struct Identificationer {
     pub roll: Option<u8>,
 }
 #[derive(Deserialize)]
-pub struct jsonconfig {
+pub struct Jsonconfig {
     pub debug: Option<bool>,
     pub name: String,
-    pub shiny: Option<shinyjson>,
+    pub shiny: Option<Shinyjson>,
     pub ids: Vec<Identificationer>,
     pub powder_limit: u8,
     pub powders: Vec<Powder>,
@@ -24,12 +24,12 @@ pub struct jsonconfig {
 }
 
 #[derive(Deserialize)]
-pub struct shinystruct {
+pub struct Shinystruct {
     pub id: u8,
     pub key: String,
 }
 #[derive(Deserialize)]
-pub struct shinyjson {
+pub struct Shinyjson {
     pub key: String,
     pub value: i64,
 }

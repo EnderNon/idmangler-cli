@@ -10,9 +10,10 @@ use idmangler_lib::{
 use std::collections::HashMap;
 use std::fs;
 use std::panic;
-use std::string::ToString;
 mod structures;
 use crate::structures::*;
+mod errors;
+
 
 use clap::Parser;
 
@@ -35,9 +36,9 @@ fn main() {
     // fancypanic();
     let args = Args::parse();
 
-    let mut debugMode = false;
+    let mut debug_mode = false;
     if args.debugmode == true {
-        debugMode = true;
+        debug_mode = true;
         println!("Debug mode enabled");
     };
     let mut configpath: String = String::from("config.json");
@@ -46,11 +47,11 @@ fn main() {
     }
 
     // newest json reading code
-    let json_config: jsonconfig =
+    let json_config: Jsonconfig =
         serde_json::from_reader(fs::File::open(configpath).expect(ERROR[1])).expect(ERROR[2]);
     let idsmap: HashMap<String, u8> =
         serde_json::from_reader(fs::File::open("id_keys.json").expect(ERROR[3])).expect(ERROR[4]);
-    let json_shiny: Vec<shinystruct> =
+    let json_shiny: Vec<Shinystruct> =
         serde_json::from_reader(fs::File::open("shiny_stats.json").expect(ERROR[5]))
             .expect(ERROR[6]);
     // println!("{:?}",idsmap.get("airDamage"));
@@ -109,7 +110,7 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::EARTH, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Earth");
                 }
             }
@@ -117,7 +118,7 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Thunder");
                 }
             }
@@ -125,7 +126,7 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::WATER, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Water");
                 }
             }
@@ -133,7 +134,7 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::FIRE, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Fire");
                 }
             }
@@ -141,7 +142,7 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::AIR, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Air");
                 }
             }
@@ -149,18 +150,18 @@ fn main() {
                 for _i in 0..powderamount {
                     powdervec.push((Powders::THUNDER, powdertier))
                 }
-                if debugMode {
+                if debug_mode {
                     println!("Powder type: Broken, fallback Thunder");
                 }
             }
         };
 
-        if debugMode {
+        if debug_mode {
             println!("Powder tier: {}", powdertier);
             println!("Powder amount: {}", powderamount);
         }
     }
-    if debugMode {
+    if debug_mode {
         println!("Powders Vec: {:?}", powdervec);
     }
 
@@ -176,7 +177,7 @@ fn main() {
         Some(i) => {
             if i != 0 {
                 RerollData(i).encode(ver, &mut out).unwrap();
-                if debugMode {
+                if debug_mode {
                     println!("Rerolls: {}", i)
                 }
             }
@@ -186,21 +187,21 @@ fn main() {
 
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
-        if let ref shinykey = shiny.key {
+        if let ref _shinykey = shiny.key {
             if let shinyvalue = shiny.value {
 
                 realshinykey = 1;
                 for i in json_shiny {
                     if i.key == shiny.key {
                         realshinykey = i.id;
-                        if debugMode {
+                        if debug_mode {
                             println!("shiny key {}", shiny.key);
                         }
                     }
                 }
-                if debugMode {
-                    println!("realshinykey: {}", realshinykey);
-                    println!("shinyvalue: {}", shinyvalue);
+                if debug_mode {
+                    dbg!(&realshinykey);
+                    dbg!(&shinyvalue);
                 }
 
                 ShinyData {
@@ -246,8 +247,7 @@ fn fancypanic() {
             "{}",
             panic_msg
                 .lines()
-                .skip(1)
-                .next()
+                .nth(1)
                 .unwrap_or("HOW DID YOU BREAK THE PANIC HANDLER???")
         );
     }));
