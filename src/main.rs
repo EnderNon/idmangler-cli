@@ -66,9 +66,13 @@ fn cook() -> Result<(), Errorfr> {
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
 
-    StartData(ver).encode(ver, &mut out).unwrap();
+    StartData(ver)
+        .encode(ver, &mut out)
+        .unwrap();
 
-    TypeData(ItemType::Gear).encode(ver, &mut out).unwrap();
+    TypeData(ItemType::Gear)
+        .encode(ver, &mut out)
+        .unwrap();
 
     NameData(String::from(format!("{}", json_config.name.trim())))
         .encode(ver, &mut out)
