@@ -56,6 +56,7 @@ Potential range: 0<->255.
 ### Other things about this
 The format obeys the same json rules as the powders.  
 If you are trying to get the 100% or 0% roll and the value you calculated is close to 130 or 30, change it to 130 or 30 because that is the real value.
+However, if the value is negative it will be between 70%-130%. 
 
 # Current issues
 Crafteds are not implemented

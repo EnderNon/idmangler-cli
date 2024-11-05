@@ -22,7 +22,7 @@ use clap::Parser;
 struct Args {
     /// Path for config path
     #[arg(short, long)]
-    configpath: Option<String>,
+    config: Option<String>,
 
     /// Enable debug mode
     #[arg(short, long, default_value_t = false)]
@@ -46,13 +46,13 @@ fn cook() -> Result<(), Errorfr> {
         debug_mode = true;
         println!("Debug mode enabled");
     };
-    let mut configpath: String = String::from("config.json");
-    if let Some(configpathargs) = args.configpath {
-        configpath = configpathargs;
+    let mut config: String = String::from("config.json");
+    if let Some(configpathargs) = args.config {
+        config = configpathargs;
     }
 
     // load configs
-    let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(configpath)
+    let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(config)
         .map_err(|_| Errorfr::ItemJsonMissing)?)
         .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
     let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json")
