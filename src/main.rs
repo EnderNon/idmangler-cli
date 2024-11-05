@@ -7,7 +7,6 @@ use idmangler_lib::{
     StartData, TypeData,
 };
 
-use serde_json;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
