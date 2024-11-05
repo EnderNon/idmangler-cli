@@ -31,11 +31,12 @@ struct Args {
 
 // const fallbackconfigpath: String = "config.json".to_owned();
 
-#[derive(Debug)]
-struct E;
-
-
-fn main() -> Result<(), E> {
+fn main() {
+    if let Err(e) = cook() {
+        println!("{}",e);
+    }
+}
+fn cook() -> Result<(), Errorfr> {
     // enable fancypanic when building for release
     // fancypanic();
     let args = Args::parse();
@@ -52,13 +53,14 @@ fn main() -> Result<(), E> {
 
     // newest json reading code
     let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(configpath)
-        .map_err(|_| Errorfr::JsonMissing)?)
-        .map_err(|_| Errorfr::JsonCorrupt)?;
-    let idsmap: HashMap<String, u8> =
-        serde_json::from_reader(fs::File::open("id_keys.json").expect(ERROR[3])).expect(ERROR[4]);
-    let json_shiny: Vec<Shinystruct> =
-        serde_json::from_reader(fs::File::open("shiny_stats.json").expect(ERROR[5]))
-            .expect(ERROR[6]);
+        .map_err(|_| Errorfr::ItemJsonMissing)?)
+        .map_err(|_| Errorfr::ItemJsonCorrupt)?;
+    let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json")
+        .map_err(|_| Errorfr::IDMapJsonMissing)?)
+        .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
+    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(fs::File::open("shiny_stats.json")
+        .map_err(|_| Errorfr::ShinyJsonMissing)?)
+        .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
     // println!("{:?}",idsmap.get("airDamage"));
 
     let mut out = Vec::new();
@@ -243,6 +245,8 @@ fn main() -> Result<(), E> {
     //let out = decode(&mut bytes_iter).unwrap();
 
     // println!("{:#?}", out);
+    Ok(())
+
 }
 
 fn fancypanic() {
