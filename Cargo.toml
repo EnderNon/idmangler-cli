@@ -1,5 +1,5 @@
 [package]
-name = "idmanglercli"
+name = "idmangler-cli"
 version = "0.3.1"
 edition = "2021"
 

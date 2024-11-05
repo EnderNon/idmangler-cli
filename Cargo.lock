@@ -110,16 +110,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
-name = "idmangler-lib"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01a4ccddf0b9d54668e06b249f940e4c376cc4393ef5d149c87759a774b385d5"
-dependencies = [
- "thiserror",
-]
-
-[[package]]
-name = "idmanglercli"
+name = "idmangler-cli"
 version = "0.3.1"
 dependencies = [
  "base64",
@@ -127,6 +118,15 @@ dependencies = [
  "idmangler-lib",
  "serde",
  "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "idmangler-lib"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01a4ccddf0b9d54668e06b249f940e4c376cc4393ef5d149c87759a774b385d5"
+dependencies = [
  "thiserror",
 ]
 
