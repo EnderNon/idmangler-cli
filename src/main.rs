@@ -54,7 +54,7 @@ fn cook() -> Result<(), Errorfr> {
     // load configs
     let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(configpath)
         .map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(|_| Errorfr::ItemJsonCorrupt)?;
+        .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
     let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json")
         .map_err(|_| Errorfr::IDMapJsonMissing)?)
         .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
