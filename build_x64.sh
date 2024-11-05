@@ -5,7 +5,7 @@ mkdir -p product
 
 cp ./target/x86_64-pc-windows-gnu/release/idmangler-cli.exe ./product/idmangler-cli-windows-x64.exe
 cp ./target/x86_64-unknown-linux-gnu/release/idmangler-cli ./product/idmangler-cli-linux-x64
-cp -u -p ./{config.json,config_hanafupookie.json,config_singu.json,README.md} ./product/
+cp -u -p ./{config.json,config_hanafupookie.json,config_singu.json,config.md} ./product/
 
 pkgversion=$(cargo metadata --format-version=1 --no-deps | jq '.packages[] | select(.name == "idmangler-cli") | .version')
 echo "package version is:"
