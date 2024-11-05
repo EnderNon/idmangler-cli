@@ -4,13 +4,13 @@ use serde::Deserialize;
 pub struct Powder {
     pub r#type: char,
     pub tier: u8,
-    pub amount: Option<u8>
+    pub amount: Option<u8>,
 }
 #[derive(Deserialize)]
 pub struct Identificationer {
     pub id: String,
     pub base: i32,
-    pub roll: Option<u8>
+    pub roll: Option<u8>,
 }
 #[derive(Deserialize)]
 pub struct jsonconfig {
@@ -20,16 +20,16 @@ pub struct jsonconfig {
     pub ids: Vec<Identificationer>,
     pub powder_limit: u8,
     pub powders: Vec<Powder>,
-    pub rerolls:Option<u8>
+    pub rerolls: Option<u8>,
 }
 
 #[derive(Deserialize)]
-pub struct shinystruct{
+pub struct shinystruct {
     pub id: u8,
-    pub key:String
+    pub key: String,
 }
 #[derive(Deserialize)]
 pub struct shinyjson {
     pub key: String,
-    pub value: i64
+    pub value: i64,
 }
