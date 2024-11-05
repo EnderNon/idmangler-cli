@@ -123,9 +123,9 @@ dependencies = [
 
 [[package]]
 name = "idmangler-lib"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01a4ccddf0b9d54668e06b249f940e4c376cc4393ef5d149c87759a774b385d5"
+checksum = "0395df40b27e5b44d89befbf479c06df7554c0af28674fa663aebd8e0d8f400c"
 dependencies = [
  "thiserror",
 ]

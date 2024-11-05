@@ -1,7 +1,7 @@
 use idmangler_lib::{
     encoding::encode_string,
     types::{
-        ItemType, Powders, TransformVersion, {RollType, Stat},
+        ItemType, TransformVersion, {RollType, Stat}, Element
     },
     DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData,
     StartData, TypeData,
@@ -117,62 +117,57 @@ fn cook() -> Result<(), Errorfr> {
         let powdertier = eachpowder.tier; // get the powder tier
         let powderamount: u8 = eachpowder.amount.unwrap_or_else(|| 1);
         // match for the powder type
-        // no need to return to variable or i'll need to rematch AGAIN
-        match eachpowder.r#type.to_ascii_lowercase() {
-            'e' => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::EARTH, powdertier))
+        for _ in 0..powderamount {
+            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
+                'e' => {
+                    if debug_mode {
+                        println!("Powder type: Earth");
+                    }
+                    Element::Earth
                 }
-                if debug_mode {
-                    println!("Powder type: Earth");
+                't' => {
+
+                    if debug_mode {
+                        println!("Powder type: Thunder");
+                    }
+                    Element::Thunder
                 }
+                'w' => {
+                    if debug_mode {
+                        println!("Powder type: Water");
+                    }
+                    Element::Water
+                }
+                'f' => {
+                    if debug_mode {
+                        println!("Powder type: Fire");
+                    }
+                    Element::Fire
+                }
+                'a' => {
+                    if debug_mode {
+                        println!("Powder type: Air");
+                    }
+                    Element::Air
+                }
+                _ => {
+                    if debug_mode {
+                        println!("Powder type: Broken, fallback Thunder");
+                    }
+                    Element::Thunder
+                }
+            };
+            powdervec.push(Some((eletype,powdertier)));
+            if debug_mode {
+                println!("Powder tier: {}", powdertier);
+                println!("Powder amount: {}", powderamount);
             }
-            't' => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::THUNDER, powdertier))
-                }
-                if debug_mode {
-                    println!("Powder type: Thunder");
-                }
-            }
-            'w' => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::WATER, powdertier))
-                }
-                if debug_mode {
-                    println!("Powder type: Water");
-                }
-            }
-            'f' => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::FIRE, powdertier))
-                }
-                if debug_mode {
-                    println!("Powder type: Fire");
-                }
-            }
-            'a' => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::AIR, powdertier))
-                }
-                if debug_mode {
-                    println!("Powder type: Air");
-                }
-            }
-            _ => {
-                for _i in 0..powderamount {
-                    powdervec.push((Powders::THUNDER, powdertier))
-                }
-                if debug_mode {
-                    println!("Powder type: Broken, fallback Thunder");
-                }
-            }
+
         };
 
-        if debug_mode {
-            println!("Powder tier: {}", powdertier);
-            println!("Powder amount: {}", powderamount);
-        }
+
+
+
     }
     if debug_mode {
         println!("Powders Vec: {:?}", powdervec);
