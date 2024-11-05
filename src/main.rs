@@ -51,7 +51,7 @@ fn cook() -> Result<(), Errorfr> {
         configpath = configpathargs;
     }
 
-    // newest json reading code
+    // load configs
     let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(configpath)
         .map_err(|_| Errorfr::ItemJsonMissing)?)
         .map_err(|_| Errorfr::ItemJsonCorrupt)?;
@@ -63,6 +63,8 @@ fn cook() -> Result<(), Errorfr> {
         .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
     // println!("{:?}",idsmap.get("airDamage"));
 
+
+    // create necessary variables
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
 

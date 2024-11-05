@@ -8,9 +8,9 @@ pub enum Errorfr {
     ItemJsonMissing,
 
     /// item config json is corrupt
-    #[error("Error 2: item config json is corrupt, Reread config.md"
+    #[error("Error 2: item config json is corrupt, Reread config.md\n{:?}"
     )]
-    ItemJsonCorrupt,
+    ItemJsonCorrupt(serde_json::Error),
 
     /// idmap is missing
     #[error("Error 3: id_keys.json is missing")]
