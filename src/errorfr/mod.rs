@@ -13,11 +13,11 @@ pub enum Errorfr {
     ItemJsonCorrupt,
 
     /// idmap is missing
-    #[error("Error 3: Identifications hashmap is missing")]
+    #[error("Error 3: id_keys.json is missing")]
     IDMapJsonMissing,
 
     /// idmap is corrupt
-    #[error("Error 4: Identifications hashmap is corrupt")]
+    #[error("Error 4: id_keys.json is corrupt")]
     IDMapJsonCorrupt,
 
     /// shiny data json is missing
