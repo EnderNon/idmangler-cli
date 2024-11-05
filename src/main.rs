@@ -31,7 +31,11 @@ struct Args {
 
 // const fallbackconfigpath: String = "config.json".to_owned();
 
-fn main() -> Result<(), Errors> {
+#[derive(Debug)]
+struct E;
+
+
+fn main() -> Result<(), E> {
     // enable fancypanic when building for release
     // fancypanic();
     let args = Args::parse();
