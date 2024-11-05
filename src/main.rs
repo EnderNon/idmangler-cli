@@ -12,8 +12,8 @@ use std::fs;
 use std::panic;
 mod structures;
 use crate::structures::*;
-mod errors;
-
+mod errorfr;
+use crate::errorfr::Errorfr;
 
 use clap::Parser;
 
@@ -31,7 +31,7 @@ struct Args {
 
 // const fallbackconfigpath: String = "config.json".to_owned();
 
-fn main() {
+fn main() -> Result<(), Errors> {
     // enable fancypanic when building for release
     // fancypanic();
     let args = Args::parse();
@@ -47,8 +47,9 @@ fn main() {
     }
 
     // newest json reading code
-    let json_config: Jsonconfig =
-        serde_json::from_reader(fs::File::open(configpath).expect(ERROR[1])).expect(ERROR[2]);
+    let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(configpath)
+        .map_err(|_| Errorfr::JsonMissing)?)
+        .map_err(|_| Errorfr::JsonCorrupt)?;
     let idsmap: HashMap<String, u8> =
         serde_json::from_reader(fs::File::open("id_keys.json").expect(ERROR[3])).expect(ERROR[4]);
     let json_shiny: Vec<Shinystruct> =
