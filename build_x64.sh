@@ -3,5 +3,5 @@ cargo build --target x86_64-pc-windows-gnu --package idmanglercli --bin idmangle
 
 mkdir -p product
 
-cp ./target/x86_64-pc-windows-gnu/release/idmangercli.exe ./product/idmangler-gui-windows-x64
+cp ./target/x86_64-pc-windows-gnu/release/idmanglercli.exe ./product/idmangler-gui-windows-x64
 cp ./target/x86_64-unknown-linux-gnu/release/idmanglercli ./product/idmangler-gui-linux-x64
