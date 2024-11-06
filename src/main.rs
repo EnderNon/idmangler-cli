@@ -121,46 +121,31 @@ fn cook() -> Result<(), Errorfr> {
             let eletype = match eachpowder.r#type.to_ascii_lowercase() {
                 'e' => {
                     if debug_mode {
-                        println!("Powder type: Earth");
+
                     }
                     Element::Earth
                 }
                 't' => {
-
-                    if debug_mode {
-                        println!("Powder type: Thunder");
-                    }
                     Element::Thunder
                 }
                 'w' => {
-                    if debug_mode {
-                        println!("Powder type: Water");
-                    }
                     Element::Water
                 }
                 'f' => {
-                    if debug_mode {
-                        println!("Powder type: Fire");
-                    }
                     Element::Fire
                 }
                 'a' => {
-                    if debug_mode {
-                        println!("Powder type: Air");
-                    }
                     Element::Air
                 }
                 _ => {
-                    if debug_mode {
-                        println!("Powder type: Broken, fallback Thunder");
-                    }
                     Element::Thunder
                 }
             };
+            dbg!("Element type: {}",eletype);
             powdervec.push(Some((eletype,powdertier)));
             if debug_mode {
-                println!("Powder tier: {}", powdertier);
-                println!("Powder amount: {}", powderamount);
+                dbg!(powdertier);
+                dbg!(powderamount);
             }
 
         };
@@ -170,7 +155,7 @@ fn cook() -> Result<(), Errorfr> {
 
     }
     if debug_mode {
-        println!("Powders Vec: {:?}", powdervec);
+        dbg!(powdervec);
     }
 
     // old powder data encode kinda, takes data from new encode
@@ -182,16 +167,16 @@ fn cook() -> Result<(), Errorfr> {
     .unwrap();
 
     match json_config.rerolls {
-        Some(i) => {
-            if i != 0 {
-                RerollData(i).encode(ver, &mut out).unwrap();
+        Some(rerollcount) => {
+            if rerollcount != 0 {
+                RerollData(rerollcount).encode(ver, &mut out).unwrap();
                 if debug_mode {
-                    println!("Rerolls: {}", i)
-                }
-            }
-        }
+                    dbg!(rerollcount);
+                };
+            };
+        };
         None => pass(),
-    }
+    };
 
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
@@ -203,7 +188,7 @@ fn cook() -> Result<(), Errorfr> {
                     if i.key == shiny.key {
                         realshinykey = i.id;
                         if debug_mode {
-                            println!("shiny key {}", shiny.key);
+                            dbg!(shiny.key);
                         }
                     }
                 }
