@@ -156,7 +156,7 @@ fn cook() -> Result<(), Errorfr> {
 
     }
     if debug_mode {
-        dbg!(powdervec);
+        dbg!(&powdervec);
     }
 
     // old powder data encode kinda, takes data from new encode
@@ -175,7 +175,7 @@ fn cook() -> Result<(), Errorfr> {
                     dbg!(rerollcount);
                 };
             };
-        };
+        }
         None => pass(),
     };
 
@@ -189,7 +189,7 @@ fn cook() -> Result<(), Errorfr> {
                     if i.key == shiny.key {
                         realshinykey = i.id;
                         if debug_mode {
-                            dbg!(shiny.key);
+                            dbg!(&shiny.key);
                         }
                     }
                 }
