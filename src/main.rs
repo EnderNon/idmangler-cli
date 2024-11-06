@@ -141,12 +141,13 @@ fn cook() -> Result<(), Errorfr> {
                     Element::Thunder
                 }
             };
-            dbg!("Element type: {}",eletype);
-            powdervec.push(Some((eletype,powdertier)));
             if debug_mode {
                 dbg!(powdertier);
                 dbg!(powderamount);
+                dbg!(eletype);
             }
+            powdervec.push(Some((eletype,powdertier)));
+
 
         };
 
