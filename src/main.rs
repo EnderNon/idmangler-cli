@@ -26,7 +26,7 @@ struct Args {
 
     /// Enable debug mode
     #[arg(short, long, default_value_t = false)]
-    debugmode: bool,
+    debug: bool,
 }
 
 // const fallbackconfigpath: String = "config.json".to_owned();
@@ -42,7 +42,7 @@ fn cook() -> Result<(), Errorfr> {
     let args = Args::parse();
 
     let mut debug_mode = false;
-    if args.debugmode == true {
+    if args.debug == true {
         debug_mode = true;
         println!("Debug mode enabled");
     };
@@ -143,7 +143,6 @@ fn cook() -> Result<(), Errorfr> {
             };
             if debug_mode {
                 dbg!(powdertier);
-                dbg!(powderamount);
                 dbg!(eletype);
             }
             powdervec.push(Some((eletype,powdertier)));
