@@ -7,9 +7,14 @@ use idmangler_lib::{
     StartData, TypeData,
 };
 
-use std::collections::HashMap;
-use std::fs;
-use std::panic;
+use std::{
+    collections::HashMap,
+    env,
+    fs,
+    panic
+};
+use std::path::PathBuf;
+
 mod structures;
 use crate::structures::*;
 mod errorfr;
@@ -40,13 +45,16 @@ fn cook() -> Result<(), Errorfr> {
     // enable fancypanic when building for release
     // fancypanic();
     let args = Args::parse();
+    let mut executablePath = env::current_exe().unwrap();
+    PathBuf::pop(&mut executablePath);
+    let executablePath = executablePath.to_str().unwrap();
 
     let mut debug_mode = false;
     if args.debug == true {
         debug_mode = true;
         println!("Debug mode enabled");
     };
-    let mut config: String = String::from("config.json");
+    let mut config: String = String::from(executablePath.to_owned()+"config.json");
     if let Some(configpathargs) = args.config {
         config = configpathargs;
     }
@@ -55,10 +63,10 @@ fn cook() -> Result<(), Errorfr> {
     let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(config)
         .map_err(|_| Errorfr::ItemJsonMissing)?)
         .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
-    let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open("id_keys.json")
+    let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open(executablePath.to_owned()+"id_keys.json")
         .map_err(|_| Errorfr::IDMapJsonMissing)?)
         .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
-    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(fs::File::open("shiny_stats.json")
+    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(fs::File::open(executablePath.to_owned()+"shiny_stats.json")
         .map_err(|_| Errorfr::ShinyJsonMissing)?)
         .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
     // println!("{:?}",idsmap.get("airDamage"));
