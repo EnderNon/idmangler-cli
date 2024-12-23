@@ -9,9 +9,10 @@ Any bugs? DM endernon on discord.
 Go to the [releases tab](https://git.frfrnocap.men/endernon/idmangler-cli/releases)
 ### Option 2: compile yourself
 requirements: rust, cargo  
-use cargo run --release to build and run.  
+use `cargo run --release` to build and run.  
 ### Option 3: get from crates.io
-Requirements: rust-lang
+Requirements: rust-lang  
+run `cargo install idmangler-cli`.
 
 ## Usage
 - Move the program to some folder along with config.json . Download these three files and place them next to the program:  

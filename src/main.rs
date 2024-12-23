@@ -76,14 +76,18 @@ fn cook() -> Result<(), Errorfr> {
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
 
+
+    // ENCODE: StartData
     StartData(ver)
         .encode(ver, &mut out)
         .unwrap();
 
+    // ENCODE: TypeData
     TypeData(ItemType::Gear)
         .encode(ver, &mut out)
         .unwrap();
 
+    // ENCODE: NameData
     NameData(String::from(format!("{}", json_config.name.trim())))
         .encode(ver, &mut out)
         .unwrap();
@@ -112,12 +116,15 @@ fn cook() -> Result<(), Errorfr> {
         // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
     }
 
+    // ENCODE: IdentificationsData
     IdentificationData {
         identifications: idvec,
         extended_encoding: true,
     }
     .encode(ver, &mut out)
     .unwrap();
+
+
 
     // json powder data handling
     let mut powdervec = Vec::new();
@@ -128,9 +135,6 @@ fn cook() -> Result<(), Errorfr> {
         for _ in 0..powderamount {
             let eletype = match eachpowder.r#type.to_ascii_lowercase() {
                 'e' => {
-                    if debug_mode {
-
-                    }
                     Element::Earth
                 }
                 't' => {
@@ -166,7 +170,7 @@ fn cook() -> Result<(), Errorfr> {
         dbg!(&powdervec);
     }
 
-    // old powder data encode kinda, takes data from new encode
+    // ENCODE: PowderData
     PowderData {
         powder_slots: json_config.powder_limit,
         powders: powdervec,
@@ -174,9 +178,12 @@ fn cook() -> Result<(), Errorfr> {
     .encode(ver, &mut out)
     .unwrap();
 
+
+
     match json_config.rerolls {
         Some(rerollcount) => {
             if rerollcount != 0 {
+                // ENCODE: RerollData if applicable
                 RerollData(rerollcount).encode(ver, &mut out).unwrap();
                 if debug_mode {
                     dbg!(rerollcount);
@@ -186,11 +193,12 @@ fn cook() -> Result<(), Errorfr> {
         None => pass(),
     };
 
+
+
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
         if let ref _shinykey = shiny.key {
             if let shinyvalue = shiny.value {
-
                 realshinykey = 1;
                 for i in json_shiny {
                     if i.key == shiny.key {
@@ -204,7 +212,7 @@ fn cook() -> Result<(), Errorfr> {
                     dbg!(&realshinykey);
                     dbg!(&shinyvalue);
                 }
-
+                // ENCODE: ShinyData (if applicable)
                 ShinyData {
                     id: realshinykey,
                     val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
@@ -220,6 +228,7 @@ fn cook() -> Result<(), Errorfr> {
     // prints (Water,6) 255 times
     // println!("{:?}",vec![(Powders::WATER, 6); 255]);
 
+    // ENCODE: EndData
     EndData.encode(ver, &mut out).unwrap();
 
     // final string print

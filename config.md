@@ -25,14 +25,14 @@ Each value in the array must have a comma at the end except the last.
 The use of spaces is optional, as well as letter case for the $TYPE value.  
 The keys ("type" "tier" "amount") must all be lowercase.  
 If type is invalid, it will default back to being Thunder powder.
-#### Powders Example
-```js
+#### Powders Example (yes, this looks wacky to show that this is allowed)
+```json
 "powders": [
     { "type":"T", "tier":6, "amount":5 },
-    {"type":"e","tier":1,"amount":5},
-    {"type":"F", "tier":3,"amount":1},
+    {"type"  :"e","tier":1,"amount":5},
+    {"type":  "F", "tier": 3,"amount":1},
     {     "type"     : "w"     ,  "tier":6     }
-],
+]
 ```
 Note that the last powder block in array has no comma at the end.
 ### Which items can have powders?
