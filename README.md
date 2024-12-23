@@ -10,6 +10,8 @@ Go to the [releases tab](https://git.frfrnocap.men/endernon/idmangler-cli/releas
 ### Option 2: compile yourself
 requirements: rust, cargo  
 use cargo run --release to build and run.  
+### Option 3: get from crates.io
+Requirements: rust-lang
 
 ## Usage
 - Move the program to some folder along with config.json . Download these three files and place them next to the program:  
