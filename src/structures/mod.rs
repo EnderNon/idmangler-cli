@@ -16,6 +16,7 @@ pub struct Identificationer {
 pub struct Jsonconfig {
     pub debug: Option<bool>,
     pub name: String,
+    pub crafted: bool,
     pub shiny: Option<Shinyjson>,
     pub ids: Vec<Identificationer>,
     pub powder_limit: u8,
