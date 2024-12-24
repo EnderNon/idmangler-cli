@@ -83,14 +83,15 @@ fn cook() -> Result<(), Errorfr> {
         .unwrap();
 
     // ENCODE: TypeData
-    TypeData(ItemType::Gear)
+    TypeData(ItemType::from(json_config.item_type))
         .encode(ver, &mut out)
-        .unwrap();
+        .map_err(|_| Errorfr::ItemTypeMissing)?;
 
     // ENCODE: NameData
     NameData(String::from(format!("{}", json_config.name.trim())))
         .encode(ver, &mut out)
         .unwrap();
+
 
     // json identification data handling
     let mut idvec = Vec::new();
@@ -161,9 +162,6 @@ fn cook() -> Result<(), Errorfr> {
 
 
         };
-
-
-
 
     }
     if debug_mode {

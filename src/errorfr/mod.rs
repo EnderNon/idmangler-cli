@@ -25,5 +25,9 @@ pub enum Errorfr {
 
     /// shiny data json is corrupt
     #[error("Error 6: shiny_stats.json is corrupt.")]
-    ShinyJsonCorrupt
+    ShinyJsonCorrupt,
+
+    ///
+    #[error("Error 7: Item Type is missing from json (add an \"item_type\" field")]
+    ItemTypeMissing
 }
