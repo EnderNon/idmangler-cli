@@ -1,19 +1,14 @@
 use idmangler_lib::{
     encoding::encode_string,
     types::{
-        ItemType, TransformVersion, {RollType, Stat}, Element
+        Element, ItemType, TransformVersion, {RollType, Stat},
     },
     DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData,
     StartData, TypeData,
 };
 
-use std::{
-    collections::HashMap,
-    env,
-    fs,
-    panic
-};
-use std::path::PathBuf;
+use std::ops::Deref;
+use std::{collections::HashMap, env, fs, io, panic, path::PathBuf};
 
 mod structures;
 use crate::structures::*;
@@ -21,8 +16,9 @@ mod errorfr;
 use crate::errorfr::Errorfr;
 
 use clap::Parser;
+use reqwest::Url;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None)]
 struct Args {
     /// Path for config path
@@ -32,66 +28,119 @@ struct Args {
     /// Enable debug mode
     #[arg(short, long, default_value_t = false)]
     debug: bool,
+
+    /// Download jsons (for ease of use)
+    #[arg(long)]
+    download: Option<String>,
 }
 
-// const fallbackconfigpath: String = "config.json".to_owned();
+fn dl_json(
+    url: Url,
+    savename: String,
+    args: Args,
+    executablePath: &str,
+    debug_mode: bool,
+) -> Result<(), Errorfr> {
+    let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
+    let body = resp.text().map_err(|_| Errorfr::JsonDlReqBodyInvalid)?;
+    let savepath = format!("{}",savename);
+    println!("Downloading to {savepath}");
+    let mut out = fs::File::create(savepath)
+        .map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
+    io::copy(&mut body.as_bytes(), &mut out).map_err(|_| Errorfr::JsonDlReqFileWriteFail)?;
+    Ok(())
+}
 
 fn main() {
-    if let Err(e) = cook() {
-        println!("{}",e);
-    }
-}
-fn cook() -> Result<(), Errorfr> {
     // enable fancypanic when building for release
     // fancypanic();
     let args = Args::parse();
     let mut executablePath = env::current_exe().unwrap();
     PathBuf::pop(&mut executablePath);
-    let executablePath = executablePath.to_str().unwrap();
+    let executable_path = executablePath.to_str().unwrap();
 
     let mut debug_mode = false;
     if args.debug == true {
         debug_mode = true;
         println!("Debug mode enabled");
     };
-    let mut config: String = String::from(executablePath.to_owned()+"config.json");
+
+    // download jsons if necessary
+    if let Some(dlvalue) = &args.download {
+        let jsons = DownloadJsons::from(dlvalue.clone());
+        if jsons == DownloadJsons::all || jsons == DownloadJsons::shiny_stats {
+            if let Err(e) = dl_json(
+                "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
+                format!("{}{}", executable_path, "shiny_stats.json"),
+                args.clone(),
+                executable_path,
+                debug_mode
+            ) { // error handling below
+                println!("{} Filename: {}",e,dlvalue)
+            }
+        }
+        if jsons == DownloadJsons::all || jsons == DownloadJsons::id_keys {
+            if let Err(e) = dl_json(
+                "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
+                format!("{}{}", executable_path, "id_keys.json"),
+                args.clone(),
+                executable_path,
+                debug_mode
+            ) { // error handling below
+                println!("{} Filename: {}",e,dlvalue)
+            }
+        }
+    };
+
+    if let Err(e) = cook(args, executable_path, debug_mode) {
+        println!("{}", e);
+    }
+}
+
+fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), Errorfr> {
+    let mut config: String = String::from(executable_path.to_owned() + "config.json");
     if let Some(configpathargs) = args.config {
         config = configpathargs;
     }
 
     // load configs
-    let json_config: Jsonconfig = serde_json::from_reader(fs::File::open(config)
-        .map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
-    let idsmap: HashMap<String, u8> = serde_json::from_reader(fs::File::open(executablePath.to_owned()+"id_keys.json")
-        .map_err(|_| Errorfr::IDMapJsonMissing)?)
-        .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
-    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(fs::File::open(executablePath.to_owned()+"shiny_stats.json")
-        .map_err(|_| Errorfr::ShinyJsonMissing)?)
-        .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
+    let json_config: Jsonconfig =
+        serde_json::from_reader(fs::File::open(config).map_err(|_| Errorfr::ItemJsonMissing)?)
+            .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
+    let idsmap: HashMap<String, u8> = serde_json::from_reader(
+        fs::File::open(executable_path.to_owned() + "id_keys.json")
+            .map_err(|_| Errorfr::IDMapJsonMissing)?,
+    )
+    .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
+    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
+        fs::File::open(executable_path.to_owned() + "shiny_stats.json")
+            .map_err(|_| Errorfr::ShinyJsonMissing)?,
+    )
+    .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
     // println!("{:?}",idsmap.get("airDamage"));
 
+    if let Some(debugconfig) = json_config.debug {
+        if debugconfig {
+            debug_mode = true
+        }
+    }
 
     // create necessary variables
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
 
-
     // ENCODE: StartData
-    StartData(ver)
-        .encode(ver, &mut out)
-        .unwrap();
+    StartData(ver).encode(ver, &mut out).unwrap();
 
     // ENCODE: TypeData
     TypeData(ItemType::from(json_config.item_type))
         .encode(ver, &mut out)
-        .map_err(|_| Errorfr::ItemTypeMissing)?;
+        .unwrap();
 
     // ENCODE: NameData
     NameData(String::from(format!("{}", json_config.name.trim())))
         .encode(ver, &mut out)
         .unwrap();
-
 
     // json identification data handling
     let mut idvec = Vec::new();
@@ -125,8 +174,6 @@ fn cook() -> Result<(), Errorfr> {
     .encode(ver, &mut out)
     .unwrap();
 
-
-
     // json powder data handling
     let mut powdervec = Vec::new();
     for eachpowder in json_config.powders {
@@ -135,34 +182,19 @@ fn cook() -> Result<(), Errorfr> {
         // match for the powder type
         for _ in 0..powderamount {
             let eletype = match eachpowder.r#type.to_ascii_lowercase() {
-                'e' => {
-                    Element::Earth
-                }
-                't' => {
-                    Element::Thunder
-                }
-                'w' => {
-                    Element::Water
-                }
-                'f' => {
-                    Element::Fire
-                }
-                'a' => {
-                    Element::Air
-                }
-                _ => {
-                    Element::Thunder
-                }
+                'e' => Element::Earth,
+                't' => Element::Thunder,
+                'w' => Element::Water,
+                'f' => Element::Fire,
+                'a' => Element::Air,
+                _ => Element::Thunder,
             };
             if debug_mode {
                 dbg!(powdertier);
                 dbg!(eletype);
             }
-            powdervec.push(Some((eletype,powdertier)));
-
-
-        };
-
+            powdervec.push(Some((eletype, powdertier)));
+        }
     }
     if debug_mode {
         dbg!(&powdervec);
@@ -176,8 +208,6 @@ fn cook() -> Result<(), Errorfr> {
     .encode(ver, &mut out)
     .unwrap();
 
-
-
     match json_config.rerolls {
         Some(rerollcount) => {
             if rerollcount != 0 {
@@ -190,8 +220,6 @@ fn cook() -> Result<(), Errorfr> {
         }
         None => pass(),
     };
-
-
 
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
@@ -218,7 +246,6 @@ fn cook() -> Result<(), Errorfr> {
                 }
                 .encode(ver, &mut out)
                 .unwrap();
-
             }
         }
     }
@@ -247,7 +274,6 @@ fn cook() -> Result<(), Errorfr> {
 
     // println!("{:#?}", out);
     Ok(())
-
 }
 
 fn fancypanic() {

@@ -53,7 +53,41 @@ impl From<ItemTypeDeser> for ItemType {
             ItemTypeDeser::Tome => ItemType::Tome,
             ItemTypeDeser::Charm => ItemType::Charm,
             ItemTypeDeser::CraftedConsu => ItemType::CraftedConsu,
-            ItemTypeDeser::CraftedGear => ItemType::CraftedGear
+            ItemTypeDeser::CraftedGear => ItemType::CraftedGear,
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
+pub enum DownloadJsons {
+    none,
+    id_keys,
+    shiny_stats,
+    all,
+}
+impl From<String> for DownloadJsons {
+    fn from(value: String) -> Self {
+        match value.to_lowercase().as_str().trim() {
+            "none" => {
+                println!("download NONE");
+                DownloadJsons::none
+            }
+            "id_keys" | "idkeys" | "idkeys.json" | "id_keys.json" => {
+                println!("download ID_KEYS");
+                DownloadJsons::id_keys
+            }
+            "shiny_stats" | "shinystats" | "shiny_stats.json" | "shinystats.json" => {
+                println!("download SHINY_STATS");
+                DownloadJsons::shiny_stats
+            }
+            "all" | "everything" | "both" => {
+                println!("download BOTH");
+                DownloadJsons::all
+            }
+            _ => {
+                println!("Could not understand what Jsons to download, sorry.");
+                DownloadJsons::none
+            }
         }
     }
 }
