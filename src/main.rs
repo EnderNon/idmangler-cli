@@ -52,8 +52,6 @@ fn dl_json(
 }
 
 fn main() {
-    // enable fancypanic when building for release
-    fancypanic();
     let args = Args::parse();
     let mut executablePath = env::current_exe().unwrap();
     PathBuf::pop(&mut executablePath);
@@ -273,19 +271,6 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     // println!("{:#?}", out);
     Ok(())
-}
-
-fn fancypanic() {
-    panic::set_hook(Box::new(|panic_info| {
-        let panic_msg = format!("{panic_info}");
-        println!(
-            "{}",
-            panic_msg
-                .lines()
-                .nth(1)
-                .unwrap_or("HOW DID YOU BREAK THE PANIC HANDLER???")
-        );
-    }));
 }
 
 fn pass() {}
