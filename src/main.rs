@@ -7,7 +7,7 @@ use idmangler_lib::{
     StartData, TypeData,
 };
 
-use std::{collections::HashMap, env, fs, io, panic, path::PathBuf, sync::{LazyLock, Mutex}};
+use std::{collections::HashMap, env, fs, io, panic, path::PathBuf};
 
 mod structures;
 use crate::structures::*;
@@ -32,10 +32,6 @@ struct Args {
     #[arg(short, long)]
     download: Option<String>,
 }
-
-static JSONCONFIG: Mutex<Option<Jsonconfig>> = Mutex::new(None);
-static IDSMAP: Mutex<Option<HashMap<String, u8>>> = Mutex::new(None);
-static JSONSHINY: Mutex<Option<Vec<Shinystruct>>> = Mutex::new(None);
 
 fn dl_json(
     url: Url,
@@ -88,29 +84,28 @@ fn main() {
         println!("{}", e);
     }
 }
-fn testfrfr() -> Result<(), Errorfr> {
-    Ok(())
-}
+
 fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), Errorfr> {
     let config = args.config;
 
 
     // load configs
-    *JSONCONFIG.lock().unwrap() =
-        serde_json::from_reader(fs::File::open(config)
-            .map_err(|_| Errorfr::ItemJsonMissing)?)
+    let json_config: Jsonconfig =
+        serde_json::from_reader(fs::File::open(config).map_err(|_| Errorfr::ItemJsonMissing)?)
             .map_err(Errorfr::ItemJsonCorrupt)?;
-    *IDSMAP.lock().unwrap() = serde_json::from_reader(
+    let idsmap: HashMap<String, u8> = serde_json::from_reader(
         fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?)
+            .map_err(|_| Errorfr::IDMapJsonMissing)?,
+    )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
     let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
         fs::File::open(executable_path.to_owned() + "/ShinyStats.json")
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
+    // println!("{:?}",idsmap.get("airDamage"));
 
-    if let Some(debugconfig) = *&JSONCONFIG.lock().unwrap().as_ref().unwrap().debug {
+    if let Some(debugconfig) = json_config.debug {
         if debugconfig {
             debug_mode = true
         }
@@ -124,19 +119,19 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     StartData(ver).encode(ver, &mut out).unwrap();
 
     // ENCODE: TypeData
-    TypeData(ItemType::from(*&JSONCONFIG.lock().unwrap().as_ref().unwrap().item_type))
+    TypeData(ItemType::from(json_config.item_type))
         .encode(ver, &mut out)
         .unwrap();
 
     // ENCODE: NameData
-    NameData(JSONCONFIG.lock().unwrap().as_ref().unwrap().name.trim().to_string())
+    NameData(json_config.name.trim().to_string())
         .encode(ver, &mut out)
         .unwrap();
 
     // json identification data handling
     let mut idvec = Vec::new();
-    for eachid in &JSONCONFIG.lock().unwrap().as_ref().unwrap().ids {
-        let id_id = *IDSMAP.lock().unwrap().as_ref().unwrap().get(eachid.id.trim());
+    for eachid in json_config.ids {
+        let id_id = idsmap.get(eachid.id.trim());
         let id_base = eachid.base;
         let id_roll = eachid.roll;
 
@@ -167,7 +162,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     // json powder data handling
     let mut powdervec = Vec::new();
-    for eachpowder in &JSONCONFIG.lock().unwrap().as_ref().unwrap().powders {
+    for eachpowder in json_config.powders {
         let powdertier = eachpowder.tier; // get the powder tier
         let powderamount: u8 = eachpowder.amount.unwrap_or(1);
         // match for the powder type
@@ -193,13 +188,13 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     // ENCODE: PowderData
     PowderData {
-        powder_slots: *&JSONCONFIG.lock().unwrap().as_ref().unwrap().powder_limit,
+        powder_slots: json_config.powder_limit,
         powders: powdervec,
     }
     .encode(ver, &mut out)
     .unwrap();
 
-    match *&JSONCONFIG.lock().unwrap().as_ref().unwrap().rerolls {
+    match json_config.rerolls {
         Some(rerollcount) => {
             if rerollcount != 0 {
                 // ENCODE: RerollData if applicable
@@ -213,7 +208,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     };
 
     let mut realshinykey: u8;
-    if let Some(shiny) = &JSONCONFIG.lock().unwrap().as_ref().unwrap().shiny {
+    if let Some(shiny) = json_config.shiny {
         let _shinykey = &shiny.key;
         let shinyvalue = shiny.value;
         realshinykey = 1;
