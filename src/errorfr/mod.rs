@@ -8,23 +8,23 @@ pub enum Errorfr {
     ItemJsonMissing,
 
     /// item config json is corrupt
-    #[error("Error 1.2: item config json is corrupt, Reread config.md.\n{0}")]
+    #[error("Error 1.2: item config json is invalid. \nReread config.md.\n{0}")]
     ItemJsonCorrupt(serde_json::Error),
 
     /// idmap is missing
-    #[error("Error 1.3: id_keys.json is missing")]
+    #[error("Error 1.3: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download all\".")]
     IDMapJsonMissing,
 
     /// idmap is corrupt
-    #[error("Error 2.1: id_keys.json is corrupt")]
+    #[error("Error 2.1: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download all\".")]
     IDMapJsonCorrupt,
 
     /// shiny data json is missing
-    #[error("Error 2.2: shiny_stats.json is missing.")]
+    #[error("Error 2.2: shiny_stats.json is missing. \nYou should run \"--download shiny_stats\" or \"--download all\".")]
     ShinyJsonMissing,
 
     /// shiny data json is corrupt
-    #[error("Error 2.3: shiny_stats.json is corrupt.")]
+    #[error("Error 2.3: shiny_stats.json is corrupt. \nYou should run \"--download shiny_stats\" or \"--download all\".")]
     ShinyJsonCorrupt,
 
     /// could not download the file

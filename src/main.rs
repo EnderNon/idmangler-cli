@@ -53,7 +53,7 @@ fn dl_json(
 
 fn main() {
     // enable fancypanic when building for release
-    // fancypanic();
+    fancypanic();
     let args = Args::parse();
     let mut executablePath = env::current_exe().unwrap();
     PathBuf::pop(&mut executablePath);
