@@ -39,7 +39,7 @@ fn dl_json(
 ) -> Result<(), Errorfr> {
     let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
     let body = resp.text().map_err(|_| Errorfr::JsonDlReqBodyInvalid)?;
-    let savepath = format!("{}",savename);
+    let savepath = savename.to_string();
     println!("Downloading file to {savepath}");
     let mut out = fs::File::create(savepath)
         .map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
@@ -54,7 +54,7 @@ fn main() {
     let executable_path = executable_path.to_str().unwrap();
 
     let mut debug_mode = false;
-    if args.debug == true {
+    if args.debug {
         debug_mode = true;
         println!("Debug mode enabled");
     };
@@ -92,7 +92,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     // load configs
     let json_config: Jsonconfig =
         serde_json::from_reader(fs::File::open(config).map_err(|_| Errorfr::ItemJsonMissing)?)
-            .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
+            .map_err(Errorfr::ItemJsonCorrupt)?;
     let idsmap: HashMap<String, u8> = serde_json::from_reader(
         fs::File::open(executable_path.to_owned() + "/id_keys.json")
             .map_err(|_| Errorfr::IDMapJsonMissing)?,
@@ -124,7 +124,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
         .unwrap();
 
     // ENCODE: NameData
-    NameData(String::from(format!("{}", json_config.name.trim())))
+    NameData(json_config.name.trim().to_string())
         .encode(ver, &mut out)
         .unwrap();
 
@@ -132,7 +132,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     let mut idvec = Vec::new();
     for eachid in json_config.ids {
         let id_id = idsmap.get(eachid.id.trim());
-        let id_base = eachid.base as i32;
+        let id_base = eachid.base;
         let id_roll = eachid.roll;
 
         idvec.push(
@@ -164,7 +164,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     let mut powdervec = Vec::new();
     for eachpowder in json_config.powders {
         let powdertier = eachpowder.tier; // get the powder tier
-        let powderamount: u8 = eachpowder.amount.unwrap_or_else(|| 1);
+        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
         // match for the powder type
         for _ in 0..powderamount {
             let eletype = match eachpowder.r#type.to_ascii_lowercase() {
@@ -209,7 +209,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
-        let ref _shinykey = shiny.key;
+        let _shinykey = &shiny.key;
         let shinyvalue = shiny.value;
         realshinykey = 1;
         for i in json_shiny {
