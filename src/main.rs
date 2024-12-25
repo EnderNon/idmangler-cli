@@ -19,18 +19,18 @@ use clap::Parser;
 use reqwest::Url;
 
 #[derive(Parser, Debug, Clone)]
-#[command(version, about, long_about = None)]
+#[command(version, about, long_about = None, arg_required_else_help(true))]
 struct Args {
     /// Path for config path
     #[arg(short, long)]
-    config: Option<String>,
+    config: String,
 
     /// Enable debug mode
-    #[arg(short, long, default_value_t = false)]
+    #[arg(long, default_value_t = false)]
     debug: bool,
 
     /// Download jsons (for ease of use)
-    #[arg(long)]
+    #[arg(short, long)]
     download: Option<String>,
 }
 
@@ -98,22 +98,21 @@ fn main() {
 }
 
 fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), Errorfr> {
-    let mut config: String = String::from(executable_path.to_owned() + "config.json");
-    if let Some(configpathargs) = args.config {
-        config = configpathargs;
-    }
+    let mut config: String = String::from(executable_path.to_owned() + "/config.json");
+    config = args.config;
+
 
     // load configs
     let json_config: Jsonconfig =
         serde_json::from_reader(fs::File::open(config).map_err(|_| Errorfr::ItemJsonMissing)?)
             .map_err(|e| Errorfr::ItemJsonCorrupt(e))?;
     let idsmap: HashMap<String, u8> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "id_keys.json")
+        fs::File::open(executable_path.to_owned() + "/id_keys.json")
             .map_err(|_| Errorfr::IDMapJsonMissing)?,
     )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
     let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "shiny_stats.json")
+        fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
