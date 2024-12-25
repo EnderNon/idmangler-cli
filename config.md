@@ -3,7 +3,7 @@
 **Name** is stored as a String. It must be a valid Wynncraft item for it to display as intended.
 ## Shiny ID
 Inside the Shiny{} list, there will be two elements: "key" and "value".  
-The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
+The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/ShinyStats.json  
 The value is the shown amount.
 ## Powders
 
@@ -23,7 +23,7 @@ Potential value range: 1<->255.
 #### Other things about powder format:
 Each value in the array must have a comma at the end except the last.  
 The use of spaces is optional, as well as letter case for the $TYPE value.  
-The keys ("type" "tier" "amount") must all be lowercase.  
+The keys ("type" "tier" "amount") must All be lowercase.  
 If type is invalid, it will default back to being Thunder powder.
 #### Powders Example (yes, this looks wacky to show that this is allowed)
 ```json

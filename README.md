@@ -17,7 +17,7 @@ run `cargo install idmangler-cli`.
 ## Usage
 - Move the program to some folder along with config.json . Download these three files and place them next to the program:  
   - https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json  
-  - https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
+  - https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/ShinyStats.json  
 
 - Open a terminal (Windows: use cmd or Powershell , Linux: use your preferred Terminal Emulator)  
 - Use the command "cd DIRECTORY" (where DIRECTORY is where the program is stored)

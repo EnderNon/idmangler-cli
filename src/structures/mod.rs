@@ -60,33 +60,33 @@ impl From<ItemTypeDeser> for ItemType {
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
 pub enum DownloadJsons {
-    none,
-    id_keys,
-    shiny_stats,
-    all,
+    None,
+    IdKeys,
+    ShinyStats,
+    All,
 }
 impl From<String> for DownloadJsons {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str().trim() {
             "none" => {
                 println!("download NONE");
-                DownloadJsons::none
+                DownloadJsons::None
             }
             "id_keys" | "idkeys" | "idkeys.json" | "id_keys.json" => {
                 println!("download ID_KEYS");
-                DownloadJsons::id_keys
+                DownloadJsons::IdKeys
             }
-            "shiny_stats" | "shinystats" | "shiny_stats.json" | "shinystats.json" => {
+            "ShinyStats" | "shinystats" | "ShinyStats.json" | "shinystats.json" => {
                 println!("download SHINY_STATS");
-                DownloadJsons::shiny_stats
+                DownloadJsons::ShinyStats
             }
-            "all" | "everything" | "both" => {
+            "All" | "everything" | "both" => {
                 println!("download BOTH");
-                DownloadJsons::all
+                DownloadJsons::All
             }
             _ => {
                 println!("Could not understand what Jsons to download, sorry.");
-                DownloadJsons::none
+                DownloadJsons::None
             }
         }
     }

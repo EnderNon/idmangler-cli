@@ -12,19 +12,19 @@ pub enum Errorfr {
     ItemJsonCorrupt(serde_json::Error),
 
     /// idmap is missing
-    #[error("Error 1.3: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download all\".")]
+    #[error("Error 1.3: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download All\".")]
     IDMapJsonMissing,
 
     /// idmap is corrupt
-    #[error("Error 2.1: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download all\".")]
+    #[error("Error 2.1: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download All\".")]
     IDMapJsonCorrupt,
 
     /// shiny data json is missing
-    #[error("Error 2.2: shiny_stats.json is missing. \nYou should run \"--download shiny_stats\" or \"--download all\".")]
+    #[error("Error 2.2: ShinyStats.json is missing. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
     ShinyJsonMissing,
 
     /// shiny data json is corrupt
-    #[error("Error 2.3: shiny_stats.json is corrupt. \nYou should run \"--download shiny_stats\" or \"--download all\".")]
+    #[error("Error 2.3: ShinyStats.json is corrupt. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
     ShinyJsonCorrupt,
 
     /// could not download the file

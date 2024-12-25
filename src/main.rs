@@ -7,7 +7,6 @@ use idmangler_lib::{
     StartData, TypeData,
 };
 
-use std::ops::Deref;
 use std::{collections::HashMap, env, fs, io, panic, path::PathBuf};
 
 mod structures;
@@ -37,14 +36,11 @@ struct Args {
 fn dl_json(
     url: Url,
     savename: String,
-    args: Args,
-    executablePath: &str,
-    debug_mode: bool,
 ) -> Result<(), Errorfr> {
     let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
     let body = resp.text().map_err(|_| Errorfr::JsonDlReqBodyInvalid)?;
     let savepath = format!("{}",savename);
-    println!("Downloading to {savepath}");
+    println!("Downloading file to {savepath}");
     let mut out = fs::File::create(savepath)
         .map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
     io::copy(&mut body.as_bytes(), &mut out).map_err(|_| Errorfr::JsonDlReqFileWriteFail)?;
@@ -53,9 +49,9 @@ fn dl_json(
 
 fn main() {
     let args = Args::parse();
-    let mut executablePath = env::current_exe().unwrap();
-    PathBuf::pop(&mut executablePath);
-    let executable_path = executablePath.to_str().unwrap();
+    let mut executable_path = env::current_exe().unwrap();
+    PathBuf::pop(&mut executable_path);
+    let executable_path = executable_path.to_str().unwrap();
 
     let mut debug_mode = false;
     if args.debug == true {
@@ -66,24 +62,18 @@ fn main() {
     // download jsons if necessary
     if let Some(dlvalue) = &args.download {
         let jsons = DownloadJsons::from(dlvalue.clone());
-        if jsons == DownloadJsons::all || jsons == DownloadJsons::shiny_stats {
+        if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
             if let Err(e) = dl_json(
                 "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
                 format!("{}{}", executable_path, "shiny_stats.json"),
-                args.clone(),
-                executable_path,
-                debug_mode
             ) { // error handling below
                 println!("{} Filename: {}",e,dlvalue)
             }
         }
-        if jsons == DownloadJsons::all || jsons == DownloadJsons::id_keys {
+        if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
             if let Err(e) = dl_json(
                 "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
                 format!("{}{}", executable_path, "id_keys.json"),
-                args.clone(),
-                executable_path,
-                debug_mode
             ) { // error handling below
                 println!("{} Filename: {}",e,dlvalue)
             }
@@ -96,8 +86,7 @@ fn main() {
 }
 
 fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), Errorfr> {
-    let mut config: String = String::from(executable_path.to_owned() + "/config.json");
-    config = args.config;
+    let config = args.config;
 
 
     // load configs
@@ -110,7 +99,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
     let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
+        fs::File::open(executable_path.to_owned() + "/ShinyStats.json")
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
@@ -220,31 +209,29 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
-        if let ref _shinykey = shiny.key {
-            if let shinyvalue = shiny.value {
-                realshinykey = 1;
-                for i in json_shiny {
-                    if i.key == shiny.key {
-                        realshinykey = i.id;
-                        if debug_mode {
-                            dbg!(&shiny.key);
-                        }
-                    }
-                }
+        let ref _shinykey = shiny.key;
+        let shinyvalue = shiny.value;
+        realshinykey = 1;
+        for i in json_shiny {
+            if i.key == shiny.key {
+                realshinykey = i.id;
                 if debug_mode {
-                    dbg!(&realshinykey);
-                    dbg!(&shinyvalue);
+                    dbg!(&shiny.key);
                 }
-                // ENCODE: ShinyData (if applicable)
-                ShinyData {
-                    id: realshinykey,
-                    val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
-                                            // u16::MAX is the max value of unsigned 16bit value
-                }
-                .encode(ver, &mut out)
-                .unwrap();
             }
         }
+        if debug_mode {
+            dbg!(&realshinykey);
+            dbg!(&shinyvalue);
+        }
+        // ENCODE: ShinyData (if applicable)
+        ShinyData {
+            id: realshinykey,
+            val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
+                                    // u16::MAX is the max value of unsigned 16bit value
+        }
+        .encode(ver, &mut out)
+        .unwrap();
     }
 
     // prints (Water,6) 255 times
@@ -274,13 +261,3 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 }
 
 fn pass() {}
-
-const ERROR: [&'static str; 7] = [
-    "Error 0: what did you even do to get this? ",
-    "Error 1: json config json is missing, obtain it from https://git.frfrnocap.men/endernon/idmangler-cli/raw/branch/main/config.json and move it to this directory. ",
-    "Error 2: json config json is corrupt. Reread config.md or reobtain it from https://git.frfrnocap.men/endernon/idmangler-cli/raw/branch/main/config.json and move it to this diirectory. ",
-    "Error 3: Identifications hashmap is missing. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory. ",
-    "Error 4: Identifications hashmap is corrupt. Reobtain it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json and move it to this directory. ",
-    "Error 5: Shiny data json is missing. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json and move it to this directory. ",
-    "Error 6: Shiny data json is corrupt. Get it from https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json and move it to this directory. "
-];
