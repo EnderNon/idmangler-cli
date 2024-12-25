@@ -227,7 +227,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
         // ENCODE: ShinyData (if applicable)
         ShinyData {
             id: realshinykey,
-            val: shinyvalue as i64, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
+            val: shinyvalue, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
                                     // u16::MAX is the max value of unsigned 16bit value
         }
         .encode(ver, &mut out)
