@@ -65,7 +65,7 @@ fn main() {
         if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
             if let Err(e) = dl_json(
                 "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
-                format!("{}{}", executable_path, "shiny_stats.json"),
+                format!("{}{}", executable_path, "/shiny_stats.json"),
             ) { // error handling below
                 println!("{} Filename: {}",e,dlvalue)
             }
@@ -73,7 +73,7 @@ fn main() {
         if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
             if let Err(e) = dl_json(
                 "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
-                format!("{}{}", executable_path, "id_keys.json"),
+                format!("{}{}", executable_path, "/id_keys.json"),
             ) { // error handling below
                 println!("{} Filename: {}",e,dlvalue)
             }
@@ -99,7 +99,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
     )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
     let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/ShinyStats.json")
+        fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)?;

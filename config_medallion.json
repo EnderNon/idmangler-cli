@@ -1,0 +1,18 @@
+{
+  "READMEFIRST": [
+    "Refer to config.md to understand how to apply the data shown here.",
+    "There are also some values you cannot increase beyond a limit."
+  ],
+  "name":"Outlandish Replica Face Mask of Legendary Victory",
+  "item_type": "Gear",
+  "shiny": {
+    "key": "MobsKilled",
+    "value": 9223372036854775807
+  },
+  "ids": [
+  ],
+  "powder_limit": 255,
+  "powders": [
+  ],
+  "rerolls": 255
+}
