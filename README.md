@@ -1,7 +1,7 @@
 # idmangler-cli
 Basically this generates fake items by loading from a json. Effectively a wrapper for [zatzou's idmangler-lib](https://github.com/Zatzou/idmangler-lib).
 
-Any bugs? DM endernon on discord.
+A video guide for Windows users can be found [HERE](https://www.youtube.com/watch?v=AvEUhs_6rEc).
 
 
 ## How to get the program
