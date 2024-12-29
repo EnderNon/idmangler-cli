@@ -3,8 +3,14 @@
 **Name** is stored as a String. It must be a valid Wynncraft item for it to display as intended.
 ## Shiny ID
 Inside the Shiny{} list, there will be two elements: "key" and "value".  
-The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/ShinyStats.json  
+The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
 The value is the shown amount.
+## Item type
+WIP. This will support crafteds in the future, but for now you must have this:
+```
+  "item_type": "Gear"
+```
+
 ## Powders
 
 ### Powder Limit

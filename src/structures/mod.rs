@@ -76,11 +76,11 @@ impl From<String> for DownloadJsons {
                 println!("download ID_KEYS");
                 DownloadJsons::IdKeys
             }
-            "ShinyStats" | "shinystats" | "ShinyStats.json" | "shinystats.json" => {
+            "shiny_stats" | "shinystats" | "shiny_stats.json" | "shinystats.json" => {
                 println!("download SHINY_STATS");
                 DownloadJsons::ShinyStats
             }
-            "All" | "everything" | "both" => {
+            "all" | "everything" | "both" => {
                 println!("download BOTH");
                 DownloadJsons::All
             }
