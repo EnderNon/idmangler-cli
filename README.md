@@ -16,10 +16,11 @@ run `cargo install idmangler-cli`.
 
 ## Usage
 
-### 1) Setting up the terminal
+### 1) Setting up
 - #### 1a) Linux:
   - Open your preferred terminal emulator, and make sure the working directory is the directory with idmangler-cli extracted inside.
   - Otherwise, if it's the wrong directory, run `cd PATH_TO_IDMANGLER_CLI_DIR` where `PATH_TO_IDMANGLER_CLI_DIR` is where idmangler-cli is stored.
+  - Run `chmod +x idmangler-cli` because by default it doesn't have executable permissions.
 - #### 1b) Windows:
   - Open the folder where idmangler-cli is extracted to in Windows File Explorer. 
   - Then, click the empty space in the top bar (it shows the path e.g. "This PC > Downloads") and type `cmd` and press enter.
