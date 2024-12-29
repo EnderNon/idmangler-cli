@@ -4,6 +4,7 @@
     "There are also some values you cannot increase beyond a limit."
   ],
   "name":"Hanafubuki",
+  "item_type": "Gear",
   "shiny": {
     "key": "playersKilled",
     "value": 9223372036854775807
