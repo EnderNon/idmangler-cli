@@ -22,7 +22,7 @@ use reqwest::Url;
 struct Args {
     /// Path for config path
     #[arg(short, long)]
-    config: String,
+    config: Option<String>,
 
     /// Enable debug mode
     #[arg(long, default_value_t = false)]
@@ -80,8 +80,10 @@ fn main() {
         }
     };
 
-    if let Err(e) = cook(args, executable_path, debug_mode) {
-        println!("{}", e);
+    if let Some(T) = &args.config {
+        if let Err(e) = cook(args, executable_path, debug_mode) {
+            println!("{}", e);
+        }
     }
 }
 
@@ -91,7 +93,7 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 
     // load configs
     let json_config: Jsonconfig =
-        serde_json::from_reader(fs::File::open(config).map_err(|_| Errorfr::ItemJsonMissing)?)
+        serde_json::from_reader(fs::File::open(config.unwrap()).map_err(|_| Errorfr::ItemJsonMissing)?)
             .map_err(Errorfr::ItemJsonCorrupt)?;
     let idsmap: HashMap<String, u8> = serde_json::from_reader(
         fs::File::open(executable_path.to_owned() + "/id_keys.json")
