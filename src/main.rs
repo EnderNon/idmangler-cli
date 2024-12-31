@@ -258,22 +258,25 @@ fn cook(
 }
 
 fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
-    serde_json::from_reader(fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(Errorfr::ItemJsonCorrupt)
+    serde_json5::from_reader(
+        &mut fs::File::open(path)
+            .map_err(|_| Errorfr::ItemJsonMissing)?
+    )
+    .map_err(|_| Errorfr::ItemJsonCorrupt)
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
-    serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?,
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/id_keys.json")
+            .map_err(|_| Errorfr::IDMapJsonMissing)?
     )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
 fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
-    serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
-            .map_err(|_| Errorfr::ShinyJsonMissing)?,
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
+            .map_err(|_| Errorfr::ShinyJsonMissing)?
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
