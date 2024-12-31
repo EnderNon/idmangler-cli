@@ -33,16 +33,12 @@ struct Args {
     download: Option<String>,
 }
 
-fn dl_json(
-    url: Url,
-    savename: String,
-) -> Result<(), Errorfr> {
+fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
     let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
     let body = resp.text().map_err(|_| Errorfr::JsonDlReqBodyInvalid)?;
     let savepath = savename.to_string();
     println!("Downloading file to {savepath}");
-    let mut out = fs::File::create(savepath)
-        .map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
+    let mut out = fs::File::create(savepath).map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
     io::copy(&mut body.as_bytes(), &mut out).map_err(|_| Errorfr::JsonDlReqFileWriteFail)?;
     Ok(())
 }
@@ -80,48 +76,80 @@ fn main() {
         }
     };
 
+    // check if files load properly and all that
     if let Some(T) = &args.config {
-        match load_jsonconfig(T) {
-            Ok(loaded_config) => {
-                if let Some(debugconfig) = loaded_config.debug {
-                    if debugconfig {
-                        debug_mode = true
-                    }
-                }
-                match load_idkeys(executable_path) {
-                    Ok(loaded_idkeys) => {
-                        match load_shinystats(executable_path) {
-                            Ok(loaded_shinystats) => {
-                                if let Err(e) = cook(debug_mode, loaded_config, loaded_idkeys, loaded_shinystats) {
-                                    println!("{}", e);
+        match load_idkeys(executable_path) {
+            Ok(loaded_idkeys) => {
+                match load_shinystats(executable_path) {
+                    Ok(loaded_shinystats) => {
+                        match load_jsonconfig(T) {
+                            Ok(loaded_config) => {
+                                // debug mode on if in the loaded config
+                                if let Some(debugconfig) = loaded_config.debug {
+                                    if debugconfig {
+                                        debug_mode = true
+                                    }
                                 }
-                            },
-                            Err(E) => println!("{}",E)
+                                // main program everything starts here fr
+                                let mut out: Vec<u8> = Vec::new();
+
+                                // create necessary variables
+                                let ver = TransformVersion::Version1;
+
+
+                                // StartData and TypeData are always present
+
+                                // ENCODE: StartData
+                                StartData(ver)
+                                    .encode(ver, &mut out)
+                                    .unwrap();
+
+                                // ENCODE: TypeData
+                                TypeData(ItemType::from(loaded_config.item_type))
+                                    .encode(ver, &mut out)
+                                    .unwrap();
+
+
+                                // ENCODE: ALotOfStuff
+                                // Also print any mapped errors
+                                if let Err(e) = cook(
+                                    &debug_mode,
+                                    loaded_config,
+                                    loaded_idkeys,
+                                    loaded_shinystats,
+                                    &mut out,
+                                    ver,
+                                ) {
+                                    println!("{}", e);
+                                };
+
+                                // ENCODE: EndData
+                                EndData
+                                    .encode(ver, &mut out)
+                                    .unwrap();
+
+                                // final string print
+                                println!("{}", encode_string(&out));
+
+
+
+                            }
+                            Err(E) => println!("{}", E),
                         }
                     }
-                    Err(E) => println!("{}",E)
+                    Err(E) => println!("{}", E),
                 }
             }
-            Err(E) => println!("{}",E)
+            Err(E) => println!("{}", E),
         }
     }
 }
-fn cook(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>) -> Result<(), Errorfr> {
-    // create necessary variables
-    let mut out = Vec::new();
-    let ver = TransformVersion::Version1;
+fn cook(mut debug_mode: &bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, out: &mut Vec<u8>, ver: TransformVersion) -> Result<(), Errorfr> {
 
-    // ENCODE: StartData
-    StartData(ver).encode(ver, &mut out).unwrap();
-
-    // ENCODE: TypeData
-    TypeData(ItemType::from(json_config.item_type))
-        .encode(ver, &mut out)
-        .unwrap();
 
     // ENCODE: NameData
     NameData(json_config.name.trim().to_string())
-        .encode(ver, &mut out)
+        .encode(ver, out)
         .unwrap();
 
     // json identification data handling for type GEAR (0)
@@ -153,7 +181,7 @@ fn cook(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u
         identifications: idvec,
         extended_encoding: true,
     }
-    .encode(ver, &mut out)
+    .encode(ver, out)
     .unwrap();
 
     // json powder data handling
@@ -187,20 +215,20 @@ fn cook(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u
         powder_slots: json_config.powder_limit,
         powders: powdervec,
     }
-    .encode(ver, &mut out)
+    .encode(ver, out)
     .unwrap();
 
     match json_config.rerolls {
         Some(rerollcount) => {
             if rerollcount != 0 {
                 // ENCODE: RerollData if applicable
-                RerollData(rerollcount).encode(ver, &mut out).unwrap();
+                RerollData(rerollcount).encode(ver, out).unwrap();
                 if debug_mode {
                     dbg!(rerollcount);
                 };
             };
         }
-        None => pass(),
+        None => {}
     };
 
     let mut realshinykey: u8;
@@ -224,53 +252,33 @@ fn cook(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u
         ShinyData {
             id: realshinykey,
             val: shinyvalue, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
-                                    // u16::MAX is the max value of unsigned 16bit value
+                             // u16::MAX is the max value of unsigned 16bit value
         }
-        .encode(ver, &mut out)
+        .encode(ver, out)
         .unwrap();
     }
 
     // prints (Water,6) 255 times
     // println!("{:?}",vec![(Powders::WATER, 6); 255]);
 
-    // ENCODE: EndData
-    EndData.encode(ver, &mut out).unwrap();
 
-    // final string print
-    println!("{}", encode_string(&out));
-
-    // I don't even know what the fuck this does
-    //for b in out {
-    //    print!("{:02X}", b);
-    //}
-
-    // println!();
-
-    // decode test
-    //let input = "󰀀󰄀󰉁󶹴󶡲󶅣󶥴󶔠󴉡󶱬󶥳󷑡󰀃󰠁󰀞󾠇󵠑󳱩󳢠󱽴󴠧󷄡󱹵󳫠󰢂󱌨󵴅󲠞􏿮";
-    //let bytes = decode_string(&input);
-    //let mut bytes_iter = bytes.into_iter();
-    //let out = decode(&mut bytes_iter).unwrap();
-
-    // println!("{:#?}", out);
     Ok(())
 }
-
-fn pass() {}
 
 fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
     Ok(
         serde_json::from_reader(fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(Errorfr::ItemJsonCorrupt)?
+            .map_err(Errorfr::ItemJsonCorrupt)?,
     )
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     Ok(
         // id_keys.json
         serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?,
-        ).map_err(|_| Errorfr::IDMapJsonCorrupt)?,
+            fs::File::open(executable_path.to_owned() + "/id_keys.json")
+                .map_err(|_| Errorfr::IDMapJsonMissing)?,
+        )
+        .map_err(|_| Errorfr::IDMapJsonCorrupt)?,
     )
 }
 fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
@@ -279,9 +287,14 @@ fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
         serde_json::from_reader(
             fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
                 .map_err(|_| Errorfr::ShinyJsonMissing)?,
-        ).map_err(|_| Errorfr::ShinyJsonCorrupt)?
+        )
+        .map_err(|_| Errorfr::ShinyJsonCorrupt)?,
     )
 }
 
-fn somer() -> Option<u8> { Some(1) }
-fn oker() -> Result<u8, String> { Ok(2) }
+fn somer() -> Option<u8> {
+    Some(1)
+}
+fn oker() -> Result<u8, String> {
+    Ok(2)
+}
