@@ -1,4 +1,6 @@
 # Config Guide
+
+## The required blocks
 According to the [Wynntils Artemis encoding proposal Github Issue](https://github.com/Wynntils/Wynntils/issues/2246),  
 the allowed blocks should look like this:
 
@@ -17,50 +19,14 @@ However, it's inaccurate. This is what it SHOULD look like:
 | `4` | Crafted Consumable Item  | Custom Consumable Type, Uses, Requirements | Effects, NameAfter, Custom Identifications                  |
 | `5` | Crafted Item from Recipe | TODO                                       | TODO                                                        |
 
-## Shiny ID
-Inside the Shiny{} list, there will be two elements: "key" and "value".  
-The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
-The value is the shown amount.
-## Item type
-WIP. This will support crafteds in the future, but for now you must have this:
-```
-  "item_type": "Gear"
-```
 
-## Powders
+## Documentation for each block:
+- [Item type](blocks/type.md)
+- [Name](blocks/name.md)
+- [Shiny](blocks/shiny.md)
+- [Powder Limit](blocks/powderlimit.md)
+- [Powder](blocks/powder.md)
 
-### Powder Limit
-Powder limit cannot be increased beyond 255. This is because the powder count is stored as a byte.  
-Potential value range: 0<->255.
-
-### Format
-Inside the "powders":[  ] array, set it up in the following structure.  
-**{ "type":"$TYPE", "tier":$TIER, "amount": $AMOUNT }**  
-**TYPE** is stored as a single character.  
-Potential Values: "E" "T" "W" "F" "A" .  These represent Earth, Thunder, Wind, Fire, Air.  
-**TIER** is stored as a single digit integer.  
-Potential value range: 1<->6.  
-**AMOUNT** is stored as an integer. It is optional. If not provided it falls back to 1.  
-Potential value range: 1<->255.
-#### Other things about powder format:
-Each value in the array must have a comma at the end except the last.  
-The use of spaces is optional, as well as letter case for the $TYPE value.  
-The keys ("type" "tier" "amount") must All be lowercase.  
-If type is invalid, it will default back to being Thunder powder.
-#### Powders Example (yes, this looks wacky to show that this is allowed)
-```
-"powders": [
-    { "type":"T", "tier":6, "amount":5 },
-    {"type"  :"e","tier":1,"amount":5},
-    {"type":  "F", "tier": 3,"amount":1},
-    {     "type"     : "w"     ,  "tier":6     }
-]
-```
-Note that the last powder block in array has no comma at the end.
-### Which items can have powders?
-Powders can only be encoded on an item that originally supported powders in the first place.  
-Unfortunately you can't add powders to an item that didn't originally have them.  
-e.g. can't put powder on depressing shears, as depressing weapons don't have powder slot.
 
 ## Identifications
 ### Format
