@@ -2,23 +2,21 @@
 According to the [Wynntils Artemis encoding proposal Github Issue](https://github.com/Wynntils/Wynntils/issues/2246),  
 the allowed blocks should look like this:
 
-![An image of the original encoding proposal table, present on GitHub](encodingproposaltable.png)
+![An image of the original encoding proposal table, present on GitHub](images/encodingproposaltable.png)
 
 However, it's inaccurate. This is what it SHOULD look like:
 
  ##### Key to Type Mapping Table  
 
-| Key | Type                     | Required blocks                            | Optional blocks                                        |
-|-----|--------------------------|--------------------------------------------|--------------------------------------------------------|
-| `0` | Gear Item                | Name                                       | Identifications, Powders, Shiny, Reroll                |
-| `1` | Tome Item                | Name                                       | Identifications, Reroll                                |
-| `2` | Charm Item               | Name                                       | Identifications, Reroll                                |
-| `3` | Crafted Gear Item        | Custom Gear Type, Durability, Requirements | Name, Damage, Defense, Custom Identifications, Powders |
-| `4` | Crafted Consumable Item  | Custom Consumable Type, Uses, Requirements | Effects, Name, Custom Identifications                  |
-| `5` | Crafted Item from Recipe | TODO                                       | TODO                                                   |
+| Key | Type                     | Required blocks                            | Optional blocks                                             |
+|-----|--------------------------|--------------------------------------------|-------------------------------------------------------------|
+| `0` | Gear Item                | Name                                       | Identifications, Powders, Shiny, Reroll                     |
+| `1` | Tome Item                | Name                                       | Identifications, Reroll                                     |
+| `2` | Charm Item               | Name                                       | Identifications, Reroll                                     |
+| `3` | Crafted Gear Item        | Custom Gear Type, Durability, Requirements | NameAfter, Damage, Defense, Custom Identifications, Powders |
+| `4` | Crafted Consumable Item  | Custom Consumable Type, Uses, Requirements | Effects, NameAfter, Custom Identifications                  |
+| `5` | Crafted Item from Recipe | TODO                                       | TODO                                                        |
 
-## Name
-**Name** is stored as a String. It must be a valid Wynncraft item for it to display as intended.
 ## Shiny ID
 Inside the Shiny{} list, there will be two elements: "key" and "value".  
 The potential keys for any shiny value are listed here: https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json  
