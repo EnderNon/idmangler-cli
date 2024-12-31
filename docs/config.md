@@ -22,12 +22,20 @@ However, it's inaccurate. This is what it SHOULD look like:
 
 ## Documentation for each block:
 - [Item type](blocks/type.md)
+- [Custom Gear Type (NOT IMPLEMENTED YET)](blocks/customgeartype.md)
+- [Custom Consumable Type (NOT IMPLEMENTED YET)](blocks/customconsumtype.md)
+- [Durability (NOT IMPLEMENTED YET)](blocks/durability.md)
+- [Requirements (NOT IMPLEMENTED YET)](blocks/requirements.md)
 - [Name](blocks/name.md)
+- [NameAfter (NOT IMPLEMENTED YET)](blocks/nameafter.md)
 - [Shiny](blocks/shiny.md)
+- [Identifications](blocks/identifications.md)
+- [Damage (NOT IMPLEMENTED YET)](blocks/damage.md)
+- [Defense (NOT IMPLEMENTED YET)](blocks/defense.md)
+- [Effects (NOT IMPLEMENTED YET)](blocks/effects.md)
 - [Powder Limit](blocks/powderlimit.md)
 - [Powders](blocks/powders)
-- [Identifications](blocks/identifications.md)
-- [Custom Identifications](blocks/identifications.md)
+- [Custom Identifications (NOT IMPLEMENTED YET)](blocks/identifications.md)
 - [Reroll](blocks/reroll.md)
 
 
