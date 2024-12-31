@@ -1,4 +1,22 @@
-# Values Guide
+# Config Guide
+According to the [Wynntils Artemis encoding proposal Github Issue](https://github.com/Wynntils/Wynntils/issues/2246),  
+the allowed blocks should look like this:
+
+![An image of the original encoding proposal table, present on GitHub](encodingproposaltable.png)
+
+However, it's inaccurate. This is what it SHOULD look like:
+
+ ##### Key to Type Mapping Table  
+
+| Key | Type                     | Required blocks                            | Optional blocks                                        |
+|-----|--------------------------|--------------------------------------------|--------------------------------------------------------|
+| `0` | Gear Item                | Name                                       | Identifications, Powders, Shiny, Reroll                |
+| `1` | Tome Item                | Name                                       | Identifications, Reroll                                |
+| `2` | Charm Item               | Name                                       | Identifications, Reroll                                |
+| `3` | Crafted Gear Item        | Custom Gear Type, Durability, Requirements | Name, Damage, Defense, Custom Identifications, Powders |
+| `4` | Crafted Consumable Item  | Custom Consumable Type, Uses, Requirements | Effects, Name, Custom Identifications                  |
+| `5` | Crafted Item from Recipe | TODO                                       | TODO                                                   |
+
 ## Name
 **Name** is stored as a String. It must be a valid Wynncraft item for it to display as intended.
 ## Shiny ID
@@ -32,7 +50,7 @@ The use of spaces is optional, as well as letter case for the $TYPE value.
 The keys ("type" "tier" "amount") must All be lowercase.  
 If type is invalid, it will default back to being Thunder powder.
 #### Powders Example (yes, this looks wacky to show that this is allowed)
-```json
+```
 "powders": [
     { "type":"T", "tier":6, "amount":5 },
     {"type"  :"e","tier":1,"amount":5},

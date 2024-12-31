@@ -37,7 +37,7 @@ run `cargo install idmangler-cli`.
     - https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json  
     - https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json
 ### 3) Actually generating an item
-- Read through the provided `config.md` document. You can get the web version [HERE](https://git.frfrnocap.men/endernon/idmangler-cli/src/branch/main/config.md).
+- Read through the provided `config.md` document. You can get the web version [HERE](docs/config.md).
 - Once you have read through it, use one of the provided json files to create your own json.
 - Run the program with it.
   - Windows: run `idmangler-cli.exe --config CONFIG_FILE_PATH` 
