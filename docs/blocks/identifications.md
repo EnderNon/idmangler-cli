@@ -1,0 +1,27 @@
+# Identifications
+- This data block encodes for identifications on Gear-type items.
+- Not to be confused with [Custom Identifications](identificationscustom.md).
+- Field name: `ids`
+- Field type: `Array[id, base, roll]`
+- # Id
+  - This is the ID that is used. It corresponds to the Wynntils internal name for an identification.
+  - See [HERE](https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json) for a list.
+  - Field name: `id`
+  - Field type: `String`
+  - Example: `"id":"1stSpellCost"`
+- # Base
+  - This is the base value. This value defines the range for 0% to 100% of any stat on any item.
+  - It is defined for any item in [THIS](https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json) data file. Use a json beautifier, then look for `ITEMNAME > identifications > IDENTIFICATION_NAME > raw` for the base value.
+  - Field name: `base`
+  - Field type: `Signed 32-bit Integer`
+  - Field range: `–2147483648` to `2147483647`
+- # Roll (OPTIONAL)
+  - This is the roll value. It defines the actual roll percent for the identification.
+  - The formula for the final shown percentage on the final item is `BASE * ROLL / 100`.
+  - Positive values are in the range 30-130 due to how Wynncraft handles many Identifications as `(0.3 <-> 1.3) x baseStat`. 
+  - If you are trying to find the ROLL value, try your desired roll VALUE **(NOT the roll percentage)** divided by the BASE STAT then round it to the nearest integer. 
+  - This value is optional, BUT you should only exclude it when it is a fixed value and not a range, e.g. Skill Points are always fixed.
+  - Field name: `roll`
+  - Field type: `Unsigned 8-bit Integer`
+  - Field range: `0` to `255`
+  - ...But for it to be a valid item, `30` to `130` (positive base stat) and `70` to `130` (negative base stat).
