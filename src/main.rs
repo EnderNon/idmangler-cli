@@ -262,7 +262,7 @@ fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
         &mut fs::File::open(path)
             .map_err(|_| Errorfr::ItemJsonMissing)?
     )
-    .map_err(|_| Errorfr::ItemJsonCorrupt)
+    .map_err(|e| Errorfr::ItemJsonCorrupt(e))
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json

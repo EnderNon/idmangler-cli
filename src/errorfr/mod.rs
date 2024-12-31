@@ -9,7 +9,7 @@ pub enum Errorfr {
 
     /// item config json is corrupt
     #[error("Error 1.2: item config json is invalid. \nReread config.md.\n{0}")]
-    ItemJsonCorrupt(serde_json::Error),
+    ItemJsonCorrupt(serde_json5::Error),
 
     /// idmap is missing
     #[error("Error 1.3: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download All\".")]
