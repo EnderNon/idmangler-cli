@@ -81,37 +81,36 @@ fn main() {
     };
 
     if let Some(T) = &args.config {
-        if let Err(e) = cook(args, executable_path, debug_mode) {
-            println!("{}", e);
+        match load_jsonconfig(T) {
+            Ok(loaded_config) => {
+                if let Some(debugconfig) = loaded_config.debug {
+                    if debugconfig {
+                        debug_mode = true
+                    }
+                }
+                match load_idkeys(executable_path) {
+                    Ok(loaded_idkeys) => {
+                        match load_shinystats(executable_path) {
+                            Ok(loaded_shinystats) => {
+                                if let Err(e) = cook_0(debug_mode, loaded_config, loaded_idkeys, loaded_shinystats) {
+                                    println!("{}", e);
+                                }
+                                println!("debug mode: {}", debug_mode)
+                            },
+                            Err(E) => println!("{}",E)
+                        }
+                    }
+                    Err(E) => println!("{}",E)
+                }
+            }
+            Err(E) => println!("{}",E)
         }
     }
 }
-
-fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), Errorfr> {
-    let config = args.config;
-
-
+// 0: Gear
+fn cook_0(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>) -> Result<(), Errorfr> {
     // load configs
-    let json_config: Jsonconfig =
-        serde_json::from_reader(fs::File::open(config.unwrap()).map_err(|_| Errorfr::ItemJsonMissing)?)
-            .map_err(Errorfr::ItemJsonCorrupt)?;
-    let idsmap: HashMap<String, u8> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?,
-    )
-    .map_err(|_| Errorfr::IDMapJsonCorrupt)?;
-    let json_shiny: Vec<Shinystruct> = serde_json::from_reader(
-        fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
-            .map_err(|_| Errorfr::ShinyJsonMissing)?,
-    )
-    .map_err(|_| Errorfr::ShinyJsonCorrupt)?;
     // println!("{:?}",idsmap.get("airDamage"));
-
-    if let Some(debugconfig) = json_config.debug {
-        if debugconfig {
-            debug_mode = true
-        }
-    }
 
     // create necessary variables
     let mut out = Vec::new();
@@ -263,3 +262,31 @@ fn cook(args: Args, executable_path: &str, mut debug_mode: bool) -> Result<(), E
 }
 
 fn pass() {}
+
+fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
+    Ok(
+        serde_json::from_reader(fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
+        .map_err(Errorfr::ItemJsonCorrupt)?
+    )
+}
+fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
+    Ok(
+        // id_keys.json
+        serde_json::from_reader(
+        fs::File::open(executable_path.to_owned() + "/id_keys.json")
+            .map_err(|_| Errorfr::IDMapJsonMissing)?,
+        ).map_err(|_| Errorfr::IDMapJsonCorrupt)?,
+    )
+}
+fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
+    Ok(
+        // shiny_stats.json
+        serde_json::from_reader(
+            fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
+                .map_err(|_| Errorfr::ShinyJsonMissing)?,
+        ).map_err(|_| Errorfr::ShinyJsonCorrupt)?
+    )
+}
+
+fn somer() -> Option<u8> { Some(1) }
+fn oker() -> Result<u8, String> { Ok(2) }
