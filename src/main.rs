@@ -95,7 +95,6 @@ fn main() {
                                 if let Err(e) = cook_0(debug_mode, loaded_config, loaded_idkeys, loaded_shinystats) {
                                     println!("{}", e);
                                 }
-                                println!("debug mode: {}", debug_mode)
                             },
                             Err(E) => println!("{}",E)
                         }
