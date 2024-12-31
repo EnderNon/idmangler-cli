@@ -92,7 +92,7 @@ fn main() {
                     Ok(loaded_idkeys) => {
                         match load_shinystats(executable_path) {
                             Ok(loaded_shinystats) => {
-                                if let Err(e) = cook_0(debug_mode, loaded_config, loaded_idkeys, loaded_shinystats) {
+                                if let Err(e) = cook(debug_mode, loaded_config, loaded_idkeys, loaded_shinystats) {
                                     println!("{}", e);
                                 }
                             },
@@ -106,11 +106,7 @@ fn main() {
         }
     }
 }
-// 0: Gear
-fn cook_0(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>) -> Result<(), Errorfr> {
-    // load configs
-    // println!("{:?}",idsmap.get("airDamage"));
-
+fn cook(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>) -> Result<(), Errorfr> {
     // create necessary variables
     let mut out = Vec::new();
     let ver = TransformVersion::Version1;
@@ -128,7 +124,7 @@ fn cook_0(mut debug_mode: bool, json_config: Jsonconfig, idsmap: HashMap<String,
         .encode(ver, &mut out)
         .unwrap();
 
-    // json identification data handling
+    // json identification data handling for type GEAR (0)
     let mut idvec = Vec::new();
     for eachid in json_config.ids {
         let id_id = idsmap.get(eachid.id.trim());
