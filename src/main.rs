@@ -96,19 +96,15 @@ fn main() {
                                 // create necessary variables
                                 let ver = TransformVersion::Version1;
 
-
                                 // StartData and TypeData are always present
 
                                 // ENCODE: StartData
-                                StartData(ver)
-                                    .encode(ver, &mut out)
-                                    .unwrap();
+                                StartData(ver).encode(ver, &mut out).unwrap();
 
                                 // ENCODE: TypeData
                                 TypeData(ItemType::from(loaded_config.item_type))
                                     .encode(ver, &mut out)
                                     .unwrap();
-
 
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
@@ -124,15 +120,10 @@ fn main() {
                                 };
 
                                 // ENCODE: EndData
-                                EndData
-                                    .encode(ver, &mut out)
-                                    .unwrap();
+                                EndData.encode(ver, &mut out).unwrap();
 
                                 // final string print
                                 println!("{}", encode_string(&out));
-
-
-
                             }
                             Err(e) => println!("{}", e),
                         }
@@ -144,9 +135,14 @@ fn main() {
         }
     }
 }
-fn cook(debug_mode: &bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, out: &mut Vec<u8>, ver: TransformVersion) -> Result<(), Errorfr> {
-
-
+fn cook(
+    debug_mode: &bool,
+    json_config: Jsonconfig,
+    idsmap: HashMap<String, u8>,
+    json_shiny: Vec<Shinystruct>,
+    out: &mut Vec<u8>,
+    ver: TransformVersion,
+) -> Result<(), Errorfr> {
     // ENCODE: NameData
     NameData(json_config.name.trim().to_string())
         .encode(ver, out)
@@ -218,7 +214,6 @@ fn cook(debug_mode: &bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>,
     .encode(ver, out)
     .unwrap();
 
-
     if let Some(rerollcount) = json_config.rerolls {
         if rerollcount != 0 {
             // ENCODE: RerollData if applicable
@@ -259,13 +254,12 @@ fn cook(debug_mode: &bool, json_config: Jsonconfig, idsmap: HashMap<String, u8>,
     // prints (Water,6) 255 times
     // println!("{:?}",vec![(Powders::WATER, 6); 255]);
 
-
     Ok(())
 }
 
 fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
-        serde_json::from_reader(fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
-            .map_err(Errorfr::ItemJsonCorrupt)
+    serde_json::from_reader(fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
+        .map_err(Errorfr::ItemJsonCorrupt)
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
