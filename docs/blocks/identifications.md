@@ -3,6 +3,7 @@
 - Not to be confused with [Custom Identifications](identificationscustom.md).
 - Field name: `ids`
 - Field type: `Array[id, base, roll]`
+- Example: `"id":"1stSpellCost","base":69,"roll":30`
 - # Id
   - This is the ID that is used. It corresponds to the Wynntils internal name for an identification.
   - See [HERE](https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json) for a list.
@@ -15,6 +16,7 @@
   - Field name: `base`
   - Field type: `Signed 32-bit Integer`
   - Field range: `–2147483648` to `2147483647`
+  - Example: `"base":69`
 - # Roll (OPTIONAL)
   - This is the roll value. It defines the actual roll percent for the identification.
   - The formula for the final shown percentage on the final item is `BASE * ROLL / 100`.
@@ -25,3 +27,18 @@
   - Field type: `Unsigned 8-bit Integer`
   - Field range: `0` to `255`
   - ...But for it to be a valid item, `30` to `130` (positive base stat) and `70` to `130` (negative base stat).
+  - Example: `"roll":30`
+
+## Example Identifications for a perfect Singularity:
+```json
+  "ids": [
+    {"id": "mainAttackDamage","base": 320,"roll": 69},
+    {"id": "healthRegenRaw", "base":250 , "roll":130  },
+    {"id": "rawDexterity", "base":35 },
+    {"id": "walkSpeed", "base":-40 , "roll":69},
+    {"id": "mainAttackDamage", "base":15, "roll":130 },
+    {"id": "rawMainAttackDamage", "base":444 , "roll":130 },
+    {"id": "rawSpellDamage", "base":222  , "roll":130  },
+    {"id": "spellDamage", "base":10  , "roll":130  }
+  ],
+```

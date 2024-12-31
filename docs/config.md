@@ -34,7 +34,7 @@ However, it's inaccurate. This is what it SHOULD look like:
 - [Defense (NOT IMPLEMENTED YET)](blocks/defense.md)
 - [Effects (NOT IMPLEMENTED YET)](blocks/effects.md)
 - [Powder Limit](blocks/powderlimit.md)
-- [Powders](blocks/powders)
+- [Powders](blocks/powders.md)
 - [Custom Identifications (NOT IMPLEMENTED YET)](blocks/identifications.md)
 - [Reroll](blocks/reroll.md)
 

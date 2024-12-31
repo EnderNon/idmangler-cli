@@ -1,3 +1,6 @@
-## Rerolls
-Optional single value, i8. Stores number of rerolls. If missing or is 0, rerolls are not encoded.  
-Potential range: 0<->255.
+## Rerolls (OPTIONAL)
+- This data block encodes the number of rerolls.
+- Field name: `rerolls`
+- Field type: `Unsigned 8-bit Integer`
+- Field range: `0` to `255`
+- Example: `"rerolls":"125"`
