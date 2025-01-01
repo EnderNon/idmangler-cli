@@ -215,7 +215,8 @@ fn cook(
             dbg!(&powdervec);
         }
 
-        let powderlimitfr: u8 = powdervec.len() as u8;
+        let powderlimitfr: u8 = (powdervec.len() as u8)
+            .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
 
         // ENCODE: PowderData
         // only occurs if the powders array is present and the powder limit is also present
