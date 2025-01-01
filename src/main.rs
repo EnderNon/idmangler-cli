@@ -118,37 +118,66 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
         fr_ver: ver,
     };
 
-    // StartData and TypeData are always present
+    // ENCODE: StartData and TypeData, ALWAYS
     encode_startdata(&mut fr_params);
     encode_typedata(&mut fr_params, json_config.item_type);
 
-    // ENCODE: NameData
-    if let Some(real_name) = json_config.name {
-        encode_namedata(&mut fr_params, &real_name)
-    }
-
-    // json identification data handling for type GEAR (0)
-    // only occurs if identifications block is present
-    if let Some(real_ids) = json_config.ids {
-        encode_ids(&mut fr_params, real_ids, idsmap)
-    }
-
-    // json powder data handling
-    if let Some(real_powders) = json_config.powders {
-        encode_powder(&mut fr_params, real_powders)
+    // ENCODE: NameData, if ItemType is Gear, Tome, Charm
+    match json_config.item_type {
+        ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
+            if let Some(real_name) = json_config.name {
+                encode_namedata(&mut fr_params, &real_name)
+            }
+        },
+        _ => {}
     }
 
 
-    if let Some(rerollcount) = json_config.rerolls {
-        // rerolldata
-        encode_reroll(&mut fr_params, rerollcount)
-    };
-
-    if let Some(shiny) = json_config.shiny {
-        encode_shiny(&mut fr_params, shiny, json_shiny)
+    // ENCODE: IdentificationData
+    match json_config.item_type {
+        ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
+            if let Some(real_ids) = json_config.ids {
+                encode_ids(&mut fr_params, real_ids, idsmap)
+            }
+        },
+        _ => {}
     }
 
-    // EndData is ALWAYS present. If its gone it literally doesn't work
+
+    // ENCODE: PowderData if ItemType is Gear, CraftedGear
+    match json_config.item_type {
+        ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
+            if let Some(real_powders) = json_config.powders {
+                encode_powder(&mut fr_params, real_powders)
+            }
+        },
+        _ => {}
+    }
+
+
+    // ENCODE: RerollData if ItemType is Gear, Tome, Charm
+    match json_config.item_type {
+        ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
+            if let Some(rerollcount) = json_config.rerolls {
+                // rerolldata
+                encode_reroll(&mut fr_params, rerollcount)
+            }
+        },
+        _ => {}
+    }
+
+    // ENCODE: ShinyData if ItemType is Gear
+    match json_config.item_type {
+        ItemTypeDeser::Gear => {
+            if let Some(shiny) = json_config.shiny {
+                encode_shiny(&mut fr_params, shiny, json_shiny)
+            }
+        },
+        _ => {}
+    }
+
+
+    // ENCODE: EndData, ALWAYS
     encode_enddata(&mut fr_params);
 
     Ok(())
