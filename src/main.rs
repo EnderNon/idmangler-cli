@@ -244,31 +244,24 @@ fn cook(
         // ENCODE: ShinyData (if applicable)
         ShinyData {
             id: realshinykey,
-            val: shinyvalue, //- 0b0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000,
-                             // u16::MAX is the max value of unsigned 16bit value
+            val: shinyvalue,
         }
         .encode(ver, out)
         .unwrap();
     }
 
-    // prints (Water,6) 255 times
-    // println!("{:?}",vec![(Powders::WATER, 6); 255]);
-
     Ok(())
 }
 
 fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
-    serde_json5::from_reader(
-        &mut fs::File::open(path)
-            .map_err(|_| Errorfr::ItemJsonMissing)?
-    )
-    .map_err(|e| Errorfr::ItemJsonCorrupt(e))
+    serde_json5::from_reader(&mut fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
+        .map_err(|e| Errorfr::ItemJsonCorrupt(e))
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
     serde_json5::from_reader(
         &mut fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?
+            .map_err(|_| Errorfr::IDMapJsonMissing)?,
     )
     .map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
@@ -276,7 +269,7 @@ fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
     serde_json5::from_reader(
         &mut fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
-            .map_err(|_| Errorfr::ShinyJsonMissing)?
+            .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
