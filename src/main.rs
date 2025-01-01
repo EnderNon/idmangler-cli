@@ -117,7 +117,7 @@ fn cook(
 ) -> Result<(), Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
-        fr_debug_mode: &debug_mode,
+        fr_debug_mode: debug_mode,
         fr_ver: ver,
     };
 
@@ -236,7 +236,7 @@ fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTypeDes
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_namedata(general_params: &mut FuncParams, real_name: &String) {
+fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
     NameData(real_name.trim().to_string())
         .encode(general_params.fr_ver, general_params.fr_out)
@@ -301,7 +301,7 @@ fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
         dbg!(&powdervec);
     }
 
-    let powderlimitfr: u8 = (powdervec.len() as u8).min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
+    let powderlimitfr: u8 = powdervec.len() as u8; // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
 
     // ENCODE: PowderData
     // only occurs if the powders array is present and the powder limit is also present
