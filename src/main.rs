@@ -16,7 +16,6 @@ use crate::errorfr::Errorfr;
 
 use clap::Parser;
 use reqwest::Url;
-use crate::errorfr::Errorfr::PowderLimitNotPresent;
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
