@@ -1,3 +1,7 @@
+#![deny(
+    clippy::single_match
+)]
+
 use idmangler_lib::{
     encoding::encode_string,
     types::{
