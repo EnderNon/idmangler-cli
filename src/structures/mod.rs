@@ -16,12 +16,12 @@ pub struct Identificationer {
 #[derive(Deserialize)]
 pub struct Jsonconfig {
     pub debug: Option<bool>,
-    pub name: String,
     pub item_type: ItemTypeDeser,
+    pub name: Option<String>,
     pub shiny: Option<Shinyjson>,
-    pub ids: Vec<Identificationer>,
-    pub powder_limit: u8,
-    pub powders: Vec<Powder>,
+    pub ids: Option<Vec<Identificationer>>,
+    pub powder_limit: Option<u8>,
+    pub powders: Option<Vec<Powder>>,
     pub rerolls: Option<u8>,
 }
 

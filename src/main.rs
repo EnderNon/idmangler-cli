@@ -16,6 +16,7 @@ use crate::errorfr::Errorfr;
 
 use clap::Parser;
 use reqwest::Url;
+use crate::errorfr::Errorfr::PowderLimitNotPresent;
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -144,18 +145,23 @@ fn cook(
     ver: TransformVersion,
 ) -> Result<(), Errorfr> {
     // ENCODE: NameData
-    NameData(json_config.name.trim().to_string())
-        .encode(ver, out)
-        .unwrap();
+    if let Some(real_name) = json_config.name {
+        NameData(real_name.trim().to_string())
+            .encode(ver, out)
+            .unwrap();
+    }
+
 
     // json identification data handling for type GEAR (0)
-    let mut idvec = Vec::new();
-    for eachid in json_config.ids {
-        let id_id = idsmap.get(eachid.id.trim());
-        let id_base = eachid.base;
-        let id_roll = eachid.roll;
+    // only occurs if identifications block is present
+    if let Some(real_ids) = json_config.ids {
+        let mut idvec = Vec::new();
+        for eachid in real_ids {
+            let id_id = idsmap.get(eachid.id.trim());
+            let id_base = eachid.base;
+            let id_roll = eachid.roll;
 
-        idvec.push(
+            idvec.push(
                 Stat {
                     kind: match id_id {
                         Some(ide) => *ide,
@@ -167,52 +173,62 @@ fn cook(
                         None => RollType::PreIdentified
                     }
                 }
-        );
+            );
 
-        // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
-    }
-
-    // ENCODE: IdentificationsData
-    IdentificationData {
-        identifications: idvec,
-        extended_encoding: true,
-    }
-    .encode(ver, out)
-    .unwrap();
-
-    // json powder data handling
-    let mut powdervec = Vec::new();
-    for eachpowder in json_config.powders {
-        let powdertier = eachpowder.tier; // get the powder tier
-        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
-        // match for the powder type
-        for _ in 0..powderamount {
-            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
-                'e' => Element::Earth,
-                't' => Element::Thunder,
-                'w' => Element::Water,
-                'f' => Element::Fire,
-                'a' => Element::Air,
-                _ => Element::Thunder,
-            };
-            if *debug_mode {
-                dbg!(powdertier);
-                dbg!(eletype);
-            }
-            powdervec.push(Some((eletype, powdertier)));
+            // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
         }
-    }
-    if *debug_mode {
-        dbg!(&powdervec);
+        // ENCODE: IdentificationsData
+        IdentificationData {
+            identifications: idvec,
+            extended_encoding: true,
+        }
+            .encode(ver, out)
+            .unwrap();
     }
 
-    // ENCODE: PowderData
-    PowderData {
-        powder_slots: json_config.powder_limit,
-        powders: powdervec,
+
+
+
+    if let Some(real_powders) = json_config.powders {
+        let mut powdervec = Vec::new();
+        for eachpowder in real_powders {
+            let powdertier = eachpowder.tier; // get the powder tier
+            let powderamount: u8 = eachpowder.amount.unwrap_or(1);
+            // match for the powder type
+            for _ in 0..powderamount {
+                let eletype = match eachpowder.r#type.to_ascii_lowercase() {
+                    'e' => Element::Earth,
+                    't' => Element::Thunder,
+                    'w' => Element::Water,
+                    'f' => Element::Fire,
+                    'a' => Element::Air,
+                    _ => Element::Thunder,
+                };
+                if *debug_mode {
+                    dbg!(powdertier);
+                    dbg!(eletype);
+                }
+                powdervec.push(Some((eletype, powdertier)));
+            }
+        }
+        if *debug_mode {
+            dbg!(&powdervec);
+        }
+
+        let real_powderlimit = json_config.powder_limit.ok_or(PowderLimitNotPresent)?;
+
+        // ENCODE: PowderData
+        // only occurs if the powders array is present and the powder limit is also present
+        //
+        PowderData {
+            powder_slots: real_powderlimit,
+            powders: powdervec,
+        }
+            .encode(ver, out)
+            .unwrap();
     }
-    .encode(ver, out)
-    .unwrap();
+    // json powder data handling
+
 
     if let Some(rerollcount) = json_config.rerolls {
         if rerollcount != 0 {

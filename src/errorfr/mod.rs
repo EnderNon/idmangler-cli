@@ -40,6 +40,10 @@ pub enum Errorfr {
     JsonDlReqFileCreateFail,
 
     /// unable to copy (write in) file content
-    #[error("Error 9: Download successful, but unable to write to file.")]
+    #[error("Error 3.4: Download successful, but unable to write to file.")]
     JsonDlReqFileWriteFail,
+
+    /// powder limit was not present but powder vec was
+    #[error("Error 4.1: Array of powders was present, but powder limit was not. \nIf you are using a powder array, the \"powder_limit\" value MUST be present. \nIf you're confused, just set it to 255.\nSuggestion: \"powder_limit\": 255")]
+    PowderLimitNotPresent
 }
