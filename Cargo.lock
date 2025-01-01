@@ -665,7 +665,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_json5",
- "thiserror 1.0.68",
+ "thiserror 2.0.9",
  "tribool",
 ]
 
