@@ -58,23 +58,7 @@ fn main() {
 
     // download jsons if necessary
     if let Some(dlvalue) = &args.download {
-        let jsons = DownloadJsons::from(dlvalue.clone());
-        if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
-            if let Err(e) = dl_json(
-                "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
-                format!("{}{}", executable_path, "/shiny_stats.json"),
-            ) { // error handling below
-                println!("{} Filename: {}",e,dlvalue)
-            }
-        }
-        if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
-            if let Err(e) = dl_json(
-                "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
-                format!("{}{}", executable_path, "/id_keys.json"),
-            ) { // error handling below
-                println!("{} Filename: {}",e,dlvalue)
-            }
-        }
+        dl_json_fr(dlvalue, executable_path)
     };
 
     // check if files load properly and all that
@@ -98,14 +82,8 @@ fn main() {
                                 let ver = TransformVersion::Version1;
 
                                 // StartData and TypeData are always present
-
-                                // ENCODE: StartData
-                                StartData(ver).encode(ver, &mut out).unwrap();
-
-                                // ENCODE: TypeData
-                                TypeData(ItemType::from(loaded_config.item_type))
-                                    .encode(ver, &mut out)
-                                    .unwrap();
+                                encode_startdata(&mut out, ver);
+                                encode_typedata(&mut out, ver, loaded_config.item_type);
 
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
@@ -120,8 +98,7 @@ fn main() {
                                     println!("{}", e);
                                 };
 
-                                // ENCODE: EndData
-                                EndData.encode(ver, &mut out).unwrap();
+                                encode_enddata(&mut out, ver);
 
                                 // final string print
                                 println!("{}", encode_string(&out));
@@ -155,35 +132,7 @@ fn cook(
     // json identification data handling for type GEAR (0)
     // only occurs if identifications block is present
     if let Some(real_ids) = json_config.ids {
-        let mut idvec = Vec::new();
-        for eachid in real_ids {
-            let id_id = idsmap.get(eachid.id.trim());
-            let id_base = eachid.base;
-            let id_roll = eachid.roll;
-
-            idvec.push(
-                Stat {
-                    kind: match id_id {
-                        Some(ide) => *ide,
-                        None => panic!("There is a mismatched ID, and this message has replaced where the line is meant to be")
-                    },
-                    base: Some(id_base),
-                    roll: match id_roll{
-                        Some(rolle) => RollType::Value(rolle),
-                        None => RollType::PreIdentified
-                    }
-                }
-            );
-
-            // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
-        }
-        // ENCODE: IdentificationsData
-        IdentificationData {
-            identifications: idvec,
-            extended_encoding: true,
-        }
-            .encode(ver, out)
-            .unwrap();
+        encode_ids(out, real_ids, ver, idsmap)
     }
 
 
@@ -253,7 +202,35 @@ fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
-
+fn dl_json_fr(dlvalue: &String, executable_path: &str) {
+    let jsons = DownloadJsons::from(dlvalue.clone());
+    if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
+        if let Err(e) = dl_json(
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
+            format!("{}{}", executable_path, "/shiny_stats.json"),
+        ) { // error handling below
+            println!("{} Filename: {}",e,dlvalue)
+        }
+    }
+    if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
+        if let Err(e) = dl_json(
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
+            format!("{}{}", executable_path, "/id_keys.json"),
+        ) { // error handling below
+            println!("{} Filename: {}",e,dlvalue)
+        }
+    }
+}
+fn encode_startdata(out: &mut Vec<u8>, ver: TransformVersion) {
+    // ENCODE: StartData
+    StartData(ver).encode(ver, out).unwrap();
+}
+fn encode_typedata(out: &mut Vec<u8>, ver: TransformVersion, item_type_deser: ItemTypeDeser) {
+    // ENCODE: TypeData
+    TypeData(ItemType::from(item_type_deser))
+        .encode(ver, out)
+        .unwrap();
+}
 fn encode_powder(out: &mut Vec<u8>, debug_mode: &bool, real_powders: Vec<Powder>, ver: TransformVersion) {
     let mut powdervec = Vec::new();
     for eachpowder in real_powders {
@@ -290,4 +267,39 @@ fn encode_powder(out: &mut Vec<u8>, debug_mode: &bool, real_powders: Vec<Powder>
     }
         .encode(ver, out)
         .unwrap();
+}
+fn encode_ids(out: &mut Vec<u8>, real_ids: Vec<Identificationer>, ver: TransformVersion, idsmap: HashMap<String, u8>) {
+    let mut idvec = Vec::new();
+    for eachid in real_ids {
+        let id_id = idsmap.get(eachid.id.trim());
+        let id_base = eachid.base;
+        let id_roll = eachid.roll;
+
+        idvec.push(
+            Stat {
+                kind: match id_id {
+                    Some(ide) => *ide,
+                    None => panic!("There is a mismatched ID, and this message has replaced where the line is meant to be")
+                },
+                base: Some(id_base),
+                roll: match id_roll{
+                    Some(rolle) => RollType::Value(rolle),
+                    None => RollType::PreIdentified
+                }
+            }
+        );
+
+        // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
+    }
+    // ENCODE: IdentificationsData
+    IdentificationData {
+        identifications: idvec,
+        extended_encoding: true,
+    }
+        .encode(ver, out)
+        .unwrap();
+}
+fn encode_enddata(out: &mut Vec<u8>, ver: TransformVersion) {
+    // ENCODE: EndData
+    EndData.encode(ver, out).unwrap();
 }
