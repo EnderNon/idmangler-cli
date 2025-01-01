@@ -17,7 +17,6 @@
     {"id": "jumpHeight", "base":3, "roll":130 },
     {"id": "rawStrength", "base":15}
   ],
-  "powder_limit": 255,
   "powders": [
 
 
