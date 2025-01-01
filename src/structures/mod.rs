@@ -4,7 +4,6 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Powder {
     pub r#type: char,
-    pub tier: u8,
     pub amount: Option<u8>,
 }
 #[derive(Deserialize)]

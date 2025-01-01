@@ -192,7 +192,6 @@ fn cook(
     if let Some(real_powders) = json_config.powders {
         let mut powdervec = Vec::new();
         for eachpowder in real_powders {
-            let powdertier = eachpowder.tier; // get the powder tier
             let powderamount: u8 = eachpowder.amount.unwrap_or(1);
             // match for the powder type
             for _ in 0..powderamount {
@@ -205,10 +204,9 @@ fn cook(
                     _ => Element::Thunder,
                 };
                 if *debug_mode {
-                    dbg!(powdertier);
                     dbg!(eletype);
                 }
-                powdervec.push(Some((eletype, powdertier)));
+                powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
             }
         }
         if *debug_mode {
