@@ -33,7 +33,6 @@ However, it's inaccurate. This is what it SHOULD look like:
 - [Damage (NOT IMPLEMENTED YET)](blocks/damage.md)
 - [Defense (NOT IMPLEMENTED YET)](blocks/defense.md)
 - [Effects (NOT IMPLEMENTED YET)](blocks/effects.md)
-- [Powder Limit](blocks/powderlimit.md)
 - [Powders](blocks/powders.md)
 - [Custom Identifications (NOT IMPLEMENTED YET)](blocks/identifications.md)
 - [Reroll](blocks/reroll.md)
