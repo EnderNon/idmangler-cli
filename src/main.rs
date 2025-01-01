@@ -188,45 +188,10 @@ fn cook(
 
 
 
-
-    if let Some(real_powders) = json_config.powders {
-        let mut powdervec = Vec::new();
-        for eachpowder in real_powders {
-            let powderamount: u8 = eachpowder.amount.unwrap_or(1);
-            // match for the powder type
-            for _ in 0..powderamount {
-                let eletype = match eachpowder.r#type.to_ascii_lowercase() {
-                    'e' => Element::Earth,
-                    't' => Element::Thunder,
-                    'w' => Element::Water,
-                    'f' => Element::Fire,
-                    'a' => Element::Air,
-                    _ => Element::Thunder,
-                };
-                if *debug_mode {
-                    dbg!(eletype);
-                }
-                powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
-            }
-        }
-        if *debug_mode {
-            dbg!(&powdervec);
-        }
-
-        let powderlimitfr: u8 = (powdervec.len() as u8)
-            .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
-
-        // ENCODE: PowderData
-        // only occurs if the powders array is present and the powder limit is also present
-        //
-        PowderData {
-            powder_slots: powderlimitfr,
-            powders: powdervec,
-        }
-            .encode(ver, out)
-            .unwrap();
-    }
     // json powder data handling
+    if let Some(real_powders) = json_config.powders {
+        encode_powder(out, debug_mode, real_powders, ver)
+    }
 
 
     if let Some(rerollcount) = json_config.rerolls {
@@ -287,4 +252,42 @@ fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
     .map_err(|_| Errorfr::ShinyJsonCorrupt)
+}
+
+fn encode_powder(out: &mut Vec<u8>, debug_mode: &bool, real_powders: Vec<Powder>, ver: TransformVersion) {
+    let mut powdervec = Vec::new();
+    for eachpowder in real_powders {
+        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
+        // match for the powder type
+        for _ in 0..powderamount {
+            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
+                'e' => Element::Earth,
+                't' => Element::Thunder,
+                'w' => Element::Water,
+                'f' => Element::Fire,
+                'a' => Element::Air,
+                _ => Element::Thunder,
+            };
+            if *debug_mode {
+                dbg!(eletype);
+            }
+            powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
+        }
+    }
+    if *debug_mode {
+        dbg!(&powdervec);
+    }
+
+    let powderlimitfr: u8 = (powdervec.len() as u8)
+        .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
+
+    // ENCODE: PowderData
+    // only occurs if the powders array is present and the powder limit is also present
+    //
+    PowderData {
+        powder_slots: powderlimitfr,
+        powders: powdervec,
+    }
+        .encode(ver, out)
+        .unwrap();
 }
