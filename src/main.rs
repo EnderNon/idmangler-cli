@@ -89,11 +89,9 @@ fn main() {
                                     loaded_config,
                                     loaded_idkeys,
                                     loaded_shinystats,
-
                                 ) {
                                     println!("{}", e);
                                 };
-
 
                                 // final string print
                                 println!("{}", encode_string(&out));
@@ -109,8 +107,14 @@ fn main() {
     }
 }
 
-fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, ) -> Result<(), Errorfr> {
-
+fn cook(
+    out: &mut Vec<u8>,
+    debug_mode: &bool,
+    ver: TransformVersion,
+    json_config: Jsonconfig,
+    idsmap: HashMap<String, u8>,
+    json_shiny: Vec<Shinystruct>,
+) -> Result<(), Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
         fr_debug_mode: &debug_mode,
@@ -127,10 +131,9 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
             if let Some(real_name) = json_config.name {
                 encode_namedata(&mut fr_params, &real_name)
             }
-        },
+        }
         _ => {}
     }
-
 
     // ENCODE: IdentificationData
     match json_config.item_type {
@@ -138,10 +141,9 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
             if let Some(real_ids) = json_config.ids {
                 encode_ids(&mut fr_params, real_ids, idsmap)
             }
-        },
+        }
         _ => {}
     }
-
 
     // ENCODE: PowderData if ItemType is Gear, CraftedGear
     match json_config.item_type {
@@ -149,10 +151,9 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
             if let Some(real_powders) = json_config.powders {
                 encode_powder(&mut fr_params, real_powders)
             }
-        },
+        }
         _ => {}
     }
-
 
     // ENCODE: RerollData if ItemType is Gear, Tome, Charm
     match json_config.item_type {
@@ -161,7 +162,7 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
                 // rerolldata
                 encode_reroll(&mut fr_params, rerollcount)
             }
-        },
+        }
         _ => {}
     }
 
@@ -171,10 +172,9 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
             if let Some(shiny) = json_config.shiny {
                 encode_shiny(&mut fr_params, shiny, json_shiny)
             }
-        },
+        }
         _ => {}
     }
-
 
     // ENCODE: EndData, ALWAYS
     encode_enddata(&mut fr_params);
@@ -214,10 +214,13 @@ fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     }
     if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
         if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json"
+                .parse()
+                .unwrap(),
             format!("{}{}", executable_path, "/id_keys.json"),
-        ) { // error handling below
-            println!("{} Filename: {}",e,dlvalue)
+        ) {
+            // error handling below
+            println!("{} Filename: {}", e, dlvalue)
         }
     }
 }
@@ -239,7 +242,11 @@ fn encode_namedata(general_params: &mut FuncParams, real_name: &String) {
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, idsmap: HashMap<String, u8>) {
+fn encode_ids(
+    general_params: &mut FuncParams,
+    real_ids: Vec<Identificationer>,
+    idsmap: HashMap<String, u8>,
+) {
     let mut idvec = Vec::new();
     for eachid in real_ids {
         let id_id = idsmap.get(eachid.id.trim());
@@ -267,8 +274,8 @@ fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, 
         identifications: idvec,
         extended_encoding: true,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
     let mut powdervec = Vec::new();
@@ -294,8 +301,7 @@ fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
         dbg!(&powdervec);
     }
 
-    let powderlimitfr: u8 = (powdervec.len() as u8)
-        .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
+    let powderlimitfr: u8 = (powdervec.len() as u8).min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
 
     // ENCODE: PowderData
     // only occurs if the powders array is present and the powder limit is also present
@@ -304,13 +310,15 @@ fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
         powder_slots: powderlimitfr,
         powders: powdervec,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
     if rerollcount != 0 {
         // ENCODE: RerollData if applicable
-        RerollData(rerollcount).encode(general_params.fr_ver, general_params.fr_out).unwrap();
+        RerollData(rerollcount)
+            .encode(general_params.fr_ver, general_params.fr_out)
+            .unwrap();
         if *general_params.fr_debug_mode {
             dbg!(rerollcount);
         }
@@ -338,8 +346,8 @@ fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: V
         id: realshinykey,
         val: shinyvalue,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 fn encode_enddata(general_params: &mut FuncParams) {
     // ENCODE: EndData

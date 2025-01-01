@@ -38,9 +38,8 @@ pub struct Shinyjson {
 pub struct FuncParams<'a> {
     pub fr_out: &'a mut Vec<u8>,
     pub fr_debug_mode: &'a bool,
-    pub fr_ver: TransformVersion
+    pub fr_ver: TransformVersion,
 }
-
 
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not
 #[repr(u8)]
