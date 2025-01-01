@@ -95,7 +95,6 @@ fn main() {
                                     println!("{}", e);
                                 };
 
-                                encode_enddata(&mut out, ver);
 
                                 // final string print
                                 println!("{}", encode_string(&out));
@@ -114,41 +113,44 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config
 
 ) -> Result<(), Errorfr> {
 
-    let mut func_params_outer = FuncParams {
-        fr_out: &mut out,
+    let mut fr_params = FuncParams {
+        fr_out: out,
         fr_debug_mode: &debug_mode,
         fr_ver: ver,
     };
 
     // StartData and TypeData are always present
-    encode_startdata(out, ver);
-    encode_typedata(out, ver, json_config.item_type);
+    encode_startdata(&mut fr_params);
+    encode_typedata(&mut fr_params, json_config.item_type);
 
     // ENCODE: NameData
     if let Some(real_name) = json_config.name {
-        encode_namedata(out, ver, &real_name)
+        encode_namedata(&mut fr_params, &real_name)
     }
 
     // json identification data handling for type GEAR (0)
     // only occurs if identifications block is present
     if let Some(real_ids) = json_config.ids {
-        encode_ids(out, real_ids, ver, idsmap)
+        encode_ids(&mut fr_params, real_ids, idsmap)
     }
 
     // json powder data handling
     if let Some(real_powders) = json_config.powders {
-        encode_powder(out, debug_mode, real_powders, ver)
+        encode_powder(&mut fr_params, real_powders)
     }
 
 
     if let Some(rerollcount) = json_config.rerolls {
         // rerolldata
-        encode_reroll(out, debug_mode, ver, rerollcount)
+        encode_reroll(&mut fr_params, rerollcount)
     };
 
     if let Some(shiny) = json_config.shiny {
-        encode_shiny(out, debug_mode, ver, shiny, json_shiny)
+        encode_shiny(&mut fr_params, shiny, json_shiny)
     }
+
+    // EndData is ALWAYS present. If its gone it literally doesn't work
+    encode_enddata(&mut fr_params);
 
     Ok(())
 }
@@ -192,71 +194,25 @@ fn dl_json_fr(dlvalue: &String, executable_path: &str) {
         }
     }
 }
-fn encode_startdata(out: &mut Vec<u8>, ver: TransformVersion) {
+fn encode_startdata(general_params: &mut FuncParams) {
     // ENCODE: StartData
-    StartData(ver)
-        .encode(ver, out)
+    StartData(general_params.fr_ver)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_typedata(out: &mut Vec<u8>, ver: TransformVersion, item_type_deser: ItemTypeDeser) {
+fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTypeDeser) {
     // ENCODE: TypeData
     TypeData(ItemType::from(item_type_deser))
-        .encode(ver, out)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_namedata(out: &mut Vec<u8>, ver: TransformVersion, real_name: &String) {
+fn encode_namedata(general_params: &mut FuncParams, real_name: &String) {
     // ENCODE: NameData
     NameData(real_name.trim().to_string())
-        .encode(ver, out)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_powder(out: &mut Vec<u8>, debug_mode: &bool, real_powders: Vec<Powder>, ver: TransformVersion) {
-    let mut powdervec = Vec::new();
-    for eachpowder in real_powders {
-        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
-        // match for the powder type
-        for _ in 0..powderamount {
-            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
-                'e' => Element::Earth,
-                't' => Element::Thunder,
-                'w' => Element::Water,
-                'f' => Element::Fire,
-                'a' => Element::Air,
-                _ => Element::Thunder,
-            };
-            if *debug_mode {
-                dbg!(eletype);
-            }
-            powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
-        }
-    }
-    if *debug_mode {
-        dbg!(&powdervec);
-    }
-
-    let powderlimitfr: u8 = (powdervec.len() as u8)
-        .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
-
-    // ENCODE: PowderData
-    // only occurs if the powders array is present and the powder limit is also present
-    //
-    PowderData {
-        powder_slots: powderlimitfr,
-        powders: powdervec,
-    }
-        .encode(ver, out)
-        .unwrap();
-}
-fn encode_reroll(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, rerollcount: u8) {
-    if rerollcount != 0 {
-        // ENCODE: RerollData if applicable
-        RerollData(rerollcount).encode(ver, out).unwrap();
-        if *debug_mode {
-            dbg!(rerollcount);
-        }
-    }
-}
-fn encode_ids(out: &mut Vec<u8>, real_ids: Vec<Identificationer>, ver: TransformVersion, idsmap: HashMap<String, u8>) {
+fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, idsmap: HashMap<String, u8>) {
     let mut idvec = Vec::new();
     for eachid in real_ids {
         let id_id = idsmap.get(eachid.id.trim());
@@ -284,10 +240,56 @@ fn encode_ids(out: &mut Vec<u8>, real_ids: Vec<Identificationer>, ver: Transform
         identifications: idvec,
         extended_encoding: true,
     }
-        .encode(ver, out)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_shiny(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
+fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
+    let mut powdervec = Vec::new();
+    for eachpowder in real_powders {
+        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
+        // match for the powder type
+        for _ in 0..powderamount {
+            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
+                'e' => Element::Earth,
+                't' => Element::Thunder,
+                'w' => Element::Water,
+                'f' => Element::Fire,
+                'a' => Element::Air,
+                _ => Element::Thunder,
+            };
+            if *general_params.fr_debug_mode {
+                dbg!(eletype);
+            }
+            powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
+        }
+    }
+    if *general_params.fr_debug_mode {
+        dbg!(&powdervec);
+    }
+
+    let powderlimitfr: u8 = (powdervec.len() as u8)
+        .min(255); // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
+
+    // ENCODE: PowderData
+    // only occurs if the powders array is present and the powder limit is also present
+    //
+    PowderData {
+        powder_slots: powderlimitfr,
+        powders: powdervec,
+    }
+        .encode(general_params.fr_ver, general_params.fr_out)
+        .unwrap();
+}
+fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
+    if rerollcount != 0 {
+        // ENCODE: RerollData if applicable
+        RerollData(rerollcount).encode(general_params.fr_ver, general_params.fr_out).unwrap();
+        if *general_params.fr_debug_mode {
+            dbg!(rerollcount);
+        }
+    }
+}
+fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
     let mut realshinykey: u8;
     let _shinykey = &shiny.key;
     let shinyvalue = shiny.value;
@@ -295,12 +297,12 @@ fn encode_shiny(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, shi
     for i in json_shiny {
         if i.key == shiny.key {
             realshinykey = i.id;
-            if *debug_mode {
+            if *general_params.fr_debug_mode {
                 dbg!(&shiny.key);
             }
         }
     }
-    if *debug_mode {
+    if *general_params.fr_debug_mode {
         dbg!(&realshinykey);
         dbg!(&shinyvalue);
     }
@@ -309,12 +311,12 @@ fn encode_shiny(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, shi
         id: realshinykey,
         val: shinyvalue,
     }
-        .encode(ver, out)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-fn encode_enddata(out: &mut Vec<u8>, ver: TransformVersion) {
+fn encode_enddata(general_params: &mut FuncParams) {
     // ENCODE: EndData
     EndData
-        .encode(ver, out)
+        .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }

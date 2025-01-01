@@ -34,6 +34,7 @@ pub struct Shinyjson {
     pub value: i64,
 }
 
+// struct for general parameters for most encode functions
 pub struct FuncParams<'a> {
     pub fr_out: &'a mut Vec<u8>,
     pub fr_debug_mode: &'a bool,
