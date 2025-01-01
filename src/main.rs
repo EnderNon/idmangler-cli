@@ -255,7 +255,7 @@ fn cook(
 
 fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
     serde_json5::from_reader(&mut fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(|e| Errorfr::ItemJsonCorrupt(e))
+        .map_err(Errorfr::ItemJsonCorrupt)
 }
 fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
