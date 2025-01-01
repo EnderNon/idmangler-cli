@@ -109,9 +109,8 @@ fn main() {
         }
     }
 }
-fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
 
-) -> Result<(), Errorfr> {
+fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, ) -> Result<(), Errorfr> {
 
     let mut fr_params = FuncParams {
         fr_out: out,
