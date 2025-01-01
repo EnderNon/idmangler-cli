@@ -1,4 +1,4 @@
-#![deny(
+#![allow(
     clippy::single_match
 )]
 
