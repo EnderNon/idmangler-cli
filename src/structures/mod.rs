@@ -1,6 +1,6 @@
-use idmangler_lib::types::ItemType;
+use idmangler_lib::types::{ItemType, TransformVersion};
 use serde::Deserialize;
-// structs
+// structs for the json parsing
 #[derive(Deserialize)]
 pub struct Powder {
     pub r#type: char,
@@ -34,6 +34,13 @@ pub struct Shinyjson {
     pub value: i64,
 }
 
+pub struct FuncParams<'a> {
+    pub fr_out: &'a mut Vec<u8>,
+    pub fr_debug_mode: &'a bool,
+    pub fr_ver: TransformVersion
+}
+
+
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not
 #[repr(u8)]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
@@ -56,6 +63,7 @@ impl From<ItemTypeDeser> for ItemType {
     }
 }
 
+// stuff for the bit for downloading data jsons for ease of use
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
 pub enum DownloadJsons {
     None,

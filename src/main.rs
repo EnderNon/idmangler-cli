@@ -81,19 +81,16 @@ fn main() {
                                 // create necessary variables
                                 let ver = TransformVersion::Version1;
 
-                                // StartData and TypeData are always present
-                                encode_startdata(&mut out, ver);
-                                encode_typedata(&mut out, ver, loaded_config.item_type);
-
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
                                 if let Err(e) = cook(
+                                    &mut out,
                                     &debug_mode,
+                                    ver,
                                     loaded_config,
                                     loaded_idkeys,
                                     loaded_shinystats,
-                                    &mut out,
-                                    ver,
+
                                 ) {
                                     println!("{}", e);
                                 };
@@ -113,29 +110,30 @@ fn main() {
         }
     }
 }
-fn cook(
-    debug_mode: &bool,
-    json_config: Jsonconfig,
-    idsmap: HashMap<String, u8>,
-    json_shiny: Vec<Shinystruct>,
-    out: &mut Vec<u8>,
-    ver: TransformVersion,
+fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
+
 ) -> Result<(), Errorfr> {
+
+    let mut func_params_outer = FuncParams {
+        fr_out: &mut out,
+        fr_debug_mode: &debug_mode,
+        fr_ver: ver,
+    };
+
+    // StartData and TypeData are always present
+    encode_startdata(out, ver);
+    encode_typedata(out, ver, json_config.item_type);
+
     // ENCODE: NameData
     if let Some(real_name) = json_config.name {
-        NameData(real_name.trim().to_string())
-            .encode(ver, out)
-            .unwrap();
+        encode_namedata(out, ver, &real_name)
     }
-
 
     // json identification data handling for type GEAR (0)
     // only occurs if identifications block is present
     if let Some(real_ids) = json_config.ids {
         encode_ids(out, real_ids, ver, idsmap)
     }
-
-
 
     // json powder data handling
     if let Some(real_powders) = json_config.powders {
@@ -144,39 +142,12 @@ fn cook(
 
 
     if let Some(rerollcount) = json_config.rerolls {
-        if rerollcount != 0 {
-            // ENCODE: RerollData if applicable
-            RerollData(rerollcount).encode(ver, out).unwrap();
-            if *debug_mode {
-                dbg!(rerollcount);
-            };
-        };
+        // rerolldata
+        encode_reroll(out, debug_mode, ver, rerollcount)
     };
 
-    let mut realshinykey: u8;
     if let Some(shiny) = json_config.shiny {
-        let _shinykey = &shiny.key;
-        let shinyvalue = shiny.value;
-        realshinykey = 1;
-        for i in json_shiny {
-            if i.key == shiny.key {
-                realshinykey = i.id;
-                if *debug_mode {
-                    dbg!(&shiny.key);
-                }
-            }
-        }
-        if *debug_mode {
-            dbg!(&realshinykey);
-            dbg!(&shinyvalue);
-        }
-        // ENCODE: ShinyData (if applicable)
-        ShinyData {
-            id: realshinykey,
-            val: shinyvalue,
-        }
-        .encode(ver, out)
-        .unwrap();
+        encode_shiny(out, debug_mode, ver, shiny, json_shiny)
     }
 
     Ok(())
@@ -223,11 +194,19 @@ fn dl_json_fr(dlvalue: &String, executable_path: &str) {
 }
 fn encode_startdata(out: &mut Vec<u8>, ver: TransformVersion) {
     // ENCODE: StartData
-    StartData(ver).encode(ver, out).unwrap();
+    StartData(ver)
+        .encode(ver, out)
+        .unwrap();
 }
 fn encode_typedata(out: &mut Vec<u8>, ver: TransformVersion, item_type_deser: ItemTypeDeser) {
     // ENCODE: TypeData
     TypeData(ItemType::from(item_type_deser))
+        .encode(ver, out)
+        .unwrap();
+}
+fn encode_namedata(out: &mut Vec<u8>, ver: TransformVersion, real_name: &String) {
+    // ENCODE: NameData
+    NameData(real_name.trim().to_string())
         .encode(ver, out)
         .unwrap();
 }
@@ -268,6 +247,15 @@ fn encode_powder(out: &mut Vec<u8>, debug_mode: &bool, real_powders: Vec<Powder>
         .encode(ver, out)
         .unwrap();
 }
+fn encode_reroll(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, rerollcount: u8) {
+    if rerollcount != 0 {
+        // ENCODE: RerollData if applicable
+        RerollData(rerollcount).encode(ver, out).unwrap();
+        if *debug_mode {
+            dbg!(rerollcount);
+        }
+    }
+}
 fn encode_ids(out: &mut Vec<u8>, real_ids: Vec<Identificationer>, ver: TransformVersion, idsmap: HashMap<String, u8>) {
     let mut idvec = Vec::new();
     for eachid in real_ids {
@@ -299,7 +287,34 @@ fn encode_ids(out: &mut Vec<u8>, real_ids: Vec<Identificationer>, ver: Transform
         .encode(ver, out)
         .unwrap();
 }
+fn encode_shiny(out: &mut Vec<u8>, debug_mode: &bool, ver: TransformVersion, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
+    let mut realshinykey: u8;
+    let _shinykey = &shiny.key;
+    let shinyvalue = shiny.value;
+    realshinykey = 1;
+    for i in json_shiny {
+        if i.key == shiny.key {
+            realshinykey = i.id;
+            if *debug_mode {
+                dbg!(&shiny.key);
+            }
+        }
+    }
+    if *debug_mode {
+        dbg!(&realshinykey);
+        dbg!(&shinyvalue);
+    }
+    // ENCODE: ShinyData (if applicable)
+    ShinyData {
+        id: realshinykey,
+        val: shinyvalue,
+    }
+        .encode(ver, out)
+        .unwrap();
+}
 fn encode_enddata(out: &mut Vec<u8>, ver: TransformVersion) {
     // ENCODE: EndData
-    EndData.encode(ver, out).unwrap();
+    EndData
+        .encode(ver, out)
+        .unwrap();
 }
