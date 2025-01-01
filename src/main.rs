@@ -215,13 +215,13 @@ fn cook(
             dbg!(&powdervec);
         }
 
-        let real_powderlimit = json_config.powder_limit.ok_or(PowderLimitNotPresent)?;
+        let powderlimitfr: u8 = powdervec.len() as u8;
 
         // ENCODE: PowderData
         // only occurs if the powders array is present and the powder limit is also present
         //
         PowderData {
-            powder_slots: real_powderlimit,
+            powder_slots: powderlimitfr,
             powders: powdervec,
         }
             .encode(ver, out)

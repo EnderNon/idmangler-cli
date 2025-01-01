@@ -20,7 +20,6 @@ pub struct Jsonconfig {
     pub name: Option<String>,
     pub shiny: Option<Shinyjson>,
     pub ids: Option<Vec<Identificationer>>,
-    pub powder_limit: Option<u8>,
     pub powders: Option<Vec<Powder>>,
     pub rerolls: Option<u8>,
 }
