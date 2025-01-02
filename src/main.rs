@@ -2,19 +2,20 @@
 
 use idmangler_lib::{
     encoding::encode_string,
-    types::{
-        Element, ItemType, TransformVersion, {RollType, Stat},
-    },
-    DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData,
-    StartData, TypeData,
+    types::TransformVersion,
+    DataEncoder
 };
 
-use std::{collections::HashMap, env, fs, io, panic, path::PathBuf};
+use std::{collections::HashMap, env, fs, io, path::PathBuf};
 
-mod structures;
-use crate::structures::*;
+mod jsonstruct;
 mod errorfr;
+mod encode;
+mod jsondl;
+use crate::jsonstruct::*;
 use crate::errorfr::Errorfr;
+use crate::encode::*;
+use crate::jsondl::*;
 
 use clap::Parser;
 use reqwest::Url;
@@ -186,176 +187,4 @@ fn cook(
     Ok(())
 }
 
-fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
-    serde_json5::from_reader(&mut fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(Errorfr::ItemJsonCorrupt)
-}
-fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
-    // id_keys.json
-    serde_json5::from_reader(
-        &mut fs::File::open(executable_path.to_owned() + "/id_keys.json")
-            .map_err(|_| Errorfr::IDMapJsonMissing)?,
-    )
-    .map_err(|_| Errorfr::IDMapJsonCorrupt)
-}
-fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
-    // shiny_stats.json
-    serde_json5::from_reader(
-        &mut fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
-            .map_err(|_| Errorfr::ShinyJsonMissing)?,
-    )
-    .map_err(|_| Errorfr::ShinyJsonCorrupt)
-}
-fn dl_json_fr(dlvalue: &String, executable_path: &str) {
-    let jsons = DownloadJsons::from(dlvalue.clone());
-    if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
-        if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
-            format!("{}{}", executable_path, "/shiny_stats.json"),
-        ) { // error handling below
-            println!("{} Filename: {}",e,dlvalue)
-        }
-    }
-    if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
-        if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json"
-                .parse()
-                .unwrap(),
-            format!("{}{}", executable_path, "/id_keys.json"),
-        ) {
-            // error handling below
-            println!("{} Filename: {}", e, dlvalue)
-        }
-    }
-}
-fn encode_startdata(general_params: &mut FuncParams) {
-    // ENCODE: StartData
-    StartData(general_params.fr_ver)
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
-}
-fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTypeDeser) {
-    // ENCODE: TypeData
-    TypeData(ItemType::from(item_type_deser))
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
-}
-fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
-    // ENCODE: NameData
-    NameData(real_name.trim().to_string())
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
-}
-fn encode_ids(
-    general_params: &mut FuncParams,
-    real_ids: Vec<Identificationer>,
-    idsmap: HashMap<String, u8>,
-) {
-    let mut idvec = Vec::new();
-    for eachid in real_ids {
-        let id_id = idsmap.get(eachid.id.trim());
-        let id_base = eachid.base;
-        let id_roll = eachid.roll;
 
-        idvec.push(
-            Stat {
-                kind: match id_id {
-                    Some(ide) => *ide,
-                    None => panic!("There is a mismatched ID, and this message has replaced where the line is meant to be")
-                },
-                base: Some(id_base),
-                roll: match id_roll{
-                    Some(rolle) => RollType::Value(rolle),
-                    None => RollType::PreIdentified
-                }
-            }
-        );
-
-        // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
-    }
-    // ENCODE: IdentificationsData
-    IdentificationData {
-        identifications: idvec,
-        extended_encoding: true,
-    }
-    .encode(general_params.fr_ver, general_params.fr_out)
-    .unwrap();
-}
-fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
-    let mut powdervec = Vec::new();
-    for eachpowder in real_powders {
-        let powderamount: u8 = eachpowder.amount.unwrap_or(1);
-        // match for the powder type
-        for _ in 0..powderamount {
-            let eletype = match eachpowder.r#type.to_ascii_lowercase() {
-                'e' => Element::Earth,
-                't' => Element::Thunder,
-                'w' => Element::Water,
-                'f' => Element::Fire,
-                'a' => Element::Air,
-                _ => Element::Thunder,
-            };
-            if *general_params.fr_debug_mode {
-                dbg!(eletype);
-            }
-            powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
-        }
-    }
-    if *general_params.fr_debug_mode {
-        dbg!(&powdervec);
-    }
-
-    let powderlimitfr: u8 = powdervec.len() as u8; // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
-
-    // ENCODE: PowderData
-    // only occurs if the powders array is present and the powder limit is also present
-    //
-    PowderData {
-        powder_slots: powderlimitfr,
-        powders: powdervec,
-    }
-    .encode(general_params.fr_ver, general_params.fr_out)
-    .unwrap();
-}
-fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
-    if rerollcount != 0 {
-        // ENCODE: RerollData if applicable
-        RerollData(rerollcount)
-            .encode(general_params.fr_ver, general_params.fr_out)
-            .unwrap();
-        if *general_params.fr_debug_mode {
-            dbg!(rerollcount);
-        }
-    }
-}
-fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
-    let mut realshinykey: u8;
-    let _shinykey = &shiny.key;
-    let shinyvalue = shiny.value;
-    realshinykey = 1;
-    for i in json_shiny {
-        if i.key == shiny.key {
-            realshinykey = i.id;
-            if *general_params.fr_debug_mode {
-                dbg!(&shiny.key);
-            }
-        }
-    }
-    if *general_params.fr_debug_mode {
-        dbg!(&realshinykey);
-        dbg!(&shinyvalue);
-    }
-    // ENCODE: ShinyData (if applicable)
-    ShinyData {
-        id: realshinykey,
-        val: shinyvalue,
-    }
-    .encode(general_params.fr_ver, general_params.fr_out)
-    .unwrap();
-}
-fn encode_enddata(general_params: &mut FuncParams) {
-    // ENCODE: EndData
-    EndData
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
-}
