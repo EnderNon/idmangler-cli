@@ -1,6 +1,4 @@
-#![allow(
-    clippy::single_match
-)]
+#![allow(clippy::single_match)]
 
 use idmangler_lib::{
     encoding::encode_string,
@@ -94,14 +92,11 @@ fn main() {
                                     loaded_idkeys,
                                     loaded_shinystats,
                                 ) {
-                                    println!("{}", e);
-                                }
-                                else {
-                                    // final string print
+                                    println!("{}", e); // print error if there is an error
+                                } else {
+                                    // final string print if there is no error
                                     println!("{}", encode_string(&out))
                                 }
-
-
                             }
                             Err(e) => println!("{}", e),
                         }
@@ -137,9 +132,8 @@ fn cook(
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_name) = json_config.name {
                 encode_namedata(&mut fr_params, &real_name)
-            }
-            else {
-                return Err(Errorfr::JsonNotFoundName)
+            } else {
+                return Err(Errorfr::JsonNotFoundName);
             }
         }
         _ => {}
