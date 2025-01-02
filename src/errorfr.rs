@@ -56,4 +56,11 @@ pub enum Errorfr {
     /// invalid crafted_type field
     #[error("Error 4.3: Invalid \"crafted_type\" value")]
     JsonInvalidCraftedType,
+
+    /// Durability is out of allowed range (0 to 100)
+    #[error("Error 4.4: Durability percentage is out of range (Should be between 0 and 100)")]
+    JsonDuraOutOfRange,
+
+    #[error("Error 4.5: \"Durability\" was not found (necessary for Crafted Gear item type)")]
+    JsonNotFoundDura
 }

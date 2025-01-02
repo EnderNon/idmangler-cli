@@ -15,6 +15,8 @@ pub struct Jsonconfig {
     pub crafted_type: Option<String>,
     // name of item
     pub name: Option<String>,
+    // durability data (Crafted Gear)
+    pub durability: Option<Durability>,
     // shiny data
     pub shiny: Option<Shinyjson>,
     pub ids: Option<Vec<Identificationer>>,
@@ -57,7 +59,12 @@ impl TryFrom<&str> for CraftedTypesFr {
         }
     }
 }
-
+#[derive(Deserialize)]
+pub struct Durability {
+    pub effect_strength: Option<u8>,
+    pub dura_cur: i32,
+    pub dura_max: i32
+}
 #[derive(Deserialize)]
 pub struct Shinystruct {
     pub id: u8,

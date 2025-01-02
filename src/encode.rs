@@ -1,6 +1,6 @@
-use crate::jsonstruct::{CraftedTypesFr, FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct};
+use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct};
 use idmangler_lib::types::{Element, ItemType, RollType, Stat};
-use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData};
+use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData, DurabilityData};
 use std::collections::HashMap;
 use crate::errorfr::Errorfr;
 
@@ -30,6 +30,51 @@ pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &st
                 .unwrap()
         }
     }
+    Ok(())
+}
+pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -> Result<(), Errorfr> {
+    let effect_strength_fr: u8; // but actually it should be 0 to 100, not 0 to 255. But i dunno how to use u7 data type.
+    if let Some(effstr) = real_dura.effect_strength {
+        effect_strength_fr = effstr
+    }
+    else {
+        let current_percentage = real_dura.dura_cur / real_dura.dura_max; // percentage of max durability
+        if current_percentage > 100 {
+            return Err(Errorfr::JsonDuraOutOfRange)
+        }
+        if current_percentage >= 50 { // for 100% dura to 50% dura, the effectiveness is 100%
+            effect_strength_fr = 100
+        }
+        else if current_percentage >= 10 { // for 50% dura to 10% dura, the effectiveness is 100% to 50%
+            // see this answer from Stackoverflow for transcribing range
+            // https://stackoverflow.com/a/929107
+
+            // old range is 50-10 = 40
+            let old_range = 40;
+            // new range is 100-50 = 50
+            let new_range = 50;
+            // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+            effect_strength_fr = ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
+        }
+        else if current_percentage >= 0 { // for 10% dura to 0% dura, the effectiveness is 50% to 10%
+            // old range is 10-0 = 10
+            let old_range = 10;
+            // new range is 50-10 = 40
+            let new_range = 40;
+            // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+            effect_strength_fr = ((((current_percentage - 0) * new_range) / old_range) + 10) as u8
+        }
+        else {
+            return Err(Errorfr::JsonDuraOutOfRange)
+        }
+    }
+    DurabilityData {
+        effect_strenght: effect_strength_fr,
+        current: real_dura.dura_cur,
+        max: real_dura.dura_max
+    }
+        .encode(general_params.fr_ver, general_params.fr_out)
+        .unwrap();
     Ok(())
 }
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {

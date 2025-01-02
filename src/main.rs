@@ -160,6 +160,22 @@ fn cook(
         _ => {}
     }
 
+    // ENCODE: DurabilityData (OPTIONAL) (REQUIRED for CraftedGear)
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear => {
+            if let Some(real_dura) = json_config.durability {
+                let resulted = encode_duradata(&mut fr_params, real_dura);
+                if let Err(e) = resulted {
+                    return Err(e)
+                }
+            }
+            else {
+                return Err(Errorfr::JsonNotFoundDura)
+            }
+        },
+        _ => {}
+    }
+
     // ENCODE: PowderData if ItemType is Gear, CraftedGear
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
@@ -185,7 +201,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear => {
             if let Some(shiny) = json_config.shiny {
-                encode_shiny(&mut fr_params, shiny, json_shiny)
+                encode_shinydata(&mut fr_params, shiny, json_shiny)
             }
         }
         _ => {}
