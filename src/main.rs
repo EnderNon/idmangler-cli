@@ -95,10 +95,13 @@ fn main() {
                                     loaded_shinystats,
                                 ) {
                                     println!("{}", e);
-                                };
+                                }
+                                else {
+                                    // final string print
+                                    println!("{}", encode_string(&out))
+                                }
 
-                                // final string print
-                                println!("{}", encode_string(&out));
+
                             }
                             Err(e) => println!("{}", e),
                         }
