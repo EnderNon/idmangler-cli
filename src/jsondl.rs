@@ -1,10 +1,9 @@
-use std::collections::HashMap;
-use std::fs;
-use serde::Deserialize;
 use crate::dl_json;
 use crate::errorfr::Errorfr;
-use crate::jsonstruct::{Shinystruct};
-
+use crate::jsonstruct::Shinystruct;
+use serde::Deserialize;
+use std::collections::HashMap;
+use std::fs;
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
@@ -12,7 +11,7 @@ pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr
         &mut fs::File::open(executable_path.to_owned() + "/id_keys.json")
             .map_err(|_| Errorfr::IDMapJsonMissing)?,
     )
-        .map_err(|_| Errorfr::IDMapJsonCorrupt)
+    .map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
 pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
@@ -20,7 +19,7 @@ pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorf
         &mut fs::File::open(executable_path.to_owned() + "/shiny_stats.json")
             .map_err(|_| Errorfr::ShinyJsonMissing)?,
     )
-        .map_err(|_| Errorfr::ShinyJsonCorrupt)
+    .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
 pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     let jsons = DownloadJsons::from(dlvalue.clone());

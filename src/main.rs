@@ -1,20 +1,17 @@
 #![allow(clippy::single_match)]
 
-use idmangler_lib::{
-    encoding::encode_string,
-    types::TransformVersion,
-};
+use idmangler_lib::{encoding::encode_string, types::TransformVersion};
 
 use std::{collections::HashMap, env, fs, io, path::PathBuf};
 
-mod jsonstruct;
-mod errorfr;
 mod encode;
+mod errorfr;
 mod jsondl;
-use crate::jsonstruct::*;
-use crate::errorfr::Errorfr;
+mod jsonstruct;
 use crate::encode::*;
+use crate::errorfr::Errorfr;
 use crate::jsondl::*;
+use crate::jsonstruct::*;
 
 use clap::Parser;
 use reqwest::Url;
@@ -185,5 +182,3 @@ fn cook(
 
     Ok(())
 }
-
-

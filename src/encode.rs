@@ -1,7 +1,12 @@
-use std::collections::HashMap;
-use idmangler_lib::{DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData};
+use crate::jsonstruct::{
+    FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct,
+};
 use idmangler_lib::types::{Element, ItemType, RollType, Stat};
-use crate::jsonstruct::{FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct};
+use idmangler_lib::{
+    DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData,
+    StartData, TypeData,
+};
+use std::collections::HashMap;
 
 pub fn encode_startdata(general_params: &mut FuncParams) {
     // ENCODE: StartData
@@ -53,8 +58,8 @@ pub fn encode_ids(
         identifications: idvec,
         extended_encoding: true,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 pub fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
     let mut powdervec = Vec::new();
@@ -89,8 +94,8 @@ pub fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>)
         powder_slots: powderlimitfr,
         powders: powdervec,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 pub fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
     if rerollcount != 0 {
@@ -103,7 +108,11 @@ pub fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
         }
     }
 }
-pub fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
+pub fn encode_shiny(
+    general_params: &mut FuncParams,
+    shiny: Shinyjson,
+    json_shiny: Vec<Shinystruct>,
+) {
     let mut realshinykey: u8;
     let _shinykey = &shiny.key;
     let shinyvalue = shiny.value;
@@ -125,8 +134,8 @@ pub fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shin
         id: realshinykey,
         val: shinyvalue,
     }
-        .encode(general_params.fr_ver, general_params.fr_out)
-        .unwrap();
+    .encode(general_params.fr_ver, general_params.fr_out)
+    .unwrap();
 }
 pub fn encode_enddata(general_params: &mut FuncParams) {
     // ENCODE: EndData
