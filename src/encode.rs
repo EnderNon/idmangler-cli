@@ -1,11 +1,6 @@
-use crate::jsonstruct::{
-    FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct,
-};
+use crate::jsonstruct::{CraftedTypesFr, FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct};
 use idmangler_lib::types::{Element, ItemType, RollType, Stat};
-use idmangler_lib::{
-    DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData,
-    StartData, TypeData,
-};
+use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData};
 use std::collections::HashMap;
 
 pub fn encode_startdata(general_params: &mut FuncParams) {
@@ -20,17 +15,28 @@ pub fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTyp
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
+pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &str) {
+    let frfr_type = CraftedTypesFr::try_from(crafted_type);
+    match frfr_type.unwrap() {
+        CraftedTypesFr::Gear(a) => {
+            CustomGearTypeData(a)
+                .encode(general_params.fr_ver, general_params.fr_out)
+                .unwrap()
+        },
+        CraftedTypesFr::Consu(a) => {
+            CustomConsumableTypeData(a)
+                .encode(general_params.fr_ver, general_params.fr_out)
+                .unwrap()
+        }
+    }
+}
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
     NameData(real_name.trim().to_string())
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-pub fn encode_ids(
-    general_params: &mut FuncParams,
-    real_ids: Vec<Identificationer>,
-    idsmap: HashMap<String, u8>,
-) {
+pub fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, idsmap: HashMap<String, u8>) {
     let mut idvec = Vec::new();
     for eachid in real_ids {
         let id_id = idsmap.get(eachid.id.trim());
@@ -108,11 +114,7 @@ pub fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
         }
     }
 }
-pub fn encode_shiny(
-    general_params: &mut FuncParams,
-    shiny: Shinyjson,
-    json_shiny: Vec<Shinystruct>,
-) {
+pub fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
     let mut realshinykey: u8;
     let _shinykey = &shiny.key;
     let shinyvalue = shiny.value;

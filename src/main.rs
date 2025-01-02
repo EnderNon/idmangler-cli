@@ -15,6 +15,7 @@ use crate::jsonstruct::*;
 
 use clap::Parser;
 use reqwest::Url;
+use crate::errorfr::Errorfr::JsonNotFoundCraftedType;
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -123,6 +124,20 @@ fn cook(
     // ENCODE: StartData and TypeData, ALWAYS
     encode_startdata(&mut fr_params);
     encode_typedata(&mut fr_params, json_config.item_type);
+
+    // ENCODE: CustomGearTypeData / CustomConsumableTypeData
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
+            if let Some(real_crafted_type) = json_config.crafted_type {
+                encode_typedata_custom(&mut fr_params, &*real_crafted_type)
+            }
+            else {
+                return Err(JsonNotFoundCraftedType)
+            }
+
+        }
+        _ => {}
+    }
 
     // ENCODE: NameData, if ItemType is Gear, Tome, Charm
     match json_config.item_type {

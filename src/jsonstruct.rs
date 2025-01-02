@@ -2,6 +2,8 @@ use crate::errorfr::Errorfr;
 use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType};
 use serde::Deserialize;
 use std::fs;
+use idmangler_lib::types::{ConsumableType::*,GearType::*};
+use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
 #[derive(Deserialize)]
@@ -19,11 +21,43 @@ pub struct Jsonconfig {
     pub powders: Option<Vec<Powder>>,
     pub rerolls: Option<u8>,
 }
-#[derive(Deserialize)]
-pub enum CraftedType {
+pub enum CraftedTypesFr {
     Gear(GearType),
     Consu(ConsumableType)
 }
+impl TryFrom<&str> for CraftedTypesFr {
+    type Error = Errorfr;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value.to_lowercase().as_str() {
+            // consu types
+            "potion" | "pot" => Ok(Consu(Potion)),
+            "food" | "meal" => Ok(Consu(Food)),
+            "scroll" | "paper" => Ok(Consu(Scroll)),
+            // 5 weapon types
+            "spear" => Ok(Gear(Spear)),
+            "wand" => Ok(Gear(Wand)),
+            "dagger" => Ok(Gear(Dagger)),
+            "bow" => Ok(Gear(Bow)),
+            "relik" => Ok(Gear(Relik)),
+            // 4 armour types
+            "helmet" | "hat" => Ok(Gear(Helmet)),
+            "chestplate" | "shirt" | "chest" | "cp" => Ok(Gear(Chestplate)),
+            "leggings" | "legs" | "pants" => Ok(Gear(Leggings)),
+            "boots" | "shoes" => Ok(Gear(Boots)),
+            // 4 accessory types
+            "ring" => Ok(Gear(Ring)),
+            "bracelet" => Ok(Gear(Bracelet)),
+            "necklace" => Ok(Gear(Necklace)),
+            // General gear types (FALLBACK) (don't use these if not necessary)
+            "weapon" => Ok(Gear(Weapon)),
+            "accessory" => Ok(Gear(Accessory)),
+            // fallback error return
+            _ => Err(Errorfr::JsonInvalidCraftedType)
+        }
+    }
+}
+
 #[derive(Deserialize)]
 pub struct Shinystruct {
     pub id: u8,
@@ -58,10 +92,19 @@ pub struct FuncParams<'a> {
 #[repr(u8)]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
 pub enum ItemTypeDeser {
+    #[serde(alias = "gear")]
     Gear = 0,
+    #[serde(alias = "tome")]
     Tome = 1,
+    #[serde(alias = "charm")]
     Charm = 2,
+    #[serde(alias = "craftedgear")]
+    #[serde(alias = "cgear")]
+    #[serde(alias = "CGear")]
     CraftedGear = 3,
+    #[serde(alias = "craftedconsu")]
+    #[serde(alias = "cconsu")]
+    #[serde(alias = "CConsu")]
     CraftedConsu = 4,
 }
 impl From<ItemTypeDeser> for ItemType {

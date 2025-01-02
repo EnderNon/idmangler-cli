@@ -45,7 +45,15 @@ pub enum Errorfr {
 
     /// Name value was not found in json
     #[error(
-        "Error 3.4: \"name\" field was not found in the json (required for Gear, Tome, Charm)."
+        "Error 4.1: \"name\" field was not found in the json (required for Gear, Tome, Charm)."
     )]
     JsonNotFoundName,
+
+    /// unable to find the crafted_type field
+    #[error("Error 4.2: Invalid \"crafted_type\" field")]
+    JsonNotFoundCraftedType,
+
+    /// invalid crafted_type field
+    #[error("Error 4.3: Invalid \"crafted_type\" field")]
+    JsonInvalidCraftedType,
 }
