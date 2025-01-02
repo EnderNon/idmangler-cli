@@ -44,6 +44,6 @@ pub enum Errorfr {
     JsonDlReqFileWriteFail,
 
     /// Name value was not found in json
-    #[error("Error 3.4: \"Name\" field was not found in the json (required for Gear, Tome, Charm)")]
+    #[error("Error 3.4: \"name\" field was not found in the json (required for Gear, Tome, Charm)")]
     JsonNotFoundName
 }
