@@ -1,13 +1,33 @@
 use crate::errorfr::Errorfr;
-use idmangler_lib::types::{ItemType, TransformVersion};
+use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType};
 use serde::Deserialize;
 use std::fs;
 
 // structs for the json parsing
 #[derive(Deserialize)]
-pub struct Powder {
-    pub r#type: char,
-    pub amount: Option<u8>,
+pub struct Jsonconfig {
+    pub debug: Option<bool>, // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
+    // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
+    pub item_type: ItemTypeDeser,
+    // Crafted type for Crafted item types (
+    pub crafted_type: Option<String>,
+    // name of item
+    pub name: Option<String>,
+    // shiny data
+    pub shiny: Option<Shinyjson>,
+    pub ids: Option<Vec<Identificationer>>,
+    pub powders: Option<Vec<Powder>>,
+    pub rerolls: Option<u8>,
+}
+#[derive(Deserialize)]
+pub enum CraftedType {
+    Gear(GearType),
+    Consu(ConsumableType)
+}
+#[derive(Deserialize)]
+pub struct Shinystruct {
+    pub id: u8,
+    pub key: String,
 }
 #[derive(Deserialize)]
 pub struct Identificationer {
@@ -16,21 +36,11 @@ pub struct Identificationer {
     pub roll: Option<u8>,
 }
 #[derive(Deserialize)]
-pub struct Jsonconfig {
-    pub debug: Option<bool>,
-    pub item_type: ItemTypeDeser,
-    pub name: Option<String>,
-    pub shiny: Option<Shinyjson>,
-    pub ids: Option<Vec<Identificationer>>,
-    pub powders: Option<Vec<Powder>>,
-    pub rerolls: Option<u8>,
+pub struct Powder {
+    pub r#type: char,
+    pub amount: Option<u8>,
 }
 
-#[derive(Deserialize)]
-pub struct Shinystruct {
-    pub id: u8,
-    pub key: String,
-}
 #[derive(Deserialize)]
 pub struct Shinyjson {
     pub key: String,
