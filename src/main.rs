@@ -135,6 +135,9 @@ fn cook(
             if let Some(real_name) = json_config.name {
                 encode_namedata(&mut fr_params, &real_name)
             }
+            else {
+                return Err(Errorfr::JsonNotFoundName)
+            }
         }
         _ => {}
     }

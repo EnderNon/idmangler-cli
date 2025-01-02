@@ -42,4 +42,8 @@ pub enum Errorfr {
     /// unable to copy (write in) file content
     #[error("Error 3.4: Download successful, but unable to write to file.")]
     JsonDlReqFileWriteFail,
+
+    /// Name value was not found in json
+    #[error("Error 3.4: \"Name\" field was not found in the json (required for Gear, Tome, Charm)")]
+    JsonNotFoundName
 }
