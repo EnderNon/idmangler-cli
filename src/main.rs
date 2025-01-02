@@ -3,7 +3,6 @@
 use idmangler_lib::{
     encoding::encode_string,
     types::TransformVersion,
-    DataEncoder
 };
 
 use std::{collections::HashMap, env, fs, io, path::PathBuf};

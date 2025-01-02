@@ -1,5 +1,8 @@
+use std::fs;
 use idmangler_lib::types::{ItemType, TransformVersion};
 use serde::Deserialize;
+use crate::errorfr::Errorfr;
+
 // structs for the json parsing
 #[derive(Deserialize)]
 pub struct Powder {
@@ -63,37 +66,7 @@ impl From<ItemTypeDeser> for ItemType {
     }
 }
 
-// stuff for the bit for downloading data jsons for ease of use
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]
-pub enum DownloadJsons {
-    None,
-    IdKeys,
-    ShinyStats,
-    All,
-}
-impl From<String> for DownloadJsons {
-    fn from(value: String) -> Self {
-        match value.to_lowercase().as_str().trim() {
-            "none" => {
-                println!("download NONE");
-                DownloadJsons::None
-            }
-            "id_keys" | "idkeys" | "idkeys.json" | "id_keys.json" => {
-                println!("download ID_KEYS");
-                DownloadJsons::IdKeys
-            }
-            "shiny_stats" | "shinystats" | "shiny_stats.json" | "shinystats.json" => {
-                println!("download SHINY_STATS");
-                DownloadJsons::ShinyStats
-            }
-            "all" | "everything" | "both" => {
-                println!("download BOTH");
-                DownloadJsons::All
-            }
-            _ => {
-                println!("Could not understand what Jsons to download, sorry.");
-                DownloadJsons::None
-            }
-        }
-    }
+pub fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
+    serde_json5::from_reader(&mut fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?)
+        .map_err(Errorfr::ItemJsonCorrupt)
 }
