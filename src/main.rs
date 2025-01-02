@@ -154,7 +154,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_ids) = json_config.ids {
-                encode_ids(&mut fr_params, real_ids, idsmap)
+                encode_iddata(&mut fr_params, real_ids, idsmap)
             }
         }
         _ => {}
@@ -164,7 +164,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
             if let Some(real_powders) = json_config.powders {
-                encode_powder(&mut fr_params, real_powders)
+                encode_powderdata(&mut fr_params, real_powders)
             }
         }
         _ => {}
@@ -175,7 +175,7 @@ fn cook(
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(rerollcount) = json_config.rerolls {
                 // rerolldata
-                encode_reroll(&mut fr_params, rerollcount)
+                encode_rerolldata(&mut fr_params, rerollcount)
             }
         }
         _ => {}

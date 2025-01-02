@@ -38,7 +38,7 @@ pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-pub fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, idsmap: HashMap<String, u8>) {
+pub fn encode_iddata(general_params: &mut FuncParams, real_ids: Vec<Identificationer>, idsmap: HashMap<String, u8>) {
     let mut idvec = Vec::new();
     for eachid in real_ids {
         let id_id = idsmap.get(eachid.id.trim());
@@ -69,7 +69,7 @@ pub fn encode_ids(general_params: &mut FuncParams, real_ids: Vec<Identificatione
     .encode(general_params.fr_ver, general_params.fr_out)
     .unwrap();
 }
-pub fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
+pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
     let mut powdervec = Vec::new();
     for eachpowder in real_powders {
         let powderamount: u8 = eachpowder.amount.unwrap_or(1);
@@ -105,7 +105,7 @@ pub fn encode_powder(general_params: &mut FuncParams, real_powders: Vec<Powder>)
     .encode(general_params.fr_ver, general_params.fr_out)
     .unwrap();
 }
-pub fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
+pub fn encode_rerolldata(general_params: &mut FuncParams, rerollcount: u8) {
     if rerollcount != 0 {
         // ENCODE: RerollData if applicable
         RerollData(rerollcount)
@@ -116,7 +116,7 @@ pub fn encode_reroll(general_params: &mut FuncParams, rerollcount: u8) {
         }
     }
 }
-pub fn encode_shiny(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
+pub fn encode_shinydata(general_params: &mut FuncParams, shiny: Shinyjson, json_shiny: Vec<Shinystruct>) {
     let mut realshinykey: u8;
     let _shinykey = &shiny.key;
     let shinyvalue = shiny.value;
