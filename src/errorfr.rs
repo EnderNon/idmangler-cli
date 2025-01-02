@@ -50,10 +50,10 @@ pub enum Errorfr {
     JsonNotFoundName,
 
     /// unable to find the crafted_type field
-    #[error("Error 4.2: Invalid \"crafted_type\" field")]
+    #[error("Error 4.2: Missing \"crafted_type\" field")]
     JsonNotFoundCraftedType,
 
     /// invalid crafted_type field
-    #[error("Error 4.3: Invalid \"crafted_type\" field")]
+    #[error("Error 4.3: Invalid \"crafted_type\" value")]
     JsonInvalidCraftedType,
 }

@@ -5,7 +5,7 @@
   ],
   "name":"Singularity",
   "item_type": "craftedgear",
-  "crafted_type": "potiosn",
+  "crafted_type": "potion",
   "shiny": {
     "key": "playersKilled",
     "value": 9223372036854775807

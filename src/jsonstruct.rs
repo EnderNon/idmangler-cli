@@ -31,8 +31,8 @@ impl TryFrom<&str> for CraftedTypesFr {
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value.to_lowercase().as_str() {
             // consu types
-            "potion" | "pot" => Ok(Consu(Potion)),
-            "food" | "meal" => Ok(Consu(Food)),
+            "potion" | "pot" | "potions" => Ok(Consu(Potion)),
+            "food" | "meal" | "foods" | "meals" => Ok(Consu(Food)),
             "scroll" | "paper" => Ok(Consu(Scroll)),
             // 5 weapon types
             "spear" => Ok(Gear(Spear)),
@@ -43,11 +43,11 @@ impl TryFrom<&str> for CraftedTypesFr {
             // 4 armour types
             "helmet" | "hat" => Ok(Gear(Helmet)),
             "chestplate" | "shirt" | "chest" | "cp" => Ok(Gear(Chestplate)),
-            "leggings" | "legs" | "pants" => Ok(Gear(Leggings)),
+            "leggings" | "legs" | "pants" | "trousers" => Ok(Gear(Leggings)),
             "boots" | "shoes" => Ok(Gear(Boots)),
             // 4 accessory types
             "ring" => Ok(Gear(Ring)),
-            "bracelet" => Ok(Gear(Bracelet)),
+            "bracelet" | "brace" => Ok(Gear(Bracelet)),
             "necklace" => Ok(Gear(Necklace)),
             // General gear types (FALLBACK) (don't use these if not necessary)
             "weapon" => Ok(Gear(Weapon)),

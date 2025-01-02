@@ -2,6 +2,7 @@ use crate::jsonstruct::{CraftedTypesFr, FuncParams, Identificationer, ItemTypeDe
 use idmangler_lib::types::{Element, ItemType, RollType, Stat};
 use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData};
 use std::collections::HashMap;
+use crate::errorfr::Errorfr;
 
 pub fn encode_startdata(general_params: &mut FuncParams) {
     // ENCODE: StartData
@@ -15,9 +16,9 @@ pub fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTyp
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
-pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &str) {
-    let frfr_type = CraftedTypesFr::try_from(crafted_type);
-    match frfr_type.unwrap() {
+pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &str) -> Result<(), Errorfr> {
+    let frfr_type = CraftedTypesFr::try_from(crafted_type)?;
+    match frfr_type {
         CraftedTypesFr::Gear(a) => {
             CustomGearTypeData(a)
                 .encode(general_params.fr_ver, general_params.fr_out)
@@ -29,6 +30,7 @@ pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &st
                 .unwrap()
         }
     }
+    Ok(())
 }
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
