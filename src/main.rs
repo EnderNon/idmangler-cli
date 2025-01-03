@@ -165,9 +165,7 @@ fn cook(
         ItemTypeDeser::CraftedGear => {
             if let Some(real_dura) = json_config.durability {
                 let resulted = encode_duradata(&mut fr_params, real_dura);
-                if let Err(e) = resulted {
-                    return Err(e)
-                }
+                resulted?
             }
             else {
                 return Err(Errorfr::JsonNotFoundDura)
