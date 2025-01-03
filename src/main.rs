@@ -164,8 +164,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
             if let Some(real_dura) = json_config.durability {
-                let resulted = encode_duradata(&mut fr_params, real_dura);
-                resulted?
+                encode_duradata(&mut fr_params, real_dura)?;
             }
             else {
                 return Err(Errorfr::JsonNotFoundDura)
