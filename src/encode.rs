@@ -1,4 +1,4 @@
-use crate::jsonstruct::{ClassDeser, CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, RequirementsDeser, Shinyjson, Shinystruct, SkillPointDeser};
+use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::types::{ClassType, Element, ItemType, RollType, SkillType, Stat};
 use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData, DurabilityData};
 use std::collections::HashMap;

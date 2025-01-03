@@ -3,7 +3,6 @@ use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType}
 use serde::Deserialize;
 use std::fs;
 use idmangler_lib::types::{ConsumableType::*,GearType::*, ClassType, SkillType};
-use idmangler_lib::types::Element::Earth;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
