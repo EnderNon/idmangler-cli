@@ -5,12 +5,16 @@ use std::collections::HashMap;
 use crate::errorfr::Errorfr;
 
 pub fn encode_startdata(general_params: &mut FuncParams) {
+    if *general_params.fr_debug_mode {
+        println!("Encoding StartData")
+    }
     // ENCODE: StartData
     StartData(general_params.fr_ver)
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
 }
 pub fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTypeDeser) {
+    println!("Encoding TypeData: {:?}", item_type_deser);
     // ENCODE: TypeData
     TypeData(ItemType::from(item_type_deser))
         .encode(general_params.fr_ver, general_params.fr_out)
@@ -20,11 +24,17 @@ pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &st
     let frfr_type = CraftedTypesFr::try_from(crafted_type)?;
     match frfr_type {
         CraftedTypesFr::Gear(a) => {
+            if *general_params.fr_debug_mode {
+                println!("Encoding CustomTypeData: Gear");
+            }
             CustomGearTypeData(a)
                 .encode(general_params.fr_ver, general_params.fr_out)
                 .unwrap()
         },
         CraftedTypesFr::Consu(a) => {
+            if *general_params.fr_debug_mode {
+                println!("Encoding CustomTypeData: Consumable");
+            }
             CustomConsumableTypeData(a)
                 .encode(general_params.fr_ver, general_params.fr_out)
                 .unwrap()
@@ -35,6 +45,9 @@ pub fn encode_typedata_custom(general_params: &mut FuncParams, crafted_type: &st
 pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -> Result<(), Errorfr> {
     let effect_strength_fr: u8; // but actually it should be 0 to 100, not 0 to 255. But i dunno how to use u7 data type.
     if let Some(effstr) = real_dura.effect_strength {
+        if *general_params.fr_debug_mode {
+            println!("Encoding DurabilityData: Defined");
+        }
         effect_strength_fr = effstr
     }
     else {
@@ -68,6 +81,11 @@ pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -
             return Err(Errorfr::JsonDuraOutOfRange)
         }
     }
+    if *general_params.fr_debug_mode {
+        println!("Encoding DurabilityData.effect_strenght: {}", effect_strength_fr);
+        println!("Encoding DurabilityData.current: {}", real_dura.dura_cur);
+        println!("Encoding DurabilityData.current: {}", real_dura.dura_max);
+    }
     DurabilityData {
         effect_strenght: effect_strength_fr,
         current: real_dura.dura_cur,
@@ -78,11 +96,23 @@ pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -
     Ok(())
 }
 pub fn encode_reqdata(general_params: &mut FuncParams, real_reqdata: RequirementsDeser) {
+    if *general_params.fr_debug_mode {
+        println!("Encoding RequirementData.Level: {:?}", real_reqdata.level.clone())
+    }
     let mut fr_class: Option<ClassType> = None;
     if let Some(actualclass) = real_reqdata.class {
-        fr_class = Some(ClassType::from(actualclass))
+        fr_class = Some(ClassType::from(actualclass));
+        if *general_params.fr_debug_mode {
+            println!("Encoding RequirementData.Class: {:?}", actualclass.clone())
+        }
+    }
+    else if *general_params.fr_debug_mode {
+        println!("Encoding RequirementData.Class: Undefined");
     }
     let spvec: Vec<(SkillType, i32)> = Vec::<(SkillType, i32)>::from(real_reqdata.sp);
+    if *general_params.fr_debug_mode {
+        println!("Encoding RequirementData.Skills: {:?}", spvec.clone())
+    }
     RequirementsData {
         level: real_reqdata.level,
         class: fr_class,
@@ -93,6 +123,9 @@ pub fn encode_reqdata(general_params: &mut FuncParams, real_reqdata: Requirement
 }
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
+    if *general_params.fr_debug_mode {
+        println!("Encoding NameData: {:?}", &real_name)
+    }
     NameData(real_name.trim().to_string())
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
@@ -119,6 +152,9 @@ pub fn encode_iddata(general_params: &mut FuncParams, real_ids: Vec<Identificati
         );
 
         // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
+    }
+    if *general_params.fr_debug_mode {
+        println!("Encoding IdentificationData: {:?}", &idvec)
     }
     // ENCODE: IdentificationsData
     IdentificationData {
@@ -201,6 +237,9 @@ pub fn encode_shinydata(general_params: &mut FuncParams, shiny: Shinyjson, json_
     .unwrap();
 }
 pub fn encode_enddata(general_params: &mut FuncParams) {
+    if *general_params.fr_debug_mode {
+        println!("Encoding EndData")
+    }
     // ENCODE: EndData
     EndData
         .encode(general_params.fr_ver, general_params.fr_out)

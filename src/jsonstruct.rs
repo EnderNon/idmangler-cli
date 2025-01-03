@@ -7,6 +7,7 @@ use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Jsonconfig {
     pub debug: Option<bool>, // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
@@ -30,12 +31,16 @@ pub struct Jsonconfig {
 // Also, changing the SkillPoint stuff into NOT a vec.
 // This avoids confusing end user.
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, Copy)]
 pub struct RequirementsDeser {
     pub level: u8,
     pub class: Option<ClassDeser>,
     pub sp: SkillPointDeser
 }
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, Copy)]
 pub enum ClassDeser {
     Archer,
     Warrior,
@@ -54,7 +59,9 @@ impl From<ClassDeser> for ClassType {
         }
     }
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, Copy)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone)]
 pub struct SkillPointDeser {
     #[serde(alias = "Str")]
     #[serde(alias = "str")]
@@ -99,6 +106,7 @@ impl From<SkillPointDeser> for Vec<(SkillType, i32)> {
         returnedvec
     }
 }
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum CraftedTypesFr {
     Gear(GearType),
     Consu(ConsumableType)
@@ -136,35 +144,41 @@ impl TryFrom<&str> for CraftedTypesFr {
     }
 }
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Durability {
     pub effect_strength: Option<u8>,
     pub dura_cur: i32,
     pub dura_max: i32
 }
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Shinystruct {
     pub id: u8,
     pub key: String,
 }
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Identificationer {
     pub id: String,
     pub base: i32,
     pub roll: Option<u8>,
 }
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Powder {
     pub r#type: char,
     pub amount: Option<u8>,
 }
 
 #[derive(Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Shinyjson {
     pub key: String,
     pub value: i64,
 }
 
 // struct for general parameters for most encode functions
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct FuncParams<'a> {
     pub fr_out: &'a mut Vec<u8>,
     pub fr_debug_mode: &'a bool,
