@@ -62,7 +62,7 @@ pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -
             // new range is 50-10 = 40
             let new_range = 40;
             // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
-            effect_strength_fr = ((((current_percentage - 0) * new_range) / old_range) + 10) as u8
+            effect_strength_fr = ((((current_percentage) * new_range) / old_range) + 10) as u8
         }
         else {
             return Err(Errorfr::JsonDuraOutOfRange)

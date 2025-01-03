@@ -129,7 +129,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_crafted_type) = json_config.crafted_type {
-                return encode_typedata_custom(&mut fr_params, &*real_crafted_type);
+                return encode_typedata_custom(&mut fr_params, &real_crafted_type);
             }
             else {
                 return Err(JsonNotFoundCraftedType)
