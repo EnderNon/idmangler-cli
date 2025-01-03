@@ -58,16 +58,16 @@ pub enum Errorfr {
     JsonInvalidCraftedType,
 
     /// Durability is out of allowed range (0 to 100)
-    #[error("Error 4.4: Durability percentage is out of range (Should be between 0 and 100)")]
+    #[error("Error 4.4: \"durability\" percentage is out of range (Should be between 0 and 100)")]
     JsonDuraOutOfRange,
 
     /// Durability was not found but is necessary
-    #[error("Error 4.5: \"Durability\" was not found (necessary for Crafted Gear item type)")]
+    #[error("Error 4.5: \"durability\" was not found (necessary for Crafted Gear item type)")]
     JsonNotFoundDura,
 
     /// Durability Bad
     #[error(
-        "Error 4.6: \"Requirements\" was not found (necessary for Crafted Gear / Consumable items)"
+        "Error 4.6: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)"
     )]
     JsonNotFoundReqs,
 }
