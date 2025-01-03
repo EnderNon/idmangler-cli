@@ -14,7 +14,9 @@ pub fn encode_startdata(general_params: &mut FuncParams) {
         .unwrap();
 }
 pub fn encode_typedata(general_params: &mut FuncParams, item_type_deser: ItemTypeDeser) {
-    println!("Encoding TypeData: {:?}", item_type_deser);
+    if *general_params.fr_debug_mode {
+        println!("Encoding TypeData: {:?}", item_type_deser);
+    }
     // ENCODE: TypeData
     TypeData(ItemType::from(item_type_deser))
         .encode(general_params.fr_ver, general_params.fr_out)
