@@ -64,8 +64,10 @@ pub enum Errorfr {
     /// Durability was not found but is necessary
     #[error("Error 4.5: \"Durability\" was not found (necessary for Crafted Gear item type)")]
     JsonNotFoundDura,
-    
+
     /// Durability Bad
-    #[error("Error 4.6: \"Requirements\" was not found (necessary for Crafted Gear / Consumable items)")]
-    JsonNotFoundReqs
+    #[error(
+        "Error 4.6: \"Requirements\" was not found (necessary for Crafted Gear / Consumable items)"
+    )]
+    JsonNotFoundReqs,
 }

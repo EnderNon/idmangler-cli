@@ -1,13 +1,12 @@
 use crate::errorfr::Errorfr;
-use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType};
+use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
+use idmangler_lib::types::{ClassType, ConsumableType::*, GearType::*, SkillType};
+use idmangler_lib::types::{ConsumableType, GearType, ItemType, TransformVersion};
 use serde::Deserialize;
 use std::fs;
-use idmangler_lib::types::{ConsumableType::*,GearType::*, ClassType, SkillType};
-use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Jsonconfig {
     pub debug: Option<bool>, // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
@@ -27,26 +26,22 @@ pub struct Jsonconfig {
     pub powders: Option<Vec<Powder>>,
     pub rerolls: Option<u8>,
 }
-// reimplementing this because it doesnt have Deserialize. 
+// reimplementing this because it doesnt have Deserialize.
 // Also, changing the SkillPoint stuff into NOT a vec.
 // This avoids confusing end user.
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-#[derive(Clone, Copy)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
 pub struct RequirementsDeser {
     pub level: u8,
     pub class: Option<ClassDeser>,
-    pub sp: SkillPointDeser
+    pub sp: SkillPointDeser,
 }
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-#[derive(Clone, Copy)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
 pub enum ClassDeser {
     Archer,
     Warrior,
     Assassin,
     Mage,
-    Shaman
+    Shaman,
 }
 impl From<ClassDeser> for ClassType {
     fn from(value: ClassDeser) -> Self {
@@ -55,13 +50,11 @@ impl From<ClassDeser> for ClassType {
             ClassDeser::Warrior => ClassType::Warrior,
             ClassDeser::Assassin => ClassType::Assasin,
             ClassDeser::Mage => ClassType::Mage,
-            ClassDeser::Shaman => ClassType::Shaman
+            ClassDeser::Shaman => ClassType::Shaman,
         }
     }
 }
-#[derive(Deserialize, Copy)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-#[derive(Clone)]
+#[derive(Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct SkillPointDeser {
     #[serde(alias = "Str")]
     #[serde(alias = "str")]
@@ -82,7 +75,7 @@ pub struct SkillPointDeser {
     #[serde(alias = "Agi")]
     #[serde(alias = "agi")]
     #[serde(alias = "agility")]
-    pub agility: Option<i32>
+    pub agility: Option<i32>,
 }
 
 impl From<SkillPointDeser> for Vec<(SkillType, i32)> {
@@ -109,7 +102,7 @@ impl From<SkillPointDeser> for Vec<(SkillType, i32)> {
 #[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum CraftedTypesFr {
     Gear(GearType),
-    Consu(ConsumableType)
+    Consu(ConsumableType),
 }
 impl TryFrom<&str> for CraftedTypesFr {
     type Error = Errorfr;
@@ -139,39 +132,34 @@ impl TryFrom<&str> for CraftedTypesFr {
             "weapon" => Ok(Gear(Weapon)),
             "accessory" => Ok(Gear(Accessory)),
             // fallback error return
-            _ => Err(Errorfr::JsonInvalidCraftedType)
+            _ => Err(Errorfr::JsonInvalidCraftedType),
         }
     }
 }
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Durability {
     pub effect_strength: Option<u8>,
     pub dura_cur: i32,
-    pub dura_max: i32
+    pub dura_max: i32,
 }
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Shinystruct {
     pub id: u8,
     pub key: String,
 }
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Identificationer {
     pub id: String,
     pub base: i32,
     pub roll: Option<u8>,
 }
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Powder {
     pub r#type: char,
     pub amount: Option<u8>,
 }
 
-#[derive(Deserialize)]
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Shinyjson {
     pub key: String,
     pub value: i64,
