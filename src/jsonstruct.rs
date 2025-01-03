@@ -3,6 +3,7 @@ use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType}
 use serde::Deserialize;
 use std::fs;
 use idmangler_lib::types::{ConsumableType::*,GearType::*, ClassType, SkillType};
+use idmangler_lib::types::Element::Earth;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
@@ -31,9 +32,9 @@ pub struct Jsonconfig {
 // This avoids confusing end user.
 #[derive(Deserialize)]
 pub struct RequirementsDeser {
-    level: u8,
-    class: Option<ClassDeser>,
-    sp: SkillPointDeser
+    pub level: u8,
+    pub class: Option<ClassDeser>,
+    pub sp: SkillPointDeser
 }
 #[derive(Deserialize)]
 pub enum ClassDeser {
@@ -43,13 +44,61 @@ pub enum ClassDeser {
     Mage,
     Shaman
 }
+impl From<ClassDeser> for ClassType {
+    fn from(value: ClassDeser) -> Self {
+        match value {
+            ClassDeser::Archer => ClassType::Archer,
+            ClassDeser::Warrior => ClassType::Warrior,
+            ClassDeser::Assassin => ClassType::Assasin,
+            ClassDeser::Mage => ClassType::Mage,
+            ClassDeser::Shaman => ClassType::Shaman
+        }
+    }
+}
 #[derive(Deserialize)]
 pub struct SkillPointDeser {
-    Earth: Option<i32>,
-    Thunder: Option<i32>,
-    Water: Option<i32>,
-    Fire: Option<i32>,
-    Air: Option<i32>
+    #[serde(alias = "Str")]
+    #[serde(alias = "str")]
+    #[serde(alias = "strength")]
+    pub strength: Option<i32>,
+    #[serde(alias = "Dex")]
+    #[serde(alias = "dex")]
+    #[serde(alias = "dexterity")]
+    pub dexterity: Option<i32>,
+    #[serde(alias = "Def")]
+    #[serde(alias = "def")]
+    #[serde(alias = "defense")]
+    pub defense: Option<i32>,
+    #[serde(alias = "Int")]
+    #[serde(alias = "int")]
+    #[serde(alias = "intelligence")]
+    pub intelligence: Option<i32>,
+    #[serde(alias = "Agi")]
+    #[serde(alias = "agi")]
+    #[serde(alias = "agility")]
+    pub agility: Option<i32>
+}
+
+impl From<SkillPointDeser> for Vec<(SkillType, i32)> {
+    fn from(value: SkillPointDeser) -> Self {
+        let mut returnedvec: Vec<(SkillType, i32)> = Vec::new();
+        if let Some(fr_str) = value.strength {
+            returnedvec.push((SkillType::Strength, fr_str))
+        }
+        if let Some(fr_dex) = value.dexterity {
+            returnedvec.push((SkillType::Dexterity, fr_dex))
+        }
+        if let Some(fr_int) = value.intelligence {
+            returnedvec.push((SkillType::Intelligence, fr_int))
+        }
+        if let Some(fr_def) = value.defense {
+            returnedvec.push((SkillType::Defence, fr_def))
+        }
+        if let Some(fr_agi) = value.agility {
+            returnedvec.push((SkillType::Agility, fr_agi))
+        }
+        returnedvec
+    }
 }
 pub enum CraftedTypesFr {
     Gear(GearType),

@@ -160,7 +160,7 @@ fn cook(
         _ => {}
     }
 
-    // ENCODE: DurabilityData (OPTIONAL) (REQUIRED for CraftedGear)
+    // ENCODE: DurabilityData (REQUIRED for CraftedGear)
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
             if let Some(real_dura) = json_config.durability {
@@ -176,7 +176,12 @@ fn cook(
     // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
-            
+            if let Some(real_reqs) = json_config.requirements {
+                encode_reqdata(&mut fr_params, real_reqs)
+            }
+            else {
+                return Err(Errorfr::JsonNotFoundReqs)
+            }
         },
         _ => {}
     }

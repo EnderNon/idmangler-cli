@@ -1,6 +1,6 @@
-use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, RequirementsDeser, Shinyjson, Shinystruct};
-use idmangler_lib::types::{Element, ItemType, RollType, Stat};
-use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData, DurabilityData};
+use crate::jsonstruct::{ClassDeser, CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, RequirementsDeser, Shinyjson, Shinystruct, SkillPointDeser};
+use idmangler_lib::types::{ClassType, Element, ItemType, RollType, SkillType, Stat};
+use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData, DurabilityData};
 use std::collections::HashMap;
 use crate::errorfr::Errorfr;
 
@@ -78,7 +78,18 @@ pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -
     Ok(())
 }
 pub fn encode_reqdata(general_params: &mut FuncParams, real_reqdata: RequirementsDeser) {
-    
+    let mut fr_class: Option<ClassType> = None;
+    if let Some(actualclass) = real_reqdata.class {
+        fr_class = Some(ClassType::from(actualclass))
+    }
+    let spvec: Vec<(SkillType, i32)> = Vec::<(SkillType, i32)>::from(real_reqdata.sp);
+    RequirementsData {
+        level: real_reqdata.level,
+        class: fr_class,
+        skills: spvec
+    }
+        .encode(general_params.fr_ver, general_params.fr_out)
+        .unwrap()
 }
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
