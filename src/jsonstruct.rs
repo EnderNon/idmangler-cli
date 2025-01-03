@@ -2,7 +2,7 @@ use crate::errorfr::Errorfr;
 use idmangler_lib::types::{ItemType, TransformVersion, ConsumableType, GearType};
 use serde::Deserialize;
 use std::fs;
-use idmangler_lib::types::{ConsumableType::*,GearType::*};
+use idmangler_lib::types::{ConsumableType::*,GearType::*, ClassType, SkillType};
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 
 // structs for the json parsing
@@ -17,11 +17,39 @@ pub struct Jsonconfig {
     pub name: Option<String>,
     // durability data (Crafted Gear)
     pub durability: Option<Durability>,
+    // requirements data (Crafted Gear, Crafted
+    pub requirements: Option<RequirementsDeser>,
     // shiny data
     pub shiny: Option<Shinyjson>,
+    // identifications
     pub ids: Option<Vec<Identificationer>>,
     pub powders: Option<Vec<Powder>>,
     pub rerolls: Option<u8>,
+}
+// reimplementing this because it doesnt have Deserialize. 
+// Also, changing the SkillPoint stuff into NOT a vec.
+// This avoids confusing end user.
+#[derive(Deserialize)]
+pub struct RequirementsDeser {
+    level: u8,
+    class: Option<ClassDeser>,
+    sp: SkillPointDeser
+}
+#[derive(Deserialize)]
+pub enum ClassDeser {
+    Archer,
+    Warrior,
+    Assassin,
+    Mage,
+    Shaman
+}
+#[derive(Deserialize)]
+pub struct SkillPointDeser {
+    Earth: Option<i32>,
+    Thunder: Option<i32>,
+    Water: Option<i32>,
+    Fire: Option<i32>,
+    Air: Option<i32>
 }
 pub enum CraftedTypesFr {
     Gear(GearType),

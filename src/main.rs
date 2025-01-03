@@ -173,6 +173,14 @@ fn cook(
         _ => {}
     }
 
+    // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
+            
+        },
+        _ => {}
+    }
+
     // ENCODE: PowderData if ItemType is Gear, CraftedGear
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {

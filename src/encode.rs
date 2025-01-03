@@ -1,4 +1,4 @@
-use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, Shinyjson, Shinystruct};
+use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::types::{Element, ItemType, RollType, Stat};
 use idmangler_lib::{CustomGearTypeData, CustomConsumableTypeData, DataEncoder, EndData, IdentificationData, NameData, PowderData, RerollData, ShinyData, StartData, TypeData, DurabilityData};
 use std::collections::HashMap;
@@ -76,6 +76,9 @@ pub fn encode_duradata(general_params: &mut FuncParams, real_dura: Durability) -
         .encode(general_params.fr_ver, general_params.fr_out)
         .unwrap();
     Ok(())
+}
+pub fn encode_reqdata(general_params: &mut FuncParams, real_reqdata: RequirementsDeser) {
+    
 }
 pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
     // ENCODE: NameData
