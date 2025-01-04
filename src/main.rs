@@ -84,20 +84,20 @@ fn main() {
                                 let loaded_config_borrow = &loaded_config;
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
-                                if let Err(e) = cook(
+                                let cooking = cook(
                                     &mut out,
                                     &debug_mode,
                                     ver,
                                     loaded_config_borrow,
                                     loaded_idkeys,
                                     loaded_shinystats,
-                                ) {
+                                );
+                                if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
                                     // final string print if there is no error
 
-                                    let final_string = encode_string(&out);
-                                    println!("{}", final_string)
+                                    println!("{}",cooking.unwrap())
                                 }
                             }
                             Err(e) => println!("{}", e),
@@ -118,7 +118,7 @@ fn cook(
     json_config: &Jsonconfig,
     idsmap: HashMap<String, u8>,
     json_shiny: Vec<Shinystruct>,
-) -> Result<(), Errorfr> {
+) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
         fr_debug_mode: debug_mode,
@@ -220,7 +220,20 @@ fn cook(
 
     // ENCODE: EndData, ALWAYS
     encode_enddata(&mut fr_params);
-
     
-    Ok(())
+    let mut final_string: String = encode_string(out);
+    
+    // add NameAfter
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
+            if let Some(real_name) = &json_config.name {
+                final_string = format!("{} \"{}\"", final_string, real_name)
+            } else {
+                return Err(Errorfr::JsonNotFoundName);
+            }
+        }
+        _ => {}
+    }
+    
+    Ok(final_string)
 }
