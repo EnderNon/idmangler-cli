@@ -128,7 +128,11 @@ pub fn encode_reqdata(general_params: &mut FuncParams, real_reqdata: Requirement
     } else if *general_params.fr_debug_mode {
         println!("Encoding RequirementData.Class: Undefined");
     }
-    let spvec: Vec<(SkillType, i32)> = Vec::<(SkillType, i32)>::from(real_reqdata.sp);
+    
+    let spvec: Vec<(SkillType, i32)> = match real_reqdata.sp {
+        Some(real_sp) => {Vec::<(SkillType, i32)>::from(real_sp)},
+        None => {Vec::new()}
+    };
     if *general_params.fr_debug_mode {
         println!("Encoding RequirementData.Skills: {:?}", spvec.clone())
     }

@@ -33,7 +33,7 @@ pub struct Jsonconfig {
 pub struct RequirementsDeser {
     pub level: u8,
     pub class: Option<ClassDeser>,
-    pub sp: SkillPointDeser,
+    pub sp: Option<SkillPointDeser>,
 }
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
 pub enum ClassDeser {

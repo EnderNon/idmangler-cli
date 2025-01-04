@@ -79,21 +79,25 @@ fn main() {
 
                                 // create necessary variables
                                 let ver = TransformVersion::Version1;
-
+                                
+                                
+                                let loaded_config_borrow = &loaded_config;
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
                                 if let Err(e) = cook(
                                     &mut out,
                                     &debug_mode,
                                     ver,
-                                    loaded_config,
+                                    loaded_config_borrow,
                                     loaded_idkeys,
                                     loaded_shinystats,
                                 ) {
                                     println!("{}", e); // print error if there is an error
                                 } else {
                                     // final string print if there is no error
-                                    println!("{}", encode_string(&out))
+
+                                    let final_string = encode_string(&out);
+                                    println!("{}", final_string)
                                 }
                             }
                             Err(e) => println!("{}", e),
@@ -111,7 +115,7 @@ fn cook(
     out: &mut Vec<u8>,
     debug_mode: &bool,
     ver: TransformVersion,
-    json_config: Jsonconfig,
+    json_config: &Jsonconfig,
     idsmap: HashMap<String, u8>,
     json_shiny: Vec<Shinystruct>,
 ) -> Result<(), Errorfr> {
@@ -120,7 +124,7 @@ fn cook(
         fr_debug_mode: debug_mode,
         fr_ver: ver,
     };
-
+    
     // ENCODE: StartData and TypeData, ALWAYS
     encode_startdata(&mut fr_params);
     encode_typedata(&mut fr_params, json_config.item_type);
@@ -217,5 +221,6 @@ fn cook(
     // ENCODE: EndData, ALWAYS
     encode_enddata(&mut fr_params);
 
+    
     Ok(())
 }

@@ -5,21 +5,16 @@
   ],
   "name":"Singularity",
   "item_type": "craftedgear",
-  "crafted_type": "potion",
-  "shiny": {
-    "key": "playersKilled",
-    "value": 9223372036854775807
+  "crafted_type": "spear",
+  "requirements": {
+    "level": 69,
+    "class": "Mage"
   },
-  "ids": [
-    {"id": "mainAttackDamage","base": 320,"roll": 69},
-    {"id": "healthRegenRaw", "base":250 , "roll":130  },
-    {"id": "rawDexterity", "base":35 },
-    {"id": "walkSpeed", "base":-40 , "roll":69},
-    {"id": "mainAttackDamage", "base":15, "roll":130 },
-    {"id": "rawMainAttackDamage", "base":444 , "roll":130 },
-    {"id": "rawSpellDamage", "base":222  , "roll":130  },
-    {"id": "spellDamage", "base":10  , "roll":130  }
-  ],
+  "durability": {
+    "effect_strength": 100,
+    "dura_cur": 50,
+    "dura_max": 100
+  },
   "powders": [
     {"type":"E"},
     {"type":"T"},
