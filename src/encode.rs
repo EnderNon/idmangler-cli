@@ -56,7 +56,7 @@ pub fn encode_typedata_custom(
 }
 pub fn encode_duradata(
     general_params: &mut FuncParams,
-    real_dura: Durability,
+    real_dura: &Durability,
 ) -> Result<(), Errorfr> {
     let effect_strength_fr: u8; // but actually it should be 0 to 100, not 0 to 255. But i dunno how to use u7 data type.
     if let Some(effstr) = real_dura.effect_strength {
@@ -155,7 +155,7 @@ pub fn encode_namedata(general_params: &mut FuncParams, real_name: &str) {
 }
 pub fn encode_iddata(
     general_params: &mut FuncParams,
-    real_ids: Vec<Identificationer>,
+    real_ids: &Vec<Identificationer>,
     idsmap: HashMap<String, u8>,
 ) {
     let mut idvec = Vec::new();
@@ -191,7 +191,7 @@ pub fn encode_iddata(
     .encode(general_params.fr_ver, general_params.fr_out)
     .unwrap();
 }
-pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: Vec<Powder>) {
+pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: &Vec<Powder>) {
     let mut powdervec = Vec::new();
     for eachpowder in real_powders {
         let powderamount: u8 = eachpowder.amount.unwrap_or(1);
@@ -240,8 +240,8 @@ pub fn encode_rerolldata(general_params: &mut FuncParams, rerollcount: u8) {
 }
 pub fn encode_shinydata(
     general_params: &mut FuncParams,
-    shiny: Shinyjson,
-    json_shiny: Vec<Shinystruct>,
+    shiny: &Shinyjson,
+    json_shiny: &Vec<Shinystruct>,
 ) {
     let mut realshinykey: u8;
     let _shinykey = &shiny.key;

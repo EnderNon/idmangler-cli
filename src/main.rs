@@ -132,7 +132,7 @@ fn cook(
     // ENCODE: CustomGearTypeData / CustomConsumableTypeData
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
-            if let Some(real_crafted_type) = json_config.crafted_type {
+            if let Some(real_crafted_type) = &json_config.crafted_type {
                 encode_typedata_custom(&mut fr_params, &real_crafted_type)?;
             } else {
                 return Err(JsonNotFoundCraftedType);
@@ -144,7 +144,7 @@ fn cook(
     // ENCODE: NameData, if ItemType is Gear, Tome, Charm
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if let Some(real_name) = json_config.name {
+            if let Some(real_name) = &json_config.name {
                 encode_namedata(&mut fr_params, &real_name)
             } else {
                 return Err(Errorfr::JsonNotFoundName);
@@ -156,7 +156,7 @@ fn cook(
     // ENCODE: IdentificationData
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if let Some(real_ids) = json_config.ids {
+            if let Some(real_ids) = &json_config.ids {
                 encode_iddata(&mut fr_params, real_ids, idsmap)
             }
         }
@@ -166,7 +166,7 @@ fn cook(
     // ENCODE: DurabilityData (REQUIRED for CraftedGear)
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
-            if let Some(real_dura) = json_config.durability {
+            if let Some(real_dura) = &json_config.durability {
                 encode_duradata(&mut fr_params, real_dura)?;
             } else {
                 return Err(Errorfr::JsonNotFoundDura);
@@ -190,7 +190,7 @@ fn cook(
     // ENCODE: PowderData if ItemType is Gear, CraftedGear
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
-            if let Some(real_powders) = json_config.powders {
+            if let Some(real_powders) = &json_config.powders {
                 encode_powderdata(&mut fr_params, real_powders)
             }
         }
@@ -211,8 +211,8 @@ fn cook(
     // ENCODE: ShinyData if ItemType is Gear
     match json_config.item_type {
         ItemTypeDeser::Gear => {
-            if let Some(shiny) = json_config.shiny {
-                encode_shinydata(&mut fr_params, shiny, json_shiny)
+            if let Some(shiny) = &json_config.shiny {
+                encode_shinydata(&mut fr_params, shiny, &json_shiny)
             }
         }
         _ => {}
