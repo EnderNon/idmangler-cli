@@ -1,0 +1,9 @@
+{
+  "READMEFIRST": [
+    "Refer to config.md to understand how to apply the data shown here.",
+    "There are also some values you cannot increase beyond a limit."
+  ],
+  "name":"Assimilator's Tome of Allegiance",
+  "item_type": "tome",
+  "rerolls": 255
+}
