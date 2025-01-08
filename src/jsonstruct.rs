@@ -1,7 +1,7 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::types::{ClassType, ConsumableType::*, GearType::*, SkillType};
-use idmangler_lib::types::{ConsumableType, GearType, ItemType, TransformVersion};
+use idmangler_lib::types::{ClassType, ConsumableType::*, CraftedGearType::*, SkillType};
+use idmangler_lib::types::{ConsumableType, CraftedGearType, ItemType, EncodingVersion};
 use serde::Deserialize;
 use std::fs;
 
@@ -23,7 +23,7 @@ pub struct Jsonconfig {
     pub shiny: Option<Shinyjson>,
     // identifications
     pub ids: Option<Vec<Identificationer>>,
-    pub powders: Option<Vec<Powder>>,
+    pub powders: Option<Vec<PowderFr>>,
     pub rerolls: Option<u8>,
 }
 // reimplementing this because it doesnt have Deserialize.
@@ -99,9 +99,9 @@ impl From<SkillPointDeser> for Vec<(SkillType, i32)> {
         returnedvec
     }
 }
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug)]
 pub enum CraftedTypesFr {
-    Gear(GearType),
+    Gear(CraftedGearType),
     Consu(ConsumableType),
 }
 impl TryFrom<&str> for CraftedTypesFr {
@@ -154,7 +154,7 @@ pub struct Identificationer {
     pub roll: Option<u8>,
 }
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct Powder {
+pub struct PowderFr {
     pub r#type: char,
     pub amount: Option<u8>,
 }
@@ -166,11 +166,11 @@ pub struct Shinyjson {
 }
 
 // struct for general parameters for most encode functions
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug)]
 pub struct FuncParams<'a> {
     pub fr_out: &'a mut Vec<u8>,
     pub fr_debug_mode: &'a bool,
-    pub fr_ver: TransformVersion,
+    pub fr_ver: EncodingVersion,
 }
 
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not

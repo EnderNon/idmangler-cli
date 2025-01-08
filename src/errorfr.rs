@@ -65,9 +65,21 @@ pub enum Errorfr {
     #[error("Error 4.5: \"durability\" was not found (necessary for Crafted Gear item type)")]
     JsonNotFoundDura,
 
-    /// Durability Bad
+    /// Requirements not found but is necessary
     #[error(
         "Error 4.6: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)"
     )]
     JsonNotFoundReqs,
+    
+    /// Unrecognisable Powder tier
+    #[error(
+        "Error 4.7: Unknown powder tier"
+    )]
+    JsonUnknownPowderTier,
+
+    /// Unrecognisable Powder element
+    #[error(
+        "Error 4.8: Unknown powder element"
+    )]
+    JsonUnknownPowderElement,
 }

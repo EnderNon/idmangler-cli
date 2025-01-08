@@ -1,14 +1,17 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::{
-    CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, Powder,
+    CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr,
     RequirementsDeser, Shinyjson, Shinystruct,
 };
-use idmangler_lib::types::{ClassType, Element, ItemType, RollType, SkillType, Stat};
 use idmangler_lib::{
-    CustomConsumableTypeData, CustomGearTypeData, DataEncoder, DurabilityData, EndData,
-    IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData,
-    TypeData,
+    types::{ClassType, Element, ItemType, RollType, SkillType, Stat, Powder},
+    block::{
+        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData,
+        IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData,
+        TypeData,
+    }
 };
+use idmangler_lib::encoding::DataEncoder;
 use std::collections::HashMap;
 
 pub fn encode_startdata(general_params: &mut FuncParams) {
@@ -39,7 +42,7 @@ pub fn encode_typedata_custom(
             if *general_params.fr_debug_mode {
                 println!("Encoding CustomTypeData: Gear");
             }
-            CustomGearTypeData(a)
+            CraftedGearTypeData(a)
                 .encode(general_params.fr_ver, general_params.fr_out)
                 .unwrap()
         }
@@ -47,7 +50,7 @@ pub fn encode_typedata_custom(
             if *general_params.fr_debug_mode {
                 println!("Encoding CustomTypeData: Consumable");
             }
-            CustomConsumableTypeData(a)
+            CraftedConsumableTypeData(a)
                 .encode(general_params.fr_ver, general_params.fr_out)
                 .unwrap()
         }
@@ -191,7 +194,7 @@ pub fn encode_iddata(
     .encode(general_params.fr_ver, general_params.fr_out)
     .unwrap();
 }
-pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: &Vec<Powder>) {
+pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: &Vec<PowderFr>) -> Result<(), Errorfr> {
     let mut powdervec = Vec::new();
     for eachpowder in real_powders {
         let powderamount: u8 = eachpowder.amount.unwrap_or(1);
@@ -203,12 +206,14 @@ pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: &Vec<Pow
                 'w' => Element::Water,
                 'f' => Element::Fire,
                 'a' => Element::Air,
-                _ => Element::Thunder,
+                _ => {return Err(Errorfr::JsonUnknownPowderElement)},
             };
             if *general_params.fr_debug_mode {
                 dbg!(eletype);
             }
-            powdervec.push(Some((eletype, 6))); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
+            powdervec.push(
+                Powder::new(eletype, 6).map_err(|_| Errorfr::JsonUnknownPowderTier)?
+            ); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
         }
     }
     if *general_params.fr_debug_mode {
@@ -226,6 +231,7 @@ pub fn encode_powderdata(general_params: &mut FuncParams, real_powders: &Vec<Pow
     }
     .encode(general_params.fr_ver, general_params.fr_out)
     .unwrap();
+    Ok(())
 }
 pub fn encode_rerolldata(general_params: &mut FuncParams, rerollcount: u8) {
     if rerollcount != 0 {

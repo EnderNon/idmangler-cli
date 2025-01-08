@@ -1,6 +1,6 @@
 #![allow(clippy::single_match)]
 
-use idmangler_lib::{encoding::encode_string, types::TransformVersion};
+use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 
 use std::{collections::HashMap, env, fs, io, path::PathBuf};
 
@@ -78,7 +78,7 @@ fn main() {
                                 let mut out: Vec<u8> = Vec::new();
 
                                 // create necessary variables
-                                let ver = TransformVersion::Version1;
+                                let ver = EncodingVersion::Version1;
                                 
                                 
                                 let loaded_config_borrow = &loaded_config;
@@ -114,7 +114,7 @@ fn main() {
 fn cook(
     out: &mut Vec<u8>,
     debug_mode: &bool,
-    ver: TransformVersion,
+    ver: EncodingVersion,
     json_config: &Jsonconfig,
     idsmap: HashMap<String, u8>,
     json_shiny: Vec<Shinystruct>,
@@ -133,7 +133,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_crafted_type) = &json_config.crafted_type {
-                encode_typedata_custom(&mut fr_params, &real_crafted_type)?;
+                encode_typedata_custom(&mut fr_params, real_crafted_type)?;
             } else {
                 return Err(JsonNotFoundCraftedType);
             }
@@ -145,7 +145,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_name) = &json_config.name {
-                encode_namedata(&mut fr_params, &real_name)
+                encode_namedata(&mut fr_params, real_name)
             } else {
                 return Err(Errorfr::JsonNotFoundName);
             }
@@ -191,7 +191,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
             if let Some(real_powders) = &json_config.powders {
-                encode_powderdata(&mut fr_params, real_powders)
+                encode_powderdata(&mut fr_params, real_powders)?
             }
         }
         _ => {}
