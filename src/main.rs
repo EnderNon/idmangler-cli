@@ -82,14 +82,7 @@ fn main() {
                                 let loaded_config_borrow = &loaded_config;
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
-                                let cooking = cook(
-                                    &mut out,
-                                    &debug_mode,
-                                    ver,
-                                    loaded_config_borrow,
-                                    loaded_idkeys,
-                                    loaded_shinystats,
-                                );
+                                let cooking = cook(&mut out, &debug_mode, ver, loaded_config_borrow, loaded_idkeys, loaded_shinystats);
                                 if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
@@ -110,8 +103,8 @@ fn main() {
 }
 
 fn cook(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig,
-    idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
+    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>,
+    json_shiny: Vec<Shinystruct>,
 ) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,

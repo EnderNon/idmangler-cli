@@ -44,9 +44,7 @@ pub enum Errorfr {
     JsonDlReqFileWriteFail,
 
     /// Name value was not found in json
-    #[error(
-        "Error 4.1: \"name\" field was not found in the json (required for Gear, Tome, Charm)."
-    )]
+    #[error("Error 4.1: \"name\" field was not found in the json (required for Gear, Tome, Charm).")]
     JsonNotFoundName,
 
     /// unable to find the crafted_type field
@@ -66,9 +64,7 @@ pub enum Errorfr {
     JsonNotFoundDura,
 
     /// Requirements not found but is necessary
-    #[error(
-        "Error 4.6: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)"
-    )]
+    #[error("Error 4.6: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)")]
     JsonNotFoundReqs,
 
     /// Unrecognisable Powder tier

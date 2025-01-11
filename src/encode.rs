@@ -1,14 +1,12 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::{
-    CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr,
-    RequirementsDeser, Shinyjson, Shinystruct,
+    CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct,
 };
 use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::{
     block::{
-        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData,
-        IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData,
-        StartData, TypeData,
+        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData,
+        RequirementsData, RerollData, ShinyData, StartData, TypeData,
     },
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
@@ -20,9 +18,7 @@ impl FuncParams<'_> {
             println!("Encoding StartData")
         }
         // ENCODE: StartData
-        StartData(self.fr_ver)
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        StartData(self.fr_ver).encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
     pub fn encode_typedata(&mut self, item_type_deser: ItemTypeDeser) -> Result<(), Errorfr> {
@@ -30,9 +26,7 @@ impl FuncParams<'_> {
             println!("Encoding TypeData: {:?}", item_type_deser);
         }
         // ENCODE: TypeData
-        TypeData(ItemType::from(item_type_deser))
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        TypeData(ItemType::from(item_type_deser)).encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
     pub fn encode_typedata_custom(&mut self, crafted_type: &str) -> Result<(), Errorfr> {
@@ -42,17 +36,13 @@ impl FuncParams<'_> {
                 if *self.fr_debug_mode {
                     println!("Encoding CustomTypeData: Gear");
                 }
-                CraftedGearTypeData(a)
-                    .encode(self.fr_ver, self.fr_out)
-                    .unwrap()
+                CraftedGearTypeData(a).encode(self.fr_ver, self.fr_out).unwrap()
             }
             CraftedTypesFr::Consu(a) => {
                 if *self.fr_debug_mode {
                     println!("Encoding CustomTypeData: Consumable");
                 }
-                CraftedConsumableTypeData(a)
-                    .encode(self.fr_ver, self.fr_out)
-                    .unwrap()
+                CraftedConsumableTypeData(a).encode(self.fr_ver, self.fr_out).unwrap()
             }
         }
         Ok(())
@@ -66,48 +56,44 @@ impl FuncParams<'_> {
             effect_strength_fr = effstr
         } else {
             let current_percentage = real_dura.dura_cur / real_dura.dura_max; // percentage of max durability
-            // see this answer from Stackoverflow for transcribing range
-            // https://stackoverflow.com/a/929107
+                                                                              // see this answer from Stackoverflow for transcribing range
+                                                                              // https://stackoverflow.com/a/929107
             match current_percentage {
                 50..=100 => {
                     // dura more than or equal to 50%
                     // dura less than 100%
                     // effectiveness 100%
                     effect_strength_fr = 100
-                },
+                }
                 10..50 => {
                     // dura more than or equal to 10%
                     // dura less than 50%
                     // effectiveness scales from 100% to 50%
-                    
+
                     // old range is 50-10 = 40
                     let old_range = 40;
                     // new range is 100-50 = 50
                     let new_range = 50;
                     // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
-                    effect_strength_fr =
-                        ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
-                },
+                    effect_strength_fr = ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
+                }
                 0..10 => {
                     // dura more than or equal to 0%
                     // dura less than 10%
                     // effectiveness scales from 50% to 10%
-                    
+
                     // old range is 10-0 = 10
                     let old_range = 10;
                     // new range is 50-10 = 40
                     let new_range = 40;
                     // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
                     effect_strength_fr = ((((current_percentage) * new_range) / old_range) + 10) as u8
-                },
-                _ => return Err(Errorfr::JsonDuraOutOfRange) // only get this if current durability is <0 or >100
+                }
+                _ => return Err(Errorfr::JsonDuraOutOfRange), // only get this if current durability is <0 or >100
             }
         }
         if *self.fr_debug_mode {
-            println!(
-                "Encoding DurabilityData.effect_strenght: {}",
-                effect_strength_fr
-            );
+            println!("Encoding DurabilityData.effect_strenght: {}", effect_strength_fr);
             println!("Encoding DurabilityData.current: {}", real_dura.dura_cur);
             println!("Encoding DurabilityData.current: {}", real_dura.dura_max);
         }
@@ -122,10 +108,7 @@ impl FuncParams<'_> {
     }
     pub fn encode_reqdata(&mut self, real_reqdata: RequirementsDeser) -> Result<(), Errorfr> {
         if *self.fr_debug_mode {
-            println!(
-                "Encoding RequirementData.Level: {:?}",
-                real_reqdata.level.clone()
-            )
+            println!("Encoding RequirementData.Level: {:?}", real_reqdata.level.clone())
         }
         let mut fr_class: Option<ClassType> = None;
         if let Some(actualclass) = real_reqdata.class {
@@ -158,33 +141,27 @@ impl FuncParams<'_> {
         if *self.fr_debug_mode {
             println!("Encoding NameData: {:?}", &real_name)
         }
-        NameData(real_name.trim().to_string())
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        NameData(real_name.trim().to_string()).encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
-    pub fn encode_iddata(
-        &mut self, real_ids: &Vec<Identificationer>, idsmap: HashMap<String, u8>,
-    ) -> Result<(), Errorfr> {
+    pub fn encode_iddata(&mut self, real_ids: &Vec<Identificationer>, idsmap: HashMap<String, u8>) -> Result<(), Errorfr> {
         let mut idvec = Vec::new();
         for eachid in real_ids {
             let id_id = idsmap.get(eachid.id.trim());
             let id_base = eachid.base;
             let id_roll = eachid.roll;
 
-            idvec.push(
-                Stat {
-                    kind: match id_id {
-                        Some(ide) => *ide,
-                        None => std::panic!("There is a mismatched ID, and this message has replaced where the line is meant to be")
-                    },
-                    base: Some(id_base),
-                    roll: match id_roll{
-                        Some(rolle) => RollType::Value(rolle),
-                        None => RollType::PreIdentified
-                    }
-                }
-            );
+            idvec.push(Stat {
+                kind: match id_id {
+                    Some(ide) => *ide,
+                    None => std::panic!("There is a mismatched ID, and this message has replaced where the line is meant to be"),
+                },
+                base: Some(id_base),
+                roll: match id_roll {
+                    Some(rolle) => RollType::Value(rolle),
+                    None => RollType::PreIdentified,
+                },
+            });
 
             // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
         }
@@ -217,8 +194,7 @@ impl FuncParams<'_> {
                 if *self.fr_debug_mode {
                     dbg!(eletype);
                 }
-                powdervec
-                    .push(Powder::new(eletype, 6).map_err(|_| Errorfr::JsonUnknownPowderTier)?);
+                powdervec.push(Powder::new(eletype, 6).map_err(|_| Errorfr::JsonUnknownPowderTier)?);
                 // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
             }
         }
@@ -242,18 +218,14 @@ impl FuncParams<'_> {
     pub fn encode_rerolldata(&mut self, rerollcount: u8) -> Result<(), Errorfr> {
         if rerollcount != 0 {
             // ENCODE: RerollData if applicable
-            RerollData(rerollcount)
-                .encode(self.fr_ver, self.fr_out)
-                .unwrap();
+            RerollData(rerollcount).encode(self.fr_ver, self.fr_out).unwrap();
             if *self.fr_debug_mode {
                 dbg!(rerollcount);
             }
         }
         Ok(())
     }
-    pub fn encode_shinydata(
-        &mut self, shiny: &Shinyjson, json_shiny: &Vec<Shinystruct>,
-    ) -> Result<(), Errorfr> {
+    pub fn encode_shinydata(&mut self, shiny: &Shinyjson, json_shiny: &Vec<Shinystruct>) -> Result<(), Errorfr> {
         let mut realshinykey: u8;
         let _shinykey = &shiny.key;
         let shinyvalue = shiny.value;
