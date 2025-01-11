@@ -1,8 +1,7 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 use idmangler_lib::{
-    block,
-    types::{ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType},
+    types::{ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType, AttackSpeed},
 };
 use serde::Deserialize;
 use std::fs;
@@ -42,14 +41,6 @@ pub struct Jsonconfig {
     #[serde(alias = "Name", alias = "NAME")]
     pub name: Option<String>,
 
-    // durability data (Crafted Gear)
-    #[serde(alias = "Durability", alias = "DURABILITY", alias = "Dura", alias = "DURA")]
-    pub durability: Option<Durability>,
-
-    // requirements data (Crafted)
-    #[serde(alias = "Requirements", alias = "REQUIREMENTS")]
-    pub requirements: Option<RequirementsDeser>,
-
     // shiny data
     #[serde(alias = "Shiny", alias = "SHINY")]
     pub shiny: Option<Shinyjson>,
@@ -65,6 +56,36 @@ pub struct Jsonconfig {
     // rerolls
     #[serde(alias = "Rerolls", alias = "REROLLS", alias = "reroll", alias = "Reroll", alias = "REROLL")]
     pub rerolls: Option<u8>,
+
+    // durability data (Crafted Gear)
+    #[serde(alias = "durability", alias = "Durability", alias = "DURABILITY", alias = "dura", alias = "Dura", alias = "DURA")]
+    pub crafted_durability: Option<Durability>,
+
+    // requirements data (Crafted)
+    #[serde(alias = "requirement", alias = "Requirement", alias = "REQUIREMENT", alias = "requirements", alias = "Requirements", alias = "REQUIREMENTS")]
+    pub crafted_requirements: Option<RequirementsDeser>,
+    
+    // identifications (Crafted)
+    // to be honest i wish there was a better way instead of too many aliases
+    #[serde(
+        alias = "craftedids",
+        alias = "CRAFTED_IDS",
+        alias = "CRAFTEDIDS",
+        alias = "Crafted_Ids",
+        alias = "Crafted_ids",
+        alias = "CraftedIds",
+        alias = "Craftedids",
+        alias = "craftedidentifications",
+        alias = "CRAFTED_IDENTIFICATIONS",
+        alias = "CRAFTEDIDENTIFICATIONS",
+        alias = "Crafted_Identifications",
+        alias = "Crafted_identifications",
+        alias = "CraftedIdentifications",
+        alias = "Craftedidentifications"
+    )]
+    pub crafted_ids: Option<Vec<IdentificationerCrafted>>,
+    
+    pub crafted_damage: Option<DamageDeser>
 }
 // reimplementing this because it doesnt have Deserialize.
 // Also, changing the SkillPoint stuff into NOT a vec.
@@ -184,6 +205,11 @@ pub struct Identificationer {
     pub roll: Option<u8>,
 }
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub struct IdentificationerCrafted {
+    pub name: String,
+    pub max_roll: i32,
+}
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct PowderFr {
     pub r#type: char,
     pub amount: Option<u8>,
@@ -203,6 +229,10 @@ pub struct FuncParams<'a> {
     pub fr_ver: EncodingVersion,
 }
 
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub struct DamageDeser {
+    pub attack_speed: AttackSpeed
+}
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not
 #[repr(u8)]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug, Deserialize)]

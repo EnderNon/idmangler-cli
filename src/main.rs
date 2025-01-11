@@ -11,8 +11,6 @@ mod jsonstruct;
 use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
-
-use crate::errorfr::Errorfr::JsonNotFoundCraftedType;
 use clap::Parser;
 use reqwest::Url;
 
@@ -122,7 +120,7 @@ fn cook(
             if let Some(real_crafted_type) = &json_config.crafted_type {
                 fr_params.encode_typedata_custom(real_crafted_type)?;
             } else {
-                return Err(JsonNotFoundCraftedType);
+                return Err(Errorfr::JsonNotFoundCraftedType);
             }
         }
         _ => {}
@@ -153,7 +151,7 @@ fn cook(
     // ENCODE: DurabilityData (REQUIRED for CraftedGear)
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
-            if let Some(real_dura) = &json_config.durability {
+            if let Some(real_dura) = &json_config.crafted_durability {
                 fr_params.encode_duradata(real_dura)?;
             } else {
                 return Err(Errorfr::JsonNotFoundDura);
@@ -165,7 +163,7 @@ fn cook(
     // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
-            if let Some(real_reqs) = json_config.requirements {
+            if let Some(real_reqs) = json_config.crafted_requirements {
                 fr_params.encode_reqdata(real_reqs)?
             } else {
                 return Err(Errorfr::JsonNotFoundReqs);
