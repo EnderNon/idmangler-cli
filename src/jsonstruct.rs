@@ -9,8 +9,7 @@ use std::fs;
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Jsonconfig {
     // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
-    #[serde(alias = "Debug")]
-    #[serde(alias = "DEBUG")]
+    #[serde(alias = "Debug", alias = "DEBUG")]
     pub debug: Option<bool>, 
     #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
