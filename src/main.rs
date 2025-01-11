@@ -8,7 +8,6 @@ mod encode;
 mod errorfr;
 mod jsondl;
 mod jsonstruct;
-use crate::encode::*;
 use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
@@ -126,14 +125,14 @@ fn cook(
     };
     
     // ENCODE: StartData and TypeData, ALWAYS
-    encode_startdata(&mut fr_params)?;
-    encode_typedata(&mut fr_params, json_config.item_type)?;
+    fr_params.encode_startdata()?;
+    fr_params.encode_typedata(json_config.item_type)?;
 
     // ENCODE: CustomGearTypeData / CustomConsumableTypeData
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_crafted_type) = &json_config.crafted_type {
-                encode_typedata_custom(&mut fr_params, real_crafted_type)?;
+                fr_params.encode_typedata_custom(real_crafted_type)?;
             } else {
                 return Err(JsonNotFoundCraftedType);
             }
@@ -145,7 +144,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_name) = &json_config.name {
-                encode_namedata(&mut fr_params, real_name)?
+                fr_params.encode_namedata(real_name)?
             } else {
                 return Err(Errorfr::JsonNotFoundName);
             }
@@ -157,7 +156,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_ids) = &json_config.ids {
-                encode_iddata(&mut fr_params, real_ids, idsmap)?
+                fr_params.encode_iddata(real_ids, idsmap)?
             }
         }
         _ => {}
@@ -167,7 +166,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
             if let Some(real_dura) = &json_config.durability {
-                encode_duradata(&mut fr_params, real_dura)?;
+                fr_params.encode_duradata(real_dura)?;
             } else {
                 return Err(Errorfr::JsonNotFoundDura);
             }
@@ -179,7 +178,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_reqs) = json_config.requirements {
-                encode_reqdata(&mut fr_params, real_reqs)?
+                fr_params.encode_reqdata(real_reqs)?
             } else {
                 return Err(Errorfr::JsonNotFoundReqs);
             }
@@ -191,7 +190,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::CraftedGear => {
             if let Some(real_powders) = &json_config.powders {
-                encode_powderdata(&mut fr_params, real_powders)?
+                fr_params.encode_powderdata(real_powders)?
             }
         }
         _ => {}
@@ -202,7 +201,7 @@ fn cook(
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(rerollcount) = json_config.rerolls {
                 // rerolldata
-                encode_rerolldata(&mut fr_params, rerollcount)?
+                fr_params.encode_rerolldata(rerollcount)?
             }
         }
         _ => {}
@@ -212,14 +211,14 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear => {
             if let Some(shiny) = &json_config.shiny {
-                encode_shinydata(&mut fr_params, shiny, &json_shiny)?
+                fr_params.encode_shinydata(shiny, &json_shiny)?
             }
         }
         _ => {}
     }
 
     // ENCODE: EndData, ALWAYS
-    encode_enddata(&mut fr_params)?;
+    fr_params.encode_enddata()?;
     
     let mut final_string: String = encode_string(out);
     
