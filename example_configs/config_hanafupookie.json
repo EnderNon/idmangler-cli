@@ -5,10 +5,6 @@
   ],
   "name":"Hanafubuki",
   "item_type": "Gear",
-  "shiny": {
-    "key": "playersKilled",
-    "value": 9223372036854775807
-  },
   "ids": [
     {"id": "3rdSpellCost","base": -25,"roll": 70},
     {"id": "4thSpellCost", "base":-15 , "roll":70  },
@@ -16,10 +12,6 @@
     {"id": "elementalDamage", "base":256 , "roll":130},
     {"id": "jumpHeight", "base":3, "roll":130 },
     {"id": "rawStrength", "base":15}
-  ],
-  "powders": [
-
-
   ],
   "rerolls": 255
 }
