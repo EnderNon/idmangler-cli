@@ -55,9 +55,10 @@ impl FuncParams<'_> {
             }
             effect_strength_fr = effstr
         } else {
-            let current_percentage = real_dura.dura_cur / real_dura.dura_max; // percentage of max durability
-                                                                              // see this answer from Stackoverflow for transcribing range
-                                                                              // https://stackoverflow.com/a/929107
+            // percentage of max durability
+            let current_percentage = real_dura.dura_cur / real_dura.dura_max;
+            // see this answer from Stackoverflow for transcribing range
+            // https://stackoverflow.com/a/929107
             match current_percentage {
                 50..=100 => {
                     // dura more than or equal to 50%
