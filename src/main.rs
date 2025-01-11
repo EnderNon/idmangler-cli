@@ -126,8 +126,8 @@ fn cook(
     };
     
     // ENCODE: StartData and TypeData, ALWAYS
-    encode_startdata(&mut fr_params);
-    encode_typedata(&mut fr_params, json_config.item_type);
+    encode_startdata(&mut fr_params)?;
+    encode_typedata(&mut fr_params, json_config.item_type)?;
 
     // ENCODE: CustomGearTypeData / CustomConsumableTypeData
     match json_config.item_type {
@@ -145,7 +145,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_name) = &json_config.name {
-                encode_namedata(&mut fr_params, real_name)
+                encode_namedata(&mut fr_params, real_name)?
             } else {
                 return Err(Errorfr::JsonNotFoundName);
             }
@@ -157,7 +157,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(real_ids) = &json_config.ids {
-                encode_iddata(&mut fr_params, real_ids, idsmap)
+                encode_iddata(&mut fr_params, real_ids, idsmap)?
             }
         }
         _ => {}
@@ -179,7 +179,7 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_reqs) = json_config.requirements {
-                encode_reqdata(&mut fr_params, real_reqs)
+                encode_reqdata(&mut fr_params, real_reqs)?
             } else {
                 return Err(Errorfr::JsonNotFoundReqs);
             }
@@ -202,7 +202,7 @@ fn cook(
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(rerollcount) = json_config.rerolls {
                 // rerolldata
-                encode_rerolldata(&mut fr_params, rerollcount)
+                encode_rerolldata(&mut fr_params, rerollcount)?
             }
         }
         _ => {}
@@ -212,14 +212,14 @@ fn cook(
     match json_config.item_type {
         ItemTypeDeser::Gear => {
             if let Some(shiny) = &json_config.shiny {
-                encode_shinydata(&mut fr_params, shiny, &json_shiny)
+                encode_shinydata(&mut fr_params, shiny, &json_shiny)?
             }
         }
         _ => {}
     }
 
     // ENCODE: EndData, ALWAYS
-    encode_enddata(&mut fr_params);
+    encode_enddata(&mut fr_params)?;
     
     let mut final_string: String = encode_string(out);
     
