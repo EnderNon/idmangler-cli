@@ -10,7 +10,7 @@ use std::fs;
 pub struct Jsonconfig {
     // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     #[serde(alias = "Debug", alias = "DEBUG")]
-    pub debug: Option<bool>, 
+    pub debug: Option<bool>,
     #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
     pub item_type: ItemTypeDeser,
@@ -34,7 +34,7 @@ pub struct Jsonconfig {
     pub ids: Option<Vec<Identificationer>>,
     #[serde(alias = "Powders", alias = "POWDERS", alias = "powder", alias = "Powder", alias = "POWDER")]
     // powders stuff
-    pub powders: Option<Vec<PowderFr>>, 
+    pub powders: Option<Vec<PowderFr>>,
     #[serde(alias = "Rerolls", alias = "REROLLS", alias = "reroll", alias = "Reroll", alias = "REROLL")]
     pub rerolls: Option<u8>,
 }
@@ -67,15 +67,15 @@ impl From<ClassDeser> for ClassType {
     }
 }
 #[derive(Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
-pub struct SkillPointDeser { 
+pub struct SkillPointDeser {
     #[serde(alias = "Str", alias = "str", alias = "strength")]
-    pub strength: Option<i32>, 
+    pub strength: Option<i32>,
     #[serde(alias = "Dex", alias = "dex", alias = "dexterity")]
-    pub dexterity: Option<i32>, 
+    pub dexterity: Option<i32>,
     #[serde(alias = "Def", alias = "def", alias = "defense")]
-    pub defense: Option<i32>, 
+    pub defense: Option<i32>,
     #[serde(alias = "Int", alias = "int", alias = "intelligence")]
-    pub intelligence: Option<i32>, 
+    pub intelligence: Option<i32>,
     #[serde(alias = "Agi", alias = "agi", alias = "agility")]
     pub agility: Option<i32>,
 }
