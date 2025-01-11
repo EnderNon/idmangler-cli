@@ -8,63 +8,35 @@ use std::fs;
 // structs for the json parsing
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Jsonconfig {
+    // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     #[serde(alias = "Debug")]
-    pub debug: Option<bool>, // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
-    #[serde(alias = "itemtype")]
-    #[serde(alias = "ITEM_TYPE")]
-    #[serde(alias = "ITEMTYPE")]
-    #[serde(alias = "Item_Type")]
-    #[serde(alias = "Item_type")]
-    #[serde(alias = "ItemType")]
-    #[serde(alias = "Itemtype")]
+    #[serde(alias = "DEBUG")]
+    pub debug: Option<bool>, 
+    #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
     pub item_type: ItemTypeDeser,
-    #[serde(alias = "craftedtype")]
-    #[serde(alias = "CRAFTED_TYPE")]
-    #[serde(alias = "CRAFTEDTYPE")]
-    #[serde(alias = "Crafted_Type")]
-    #[serde(alias = "Crafted_type")]
-    #[serde(alias = "CraftedType")]
-    #[serde(alias = "Craftedtype")]
+    #[serde(alias = "craftedtype", alias = "CRAFTED_TYPE", alias = "CRAFTEDTYPE", alias = "Crafted_Type", alias = "Crafted_type", alias = "CraftedType", alias = "Craftedtype")]
     // Crafted type for Crafted item types
     pub crafted_type: Option<String>,
-    #[serde(alias = "Name")]
-    #[serde(alias = "NAME")]
+    #[serde(alias = "Name", alias = "NAME")]
     // name of item
     pub name: Option<String>,
-    #[serde(alias = "Durability")]
-    #[serde(alias = "DURABILITY")]
-    #[serde(alias = "Dura")]
-    #[serde(alias = "DURA")]
+    #[serde(alias = "Durability", alias = "DURABILITY", alias = "Dura", alias = "DURA")]
     // durability data (Crafted Gear)
     pub durability: Option<Durability>,
-    #[serde(alias = "Requirements")]
-    #[serde(alias = "REQUIREMENTS")]
+    #[serde(alias = "Requirements", alias = "REQUIREMENTS")]
     // requirements data (Crafted Gear, Crafted
     pub requirements: Option<RequirementsDeser>,
-    #[serde(alias = "Shiny")]
-    #[serde(alias = "SHINY")]
+    #[serde(alias = "Shiny", alias = "SHINY")]
     // shiny data
     pub shiny: Option<Shinyjson>,
-    #[serde(alias = "Ids")]
-    #[serde(alias = "IDS")]
-    #[serde(alias = "identifications")]
-    #[serde(alias = "Identifications")]
-    #[serde(alias = "IDENTIFICATIONS")]
+    #[serde(alias = "Ids", alias = "IDS", alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
     // identifications
     pub ids: Option<Vec<Identificationer>>,
-    #[serde(alias = "Powders")]
-    #[serde(alias = "POWDERS")]
-    #[serde(alias = "powder")]
-    #[serde(alias = "Powder")]
-    #[serde(alias = "POWDER")]
+    #[serde(alias = "Powders", alias = "POWDERS", alias = "powder", alias = "Powder", alias = "POWDER")]
     // powders stuff
-    pub powders: Option<Vec<PowderFr>>,
-    #[serde(alias = "Rerolls")]
-    #[serde(alias = "REROLLS")]
-    #[serde(alias = "reroll")]
-    #[serde(alias = "Reroll")]
-    #[serde(alias = "REROLL")]
+    pub powders: Option<Vec<PowderFr>>, 
+    #[serde(alias = "Rerolls", alias = "REROLLS", alias = "reroll", alias = "Reroll", alias = "REROLL")]
     pub rerolls: Option<u8>,
 }
 // reimplementing this because it doesnt have Deserialize.
@@ -96,26 +68,16 @@ impl From<ClassDeser> for ClassType {
     }
 }
 #[derive(Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
-pub struct SkillPointDeser {
-    #[serde(alias = "Str")]
-    #[serde(alias = "str")]
-    #[serde(alias = "strength")]
-    pub strength: Option<i32>,
-    #[serde(alias = "Dex")]
-    #[serde(alias = "dex")]
-    #[serde(alias = "dexterity")]
-    pub dexterity: Option<i32>,
-    #[serde(alias = "Def")]
-    #[serde(alias = "def")]
-    #[serde(alias = "defense")]
-    pub defense: Option<i32>,
-    #[serde(alias = "Int")]
-    #[serde(alias = "int")]
-    #[serde(alias = "intelligence")]
-    pub intelligence: Option<i32>,
-    #[serde(alias = "Agi")]
-    #[serde(alias = "agi")]
-    #[serde(alias = "agility")]
+pub struct SkillPointDeser { 
+    #[serde(alias = "Str", alias = "str", alias = "strength")]
+    pub strength: Option<i32>, 
+    #[serde(alias = "Dex", alias = "dex", alias = "dexterity")]
+    pub dexterity: Option<i32>, 
+    #[serde(alias = "Def", alias = "def", alias = "defense")]
+    pub defense: Option<i32>, 
+    #[serde(alias = "Int", alias = "int", alias = "intelligence")]
+    pub intelligence: Option<i32>, 
+    #[serde(alias = "Agi", alias = "agi", alias = "agility")]
     pub agility: Option<i32>,
 }
 
@@ -224,13 +186,9 @@ pub enum ItemTypeDeser {
     Tome = 1,
     #[serde(alias = "charm")]
     Charm = 2,
-    #[serde(alias = "craftedgear")]
-    #[serde(alias = "cgear")]
-    #[serde(alias = "CGear")]
+    #[serde(alias = "craftedgear", alias = "cgear", alias = "CGear")]
     CraftedGear = 3,
-    #[serde(alias = "craftedconsu")]
-    #[serde(alias = "cconsu")]
-    #[serde(alias = "CConsu")]
+    #[serde(alias = "craftedconsu", alias = "cconsu", alias = "CConsu")]
     CraftedConsu = 4,
 }
 impl From<ItemTypeDeser> for ItemType {
