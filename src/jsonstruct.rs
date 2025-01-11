@@ -46,7 +46,7 @@ pub struct Jsonconfig {
     #[serde(alias = "Durability", alias = "DURABILITY", alias = "Dura", alias = "DURA")]
     pub durability: Option<Durability>,
 
-    // requirements data (Crafted Gear, Crafted
+    // requirements data (Crafted)
     #[serde(alias = "Requirements", alias = "REQUIREMENTS")]
     pub requirements: Option<RequirementsDeser>,
 
