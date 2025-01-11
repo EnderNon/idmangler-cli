@@ -1,7 +1,7 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
 use idmangler_lib::types::{ClassType, ConsumableType::*, CraftedGearType::*, SkillType};
-use idmangler_lib::types::{ConsumableType, CraftedGearType, ItemType, EncodingVersion};
+use idmangler_lib::types::{ConsumableType, CraftedGearType, EncodingVersion, ItemType};
 use serde::Deserialize;
 use std::fs;
 

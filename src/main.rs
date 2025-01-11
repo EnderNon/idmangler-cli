@@ -78,8 +78,7 @@ fn main() {
 
                                 // create necessary variables
                                 let ver = EncodingVersion::Version1;
-                                
-                                
+
                                 let loaded_config_borrow = &loaded_config;
                                 // ENCODE: ALotOfStuff
                                 // Also print any mapped errors
@@ -96,7 +95,7 @@ fn main() {
                                 } else {
                                     // final string print if there is no error
 
-                                    println!("{}",cooking.unwrap())
+                                    println!("{}", cooking.unwrap())
                                 }
                             }
                             Err(e) => println!("{}", e),
@@ -123,7 +122,7 @@ fn cook(
         fr_debug_mode: debug_mode,
         fr_ver: ver,
     };
-    
+
     // ENCODE: StartData and TypeData, ALWAYS
     fr_params.encode_startdata()?;
     fr_params.encode_typedata(json_config.item_type)?;
@@ -219,9 +218,9 @@ fn cook(
 
     // ENCODE: EndData, ALWAYS
     fr_params.encode_enddata()?;
-    
+
     let mut final_string: String = encode_string(out);
-    
+
     // add NameAfter
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
@@ -233,6 +232,6 @@ fn cook(
         }
         _ => {}
     }
-    
+
     Ok(final_string)
 }

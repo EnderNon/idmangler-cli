@@ -3,15 +3,15 @@ use crate::jsonstruct::{
     CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr,
     RequirementsDeser, Shinyjson, Shinystruct,
 };
+use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::{
-    types::{ClassType, Element, ItemType, RollType, SkillType, Stat, Powder},
     block::{
         CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData,
-        IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData,
-        TypeData,
-    }
+        IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData,
+        StartData, TypeData,
+    },
+    types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
-use idmangler_lib::encoding::DataEncoder;
 use std::collections::HashMap;
 
 impl FuncParams<'_> {
@@ -76,13 +76,14 @@ impl FuncParams<'_> {
                 // for 50% dura to 10% dura, the effectiveness is 100% to 50%
                 // see this answer from Stackoverflow for transcribing range
                 // https://stackoverflow.com/a/929107
-    
+
                 // old range is 50-10 = 40
                 let old_range = 40;
                 // new range is 100-50 = 50
                 let new_range = 50;
                 // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
-                effect_strength_fr = ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
+                effect_strength_fr =
+                    ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
             } else if current_percentage >= 0 {
                 // for 10% dura to 0% dura, the effectiveness is 50% to 10%
                 // old range is 10-0 = 10
@@ -128,10 +129,10 @@ impl FuncParams<'_> {
         } else if *self.fr_debug_mode {
             println!("Encoding RequirementData.Class: Undefined");
         }
-        
+
         let spvec: Vec<(SkillType, i32)> = match real_reqdata.sp {
-            Some(real_sp) => {Vec::<(SkillType, i32)>::from(real_sp)},
-            None => {Vec::new()}
+            Some(real_sp) => Vec::<(SkillType, i32)>::from(real_sp),
+            None => Vec::new(),
         };
         if *self.fr_debug_mode {
             println!("Encoding RequirementData.Skills: {:?}", spvec.clone())
@@ -155,13 +156,17 @@ impl FuncParams<'_> {
             .unwrap();
         Ok(())
     }
-    pub fn encode_iddata(&mut self, real_ids: &Vec<Identificationer>, idsmap: HashMap<String, u8>) -> Result<(), Errorfr> {
+    pub fn encode_iddata(
+        &mut self,
+        real_ids: &Vec<Identificationer>,
+        idsmap: HashMap<String, u8>,
+    ) -> Result<(), Errorfr> {
         let mut idvec = Vec::new();
         for eachid in real_ids {
             let id_id = idsmap.get(eachid.id.trim());
             let id_base = eachid.base;
             let id_roll = eachid.roll;
-    
+
             idvec.push(
                 Stat {
                     kind: match id_id {
@@ -175,7 +180,7 @@ impl FuncParams<'_> {
                     }
                 }
             );
-    
+
             // println!("{:?} {:?} {:?}",id_id,id_base,id_roll)
         }
         if *self.fr_debug_mode {
@@ -202,22 +207,22 @@ impl FuncParams<'_> {
                     'w' => Element::Water,
                     'f' => Element::Fire,
                     'a' => Element::Air,
-                    _ => {return Err(Errorfr::JsonUnknownPowderElement)},
+                    _ => return Err(Errorfr::JsonUnknownPowderElement),
                 };
                 if *self.fr_debug_mode {
                     dbg!(eletype);
                 }
-                powdervec.push(
-                    Powder::new(eletype, 6).map_err(|_| Errorfr::JsonUnknownPowderTier)?
-                ); // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
+                powdervec
+                    .push(Powder::new(eletype, 6).map_err(|_| Errorfr::JsonUnknownPowderTier)?);
+                // 6 is the tier. Wynntils ONLY really uses tier 6 so theres no point keeping others.
             }
         }
         if *self.fr_debug_mode {
             dbg!(&powdervec);
         }
-    
+
         let powderlimitfr: u8 = powdervec.len() as u8; // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
-    
+
         // ENCODE: PowderData
         // only occurs if the powders array is present and the powder limit is also present
         //
@@ -241,7 +246,11 @@ impl FuncParams<'_> {
         }
         Ok(())
     }
-    pub fn encode_shinydata(&mut self, shiny: &Shinyjson, json_shiny: &Vec<Shinystruct>) -> Result<(), Errorfr> {
+    pub fn encode_shinydata(
+        &mut self,
+        shiny: &Shinyjson,
+        json_shiny: &Vec<Shinystruct>,
+    ) -> Result<(), Errorfr> {
         let mut realshinykey: u8;
         let _shinykey = &shiny.key;
         let shinyvalue = shiny.value;
@@ -272,9 +281,7 @@ impl FuncParams<'_> {
             println!("Encoding EndData")
         }
         // ENCODE: EndData
-        EndData
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        EndData.encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
 }
