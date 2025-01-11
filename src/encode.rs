@@ -66,34 +66,41 @@ impl FuncParams<'_> {
             effect_strength_fr = effstr
         } else {
             let current_percentage = real_dura.dura_cur / real_dura.dura_max; // percentage of max durability
-            if current_percentage > 100 {
-                return Err(Errorfr::JsonDuraOutOfRange);
-            }
-            if current_percentage >= 50 {
-                // for 100% dura to 50% dura, the effectiveness is 100%
-                effect_strength_fr = 100
-            } else if current_percentage >= 10 {
-                // for 50% dura to 10% dura, the effectiveness is 100% to 50%
-                // see this answer from Stackoverflow for transcribing range
-                // https://stackoverflow.com/a/929107
-
-                // old range is 50-10 = 40
-                let old_range = 40;
-                // new range is 100-50 = 50
-                let new_range = 50;
-                // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
-                effect_strength_fr =
-                    ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
-            } else if current_percentage >= 0 {
-                // for 10% dura to 0% dura, the effectiveness is 50% to 10%
-                // old range is 10-0 = 10
-                let old_range = 10;
-                // new range is 50-10 = 40
-                let new_range = 40;
-                // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
-                effect_strength_fr = ((((current_percentage) * new_range) / old_range) + 10) as u8
-            } else {
-                return Err(Errorfr::JsonDuraOutOfRange);
+            // see this answer from Stackoverflow for transcribing range
+            // https://stackoverflow.com/a/929107
+            match current_percentage {
+                50..=100 => {
+                    // dura more than or equal to 50%
+                    // dura less than 100%
+                    // effectiveness 100%
+                    effect_strength_fr = 100
+                },
+                10..50 => {
+                    // dura more than or equal to 10%
+                    // dura less than 50%
+                    // effectiveness scales from 100% to 50%
+                    
+                    // old range is 50-10 = 40
+                    let old_range = 40;
+                    // new range is 100-50 = 50
+                    let new_range = 50;
+                    // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+                    effect_strength_fr =
+                        ((((current_percentage - 10) * new_range) / old_range) + 50) as u8
+                },
+                0..10 => {
+                    // dura more than or equal to 0%
+                    // dura less than 10%
+                    // effectiveness scales from 50% to 10%
+                    
+                    // old range is 10-0 = 10
+                    let old_range = 10;
+                    // new range is 50-10 = 40
+                    let new_range = 40;
+                    // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+                    effect_strength_fr = ((((current_percentage) * new_range) / old_range) + 10) as u8
+                },
+                _ => return Err(Errorfr::JsonDuraOutOfRange) // only get this if current durability is <0 or >100
             }
         }
         if *self.fr_debug_mode {
