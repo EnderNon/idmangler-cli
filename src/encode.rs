@@ -260,4 +260,8 @@ impl FuncParams<'_> {
         EndData.encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
+    pub fn encode_damagedata(&mut self) -> Result<(), Errorfr> {
+        
+        Ok(())
+    }
 }

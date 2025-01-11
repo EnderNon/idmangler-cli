@@ -210,7 +210,7 @@ fn cook(
 
     let mut final_string: String = encode_string(out);
 
-    // add NameAfter
+    // add NameAfter. not actually an encode.
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_name) = &json_config.name {
