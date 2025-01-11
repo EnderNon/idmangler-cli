@@ -157,9 +157,7 @@ impl FuncParams<'_> {
         Ok(())
     }
     pub fn encode_iddata(
-        &mut self,
-        real_ids: &Vec<Identificationer>,
-        idsmap: HashMap<String, u8>,
+        &mut self, real_ids: &Vec<Identificationer>, idsmap: HashMap<String, u8>,
     ) -> Result<(), Errorfr> {
         let mut idvec = Vec::new();
         for eachid in real_ids {
@@ -247,9 +245,7 @@ impl FuncParams<'_> {
         Ok(())
     }
     pub fn encode_shinydata(
-        &mut self,
-        shiny: &Shinyjson,
-        json_shiny: &Vec<Shinystruct>,
+        &mut self, shiny: &Shinyjson, json_shiny: &Vec<Shinystruct>,
     ) -> Result<(), Errorfr> {
         let mut realshinykey: u8;
         let _shinykey = &shiny.key;
