@@ -8,22 +8,63 @@ use std::fs;
 // structs for the json parsing
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Jsonconfig {
+    #[serde(alias = "Debug")]
     pub debug: Option<bool>, // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
+    #[serde(alias = "itemtype")]
+    #[serde(alias = "ITEM_TYPE")]
+    #[serde(alias = "ITEMTYPE")]
+    #[serde(alias = "Item_Type")]
+    #[serde(alias = "Item_type")]
+    #[serde(alias = "ItemType")]
+    #[serde(alias = "Itemtype")]
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
     pub item_type: ItemTypeDeser,
-    // Crafted type for Crafted item types (
+    #[serde(alias = "craftedtype")]
+    #[serde(alias = "CRAFTED_TYPE")]
+    #[serde(alias = "CRAFTEDTYPE")]
+    #[serde(alias = "Crafted_Type")]
+    #[serde(alias = "Crafted_type")]
+    #[serde(alias = "CraftedType")]
+    #[serde(alias = "Craftedtype")]
+    // Crafted type for Crafted item types
     pub crafted_type: Option<String>,
+    #[serde(alias = "Name")]
+    #[serde(alias = "NAME")]
     // name of item
     pub name: Option<String>,
+    #[serde(alias = "Durability")]
+    #[serde(alias = "DURABILITY")]
+    #[serde(alias = "Dura")]
+    #[serde(alias = "DURA")]
     // durability data (Crafted Gear)
     pub durability: Option<Durability>,
+    #[serde(alias = "Requirements")]
+    #[serde(alias = "REQUIREMENTS")]
     // requirements data (Crafted Gear, Crafted
     pub requirements: Option<RequirementsDeser>,
+    #[serde(alias = "Shiny")]
+    #[serde(alias = "SHINY")]
     // shiny data
     pub shiny: Option<Shinyjson>,
+    #[serde(alias = "Ids")]
+    #[serde(alias = "IDS")]
+    #[serde(alias = "identifications")]
+    #[serde(alias = "Identifications")]
+    #[serde(alias = "IDENTIFICATIONS")]
     // identifications
     pub ids: Option<Vec<Identificationer>>,
+    #[serde(alias = "Powders")]
+    #[serde(alias = "POWDERS")]
+    #[serde(alias = "powder")]
+    #[serde(alias = "Powder")]
+    #[serde(alias = "POWDER")]
+    // powders stuff
     pub powders: Option<Vec<PowderFr>>,
+    #[serde(alias = "Rerolls")]
+    #[serde(alias = "REROLLS")]
+    #[serde(alias = "reroll")]
+    #[serde(alias = "Reroll")]
+    #[serde(alias = "REROLL")]
     pub rerolls: Option<u8>,
 }
 // reimplementing this because it doesnt have Deserialize.
