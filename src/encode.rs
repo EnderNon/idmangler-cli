@@ -261,7 +261,6 @@ impl FuncParams<'_> {
         Ok(())
     }
     pub fn encode_damagedata(&mut self) -> Result<(), Errorfr> {
-        
         Ok(())
     }
 }

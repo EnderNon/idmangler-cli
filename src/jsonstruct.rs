@@ -1,7 +1,9 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::types::{ClassType, ConsumableType::*, CraftedGearType::*, SkillType};
-use idmangler_lib::types::{ConsumableType, CraftedGearType, EncodingVersion, ItemType};
+use idmangler_lib::{
+    block,
+    types::{ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType},
+};
 use serde::Deserialize;
 use std::fs;
 
@@ -11,30 +13,56 @@ pub struct Jsonconfig {
     // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     #[serde(alias = "Debug", alias = "DEBUG")]
     pub debug: Option<bool>,
-    #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
+
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
+    #[serde(
+        alias = "itemtype",
+        alias = "ITEM_TYPE",
+        alias = "ITEMTYPE",
+        alias = "Item_Type",
+        alias = "Item_type",
+        alias = "ItemType",
+        alias = "Itemtype"
+    )]
     pub item_type: ItemTypeDeser,
-    #[serde(alias = "craftedtype", alias = "CRAFTED_TYPE", alias = "CRAFTEDTYPE", alias = "Crafted_Type", alias = "Crafted_type", alias = "CraftedType", alias = "Craftedtype")]
+
     // Crafted type for Crafted item types
+    #[serde(
+        alias = "craftedtype",
+        alias = "CRAFTED_TYPE",
+        alias = "CRAFTEDTYPE",
+        alias = "Crafted_Type",
+        alias = "Crafted_type",
+        alias = "CraftedType",
+        alias = "Craftedtype"
+    )]
     pub crafted_type: Option<String>,
-    #[serde(alias = "Name", alias = "NAME")]
+
     // name of item
+    #[serde(alias = "Name", alias = "NAME")]
     pub name: Option<String>,
-    #[serde(alias = "Durability", alias = "DURABILITY", alias = "Dura", alias = "DURA")]
+
     // durability data (Crafted Gear)
+    #[serde(alias = "Durability", alias = "DURABILITY", alias = "Dura", alias = "DURA")]
     pub durability: Option<Durability>,
-    #[serde(alias = "Requirements", alias = "REQUIREMENTS")]
+
     // requirements data (Crafted Gear, Crafted
+    #[serde(alias = "Requirements", alias = "REQUIREMENTS")]
     pub requirements: Option<RequirementsDeser>,
-    #[serde(alias = "Shiny", alias = "SHINY")]
+
     // shiny data
+    #[serde(alias = "Shiny", alias = "SHINY")]
     pub shiny: Option<Shinyjson>,
-    #[serde(alias = "Ids", alias = "IDS", alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
+
     // identifications
+    #[serde(alias = "Ids", alias = "IDS", alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
     pub ids: Option<Vec<Identificationer>>,
-    #[serde(alias = "Powders", alias = "POWDERS", alias = "powder", alias = "Powder", alias = "POWDER")]
+
     // powders stuff
+    #[serde(alias = "Powders", alias = "POWDERS", alias = "powder", alias = "Powder", alias = "POWDER")]
     pub powders: Option<Vec<PowderFr>>,
+
+    // rerolls
     #[serde(alias = "Rerolls", alias = "REROLLS", alias = "reroll", alias = "Reroll", alias = "REROLL")]
     pub rerolls: Option<u8>,
 }
