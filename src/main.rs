@@ -13,6 +13,7 @@ use clap::Parser;
 use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 use reqwest::Url;
 use std::{collections::HashMap, env, fs, io, path::PathBuf};
+use std::io::Write;
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -41,7 +42,7 @@ fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
     let savepath = savename.to_string();
     println!("Downloading file to {savepath}");
     let mut out = fs::File::create(savepath).map_err(|_| Errorfr::JsonDlReqFileCreateFail)?;
-    io::copy(&mut body.as_bytes(), &mut out).map_err(|_| Errorfr::JsonDlReqFileWriteFail)?;
+    out.write_all(body.as_bytes()).map_err(|_| Errorfr::JsonDlReqFileWriteFail)?;
     Ok(())
 }
 

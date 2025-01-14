@@ -16,8 +16,8 @@ pub enum Errorfr {
     IDMapJsonMissing,
 
     /// idmap is corrupt
-    #[error("Error 2.2: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download All\".")]
-    IDMapJsonCorrupt,
+    #[error("Error 2.2: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download All\".\n{0}")]
+    IDMapJsonCorrupt(serde_json::Error),
 
     /// shiny data json is missing
     #[error("Error 2.3: shiny_stats.json is missing. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
@@ -33,10 +33,18 @@ pub enum Errorfr {
 
     /// gear data json is corrupt
     #[error("Error 2.6: gear.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".\n{0:?}")]
-    GearJsonCorrupt(serde_json5::Error),
+    GearJsonCorrupt(serde_json::Error),
+
+    /// gear json is missing
+    #[error("Error 2.7: gear_cache.json is missing. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
+    GearJsonCacheMissing,
+
+    /// gear data json is corrupt
+    #[error("Error 2.8: gear_cache.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".\n{0:?}")]
+    GearJsonCacheCorrupt(serde_json::Error),
 
     /// gear data json cache could not be created
-    #[error("Error 2.7: unable to create file gear_cache.json.")]
+    #[error("Error 2.8: unable to create file gear_cache.json.")]
     GearJsonCacheCreateFail,
     
 

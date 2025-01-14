@@ -1,38 +1,41 @@
-use crate::dl_json;
-use crate::errorfr::Errorfr;
-use crate::gearjson;
-use crate::jsonstruct::Shinystruct;
+use crate::{dl_json,
+    errorfr::Errorfr,
+    gearjson,
+    jsonstruct::Shinystruct
+};
 use serde::Deserialize;
-use std::collections::HashMap;
-use std::{fs, io};
-use std::io::Write;
+use std::{
+    collections::HashMap,
+    fs,
+    io::{BufReader, Write}
+};
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
-    serde_json5::from_reader(
+    serde_json::from_reader(&mut BufReader::new(
         &mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json")
-        .map_err(|_| Errorfr::IDMapJsonMissing)?)
-        .map_err(|_| Errorfr::IDMapJsonCorrupt)
+            .map_err(|_| Errorfr::IDMapJsonMissing)?))
+        .map_err(Errorfr::IDMapJsonCorrupt)
 }
 pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
-    serde_json5::from_reader(
-        &mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json")
-        .map_err(|_| Errorfr::ShinyJsonMissing)?)
+    serde_json::from_reader(&mut BufReader::new(
+        fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json")
+            .map_err(|_| Errorfr::ShinyJsonMissing)?))
         .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // gear.json (ONLY FOR DL gear.json)
-    serde_json5::from_reader(
-        &mut fs::File::open(executable_path.to_owned() + "/data/gear.json")
-        .map_err(|_| Errorfr::GearJsonMissing)?)
-        .map_err(Errorfr::GearJsonCorrupt)
+    serde_json::from_reader(&mut BufReader::new(
+        fs::File::open(executable_path.to_owned() + "/data/gear.json")
+            .map_err(|_| Errorfr::GearJsonMissing)?))
+        .map_err(Errorfr::GearJsonCacheCorrupt)
 }
 pub fn load_gear_cache(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // gear_cache.json (ONLY FOR PERFECT ITEM FUNCTION GEN)
-    serde_json5::from_reader(
-        &mut fs::File::open(executable_path.to_owned() + "/data/gear_cache.json")
-            .map_err(|_| Errorfr::GearJsonMissing)?)
+    serde_json::from_reader(&mut BufReader::new(
+        fs::File::open(executable_path.to_owned() + "/data/gear_cache.json")
+            .map_err(|_| Errorfr::GearJsonCacheMissing)?))
         .map_err(Errorfr::GearJsonCorrupt)
 }
 
