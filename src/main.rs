@@ -156,7 +156,7 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config:
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if namefr != *"" {
-                println!("cool tree");
+                println!("Overriding IDs with perfect ones!");
                 let fr_gear = load_gear_cache(executable_path)?;
             }
             else if let Some(real_ids) = &json_config.ids {

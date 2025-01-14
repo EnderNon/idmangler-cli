@@ -78,11 +78,8 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
                     &load_gear(executable_path)
                         .unwrap()
                 ).unwrap();
-                println!("loaded frfrnocap");
                 let mut outer = fs::File::create(format!("{}{}",executable_path, "/data/gear_cache.json")).map_err(|_| Errorfr::GearJsonCacheCreateFail).unwrap();
-                println!("created outer");
                 outer.write_all(&frfrnocap).unwrap();
-                println!("written outer")
             }
         }
     }
