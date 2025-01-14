@@ -1,12 +1,10 @@
 use crate::errorfr::Errorfr;
-use crate::jsonstruct::{
-    CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct,
-};
+use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::{
     block::{
-        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData,
-        RequirementsData, RerollData, ShinyData, StartData, TypeData,
+        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData,
+        ShinyData, StartData, TypeData,
     },
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };

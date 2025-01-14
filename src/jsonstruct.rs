@@ -1,7 +1,7 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::{
-    types::{ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType, AttackSpeed},
+use idmangler_lib::types::{
+    AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType,
 };
 use serde::Deserialize;
 use std::fs;
@@ -64,7 +64,7 @@ pub struct Jsonconfig {
     // requirements data (Crafted)
     #[serde(alias = "requirement", alias = "Requirement", alias = "REQUIREMENT", alias = "requirements", alias = "Requirements", alias = "REQUIREMENTS")]
     pub crafted_requirements: Option<RequirementsDeser>,
-    
+
     // identifications (Crafted)
     // to be honest i wish there was a better way instead of too many aliases
     #[serde(
@@ -84,8 +84,8 @@ pub struct Jsonconfig {
         alias = "Craftedidentifications"
     )]
     pub crafted_ids: Option<Vec<IdentificationerCrafted>>,
-    
-    pub crafted_damage: Option<DamageDeser>
+
+    pub crafted_damage: Option<DamageDeser>,
 }
 // reimplementing this because it doesnt have Deserialize.
 // Also, changing the SkillPoint stuff into NOT a vec.
@@ -231,7 +231,7 @@ pub struct FuncParams<'a> {
 
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct DamageDeser {
-    pub attack_speed: AttackSpeed
+    pub attack_speed: AttackSpeed,
 }
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not
 #[repr(u8)]

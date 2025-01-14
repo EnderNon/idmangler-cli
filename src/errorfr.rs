@@ -28,11 +28,15 @@ pub enum Errorfr {
     ShinyJsonCorrupt,
 
     /// gear json is missing
-    #[error("Error 2.3: gear.json is missing. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
+    #[error(
+        "Error 2.3: gear.json is missing. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\"."
+    )]
     GearJsonMissing,
 
     /// shiny data json is corrupt
-    #[error("Error 2.4: gear.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
+    #[error(
+        "Error 2.4: gear.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\"."
+    )]
     GearJsonCorrupt,
 
     /// could not download the file

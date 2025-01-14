@@ -1,20 +1,18 @@
 #![allow(clippy::single_match)]
 #![allow(non_camel_case_types, non_snake_case)]
 
-
 mod encode;
 mod errorfr;
+mod gearjson;
 mod jsondl;
 mod jsonstruct;
-mod gearjson;
-use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
-use std::{collections::HashMap, env, fs, io, path::PathBuf};
-use clap::Parser;
-use reqwest::Url;
 use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
-
+use clap::Parser;
+use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
+use reqwest::Url;
+use std::{collections::HashMap, env, fs, io, path::PathBuf};
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -30,14 +28,14 @@ struct Args {
     /// Download jsons (for ease of use)
     #[arg(short, long)]
     download: Option<String>,
-   
+
     /// Function to generate perfect value items
     #[arg(long)]
-    perfect: Option<String>
+    perfect: Option<String>,
 }
 pub enum PerfectStatus {
     None,
-    Some(String)
+    Some(String),
 }
 
 fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
@@ -92,7 +90,7 @@ fn main() {
                                 if let Some(t1) = args.perfect {
                                     loaded_config_borrow.name = Some(t1)
                                 }
-                                
+
                                 // ENCODE: A Lot Of Stuff
                                 // Also print any mapped errors
                                 let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_borrow, loaded_idkeys, loaded_shinystats);
@@ -115,8 +113,7 @@ fn main() {
 }
 
 fn cook(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>,
-    json_shiny: Vec<Shinystruct>,
+    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
 ) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
@@ -238,8 +235,7 @@ fn cook(
 }
 
 fn cook_perfect(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>,
-    json_shiny: Vec<Shinystruct>,
+    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
 ) -> Result<String, Errorfr> {
     Ok("fr".parse().unwrap())
 }

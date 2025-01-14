@@ -1,6 +1,6 @@
 use crate::dl_json;
-use crate::gearjson;
 use crate::errorfr::Errorfr;
+use crate::gearjson;
 use crate::jsonstruct::Shinystruct;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -19,9 +19,10 @@ pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorf
 
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // shiny_stats.json
-    let a: Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> = serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?)
-        .map_err(|_| Errorfr::GearJsonCorrupt);
-    
+    let a: Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> =
+        serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?)
+            .map_err(|_| Errorfr::GearJsonCorrupt);
+
     a
 }
 pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
@@ -29,13 +30,13 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     if let Err(e) = fs::create_dir_all(format!("{}{}", executable_path, "/data/")) {
         println!("Unable to create path. Path: {} ", e)
     }
-    
+
     if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
         if let Err(e) = dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json"
                 .parse()
                 .unwrap(),
-            format!("{}{}", executable_path, "/data/shiny_stats.json")
+            format!("{}{}", executable_path, "/data/shiny_stats.json"),
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
@@ -46,7 +47,7 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json"
                 .parse()
                 .unwrap(),
-            format!("{}{}", executable_path, "/data/id_keys.json")
+            format!("{}{}", executable_path, "/data/id_keys.json"),
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
@@ -57,7 +58,7 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json"
                 .parse()
                 .unwrap(),
-            format!("{}{}", executable_path, "/data/gear.json")
+            format!("{}{}", executable_path, "/data/gear.json"),
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
@@ -104,4 +105,3 @@ impl From<String> for DownloadJsons {
         }
     }
 }
-
