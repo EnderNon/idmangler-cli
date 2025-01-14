@@ -1,21 +1,20 @@
 #![allow(clippy::single_match)]
 #![allow(non_camel_case_types, non_snake_case)]
 
-use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
-
-use std::{collections::HashMap, env, fs, io, path::PathBuf};
 
 mod encode;
 mod errorfr;
 mod jsondl;
 mod jsonstruct;
 mod gearjson;
-
+use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
+use std::{collections::HashMap, env, fs, io, path::PathBuf};
+use clap::Parser;
+use reqwest::Url;
 use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
-use clap::Parser;
-use reqwest::Url;
+
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -96,7 +95,7 @@ fn main() {
                                 
                                 // ENCODE: A Lot Of Stuff
                                 // Also print any mapped errors
-                                let cooking = cook(&mut out, &debug_mode, ver, &loaded_config_borrow, loaded_idkeys, loaded_shinystats);
+                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_borrow, loaded_idkeys, loaded_shinystats);
                                 if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
@@ -116,7 +115,7 @@ fn main() {
 }
 
 fn cook(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>,
+    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>,
     json_shiny: Vec<Shinystruct>,
 ) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
@@ -236,4 +235,11 @@ fn cook(
     }
 
     Ok(final_string)
+}
+
+fn cook_perfect(
+    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>,
+    json_shiny: Vec<Shinystruct>,
+) -> Result<String, Errorfr> {
+    Ok("fr".parse().unwrap())
 }
