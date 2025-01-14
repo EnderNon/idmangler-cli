@@ -85,15 +85,16 @@ fn main() {
                                 // create necessary variables
                                 let ver = EncodingVersion::Version1;
 
-                                let mut loaded_config_borrow = loaded_config.clone();
-                                // check if perfect status
+                                let mut loaded_config_clone = loaded_config.clone();
+                                // check if perfect status and change name if so. otherwise blank yep
+                                let mut namefr: String = "".to_string();
                                 if let Some(t1) = args.perfect {
-                                    loaded_config_borrow.name = Some(t1)
+                                    namefr = t1
                                 }
 
                                 // ENCODE: A Lot Of Stuff
                                 // Also print any mapped errors
-                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_borrow, loaded_idkeys, loaded_shinystats);
+                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr);
                                 if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
@@ -112,9 +113,7 @@ fn main() {
     }
 }
 
-fn cook(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
-) -> Result<String, Errorfr> {
+fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
         fr_debug_mode: debug_mode,
@@ -232,10 +231,4 @@ fn cook(
     }
 
     Ok(final_string)
-}
-
-fn cook_perfect(
-    out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>,
-) -> Result<String, Errorfr> {
-    Ok("fr".parse().unwrap())
 }

@@ -1,8 +1,6 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::types::{
-    AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType,
-};
+use idmangler_lib::types::{AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType};
 use serde::Deserialize;
 use std::fs;
 
@@ -14,15 +12,7 @@ pub struct Jsonconfig {
     pub debug: Option<bool>,
 
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
-    #[serde(
-        alias = "itemtype",
-        alias = "ITEM_TYPE",
-        alias = "ITEMTYPE",
-        alias = "Item_Type",
-        alias = "Item_type",
-        alias = "ItemType",
-        alias = "Itemtype"
-    )]
+    #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
     pub item_type: ItemTypeDeser,
 
     // Crafted type for Crafted item types

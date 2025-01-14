@@ -2,10 +2,7 @@ use crate::errorfr::Errorfr;
 use crate::jsonstruct::{CraftedTypesFr, Durability, FuncParams, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::{
-    block::{
-        CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData,
-        ShinyData, StartData, TypeData,
-    },
+    block::{CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData},
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
 use std::collections::HashMap;
@@ -242,12 +239,7 @@ impl FuncParams<'_> {
             dbg!(&shinyvalue);
         }
         // ENCODE: ShinyData (if applicable)
-        ShinyData {
-            id: realshinykey,
-            val: shinyvalue,
-        }
-        .encode(self.fr_ver, self.fr_out)
-        .unwrap();
+        ShinyData { id: realshinykey, val: shinyvalue }.encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
     pub fn encode_enddata(&mut self) -> Result<(), Errorfr> {

@@ -8,20 +8,17 @@ use std::fs;
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json").map_err(|_| Errorfr::IDMapJsonMissing)?)
-        .map_err(|_| Errorfr::IDMapJsonCorrupt)
+    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json").map_err(|_| Errorfr::IDMapJsonMissing)?).map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
 pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json").map_err(|_| Errorfr::ShinyJsonMissing)?)
-        .map_err(|_| Errorfr::ShinyJsonCorrupt)
+    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json").map_err(|_| Errorfr::ShinyJsonMissing)?).map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
 
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // shiny_stats.json
     let a: Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> =
-        serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?)
-            .map_err(|_| Errorfr::GearJsonCorrupt);
+        serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?).map_err(|_| Errorfr::GearJsonCorrupt);
 
     a
 }
@@ -33,9 +30,7 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
 
     if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
         if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json"
-                .parse()
-                .unwrap(),
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/shiny_stats.json"),
         ) {
             // error handling below
@@ -44,9 +39,7 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     }
     if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
         if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json"
-                .parse()
-                .unwrap(),
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/id_keys.json"),
         ) {
             // error handling below
@@ -55,9 +48,7 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     }
     if jsons == DownloadJsons::All || jsons == DownloadJsons::Gear {
         if let Err(e) = dl_json(
-            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json"
-                .parse()
-                .unwrap(),
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/gear.json"),
         ) {
             // error handling below
