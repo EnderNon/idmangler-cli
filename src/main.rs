@@ -1,4 +1,5 @@
 #![allow(clippy::single_match)]
+#![allow(non_camel_case_types, non_snake_case)]
 
 use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 
@@ -8,6 +9,8 @@ mod encode;
 mod errorfr;
 mod jsondl;
 mod jsonstruct;
+mod gearjson;
+
 use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
@@ -21,13 +24,21 @@ struct Args {
     #[arg(short, long)]
     config: Option<String>,
 
-    /// Enable debug mode
+    /// Enable debug mode (for now this just prints debug info)
     #[arg(long, default_value_t = false)]
     debug: bool,
 
     /// Download jsons (for ease of use)
     #[arg(short, long)]
     download: Option<String>,
+   
+    /// Function to generate perfect value items
+    #[arg(long)]
+    perfect: Option<String>
+}
+pub enum PerfectStatus {
+    None,
+    Some(String)
 }
 
 fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
@@ -77,15 +88,19 @@ fn main() {
                                 // create necessary variables
                                 let ver = EncodingVersion::Version1;
 
-                                let loaded_config_borrow = &loaded_config;
-                                // ENCODE: ALotOfStuff
+                                let mut loaded_config_borrow = loaded_config.clone();
+                                // check if perfect status
+                                if let Some(t1) = args.perfect {
+                                    loaded_config_borrow.name = Some(t1)
+                                }
+                                
+                                // ENCODE: A Lot Of Stuff
                                 // Also print any mapped errors
-                                let cooking = cook(&mut out, &debug_mode, ver, loaded_config_borrow, loaded_idkeys, loaded_shinystats);
+                                let cooking = cook(&mut out, &debug_mode, ver, &loaded_config_borrow, loaded_idkeys, loaded_shinystats);
                                 if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
                                     // final string print if there is no error
-
                                     println!("{}", cooking.unwrap())
                                 }
                             }

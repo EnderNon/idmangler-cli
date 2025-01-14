@@ -12,20 +12,28 @@ pub enum Errorfr {
     ItemJsonCorrupt(serde_json5::Error),
 
     /// idmap is missing
-    #[error("Error 1.3: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download All\".")]
+    #[error("Error 2.1: id_keys.json is missing. \nYou should run \"--download id_keys\" or \"--download All\".")]
     IDMapJsonMissing,
 
     /// idmap is corrupt
-    #[error("Error 2.1: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download All\".")]
+    #[error("Error 2.2: id_keys.json is corrupt. \nYou should run \"--download id_keys\" or \"--download All\".")]
     IDMapJsonCorrupt,
 
     /// shiny data json is missing
-    #[error("Error 2.2: shiny_stats.json is missing. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
+    #[error("Error 2.3: shiny_stats.json is missing. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
     ShinyJsonMissing,
 
     /// shiny data json is corrupt
-    #[error("Error 2.3: shiny_stats.json is corrupt. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
+    #[error("Error 2.4: shiny_stats.json is corrupt. \nYou should run \"--download ShinyStats\" or \"--download All\".")]
     ShinyJsonCorrupt,
+
+    /// gear json is missing
+    #[error("Error 2.3: gear.json is missing. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
+    GearJsonMissing,
+
+    /// shiny data json is corrupt
+    #[error("Error 2.4: gear.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
+    GearJsonCorrupt,
 
     /// could not download the file
     #[error("Error 3.1: Download request failed. Check your network settings.")]

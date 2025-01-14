@@ -1,4 +1,5 @@
 use crate::dl_json;
+use crate::gearjson;
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::Shinystruct;
 use serde::Deserialize;
@@ -7,22 +8,34 @@ use std::fs;
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/id_keys.json").map_err(|_| Errorfr::IDMapJsonMissing)?)
+    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json").map_err(|_| Errorfr::IDMapJsonMissing)?)
         .map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
 pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/shiny_stats.json").map_err(|_| Errorfr::ShinyJsonMissing)?)
+    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json").map_err(|_| Errorfr::ShinyJsonMissing)?)
         .map_err(|_| Errorfr::ShinyJsonCorrupt)
+}
+
+pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
+    // shiny_stats.json
+    let a: Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> = serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?)
+        .map_err(|_| Errorfr::GearJsonCorrupt);
+    
+    a
 }
 pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     let jsons = DownloadJsons::from(dlvalue.clone());
+    if let Err(e) = fs::create_dir_all(format!("{}{}", executable_path, "/data/")) {
+        println!("Unable to create path. Path: {} ", e)
+    }
+    
     if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
         if let Err(e) = dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json"
                 .parse()
                 .unwrap(),
-            format!("{}{}", executable_path, "/shiny_stats.json"),
+            format!("{}{}", executable_path, "/data/shiny_stats.json")
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
@@ -33,7 +46,18 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json"
                 .parse()
                 .unwrap(),
-            format!("{}{}", executable_path, "/id_keys.json"),
+            format!("{}{}", executable_path, "/data/id_keys.json")
+        ) {
+            // error handling below
+            println!("{} Filename: {}", e, dlvalue)
+        }
+    }
+    if jsons == DownloadJsons::All || jsons == DownloadJsons::Gear {
+        if let Err(e) = dl_json(
+            "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json"
+                .parse()
+                .unwrap(),
+            format!("{}{}", executable_path, "/data/gear.json")
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
@@ -47,31 +71,37 @@ pub enum DownloadJsons {
     None,
     IdKeys,
     ShinyStats,
+    Gear,
     All,
 }
 impl From<String> for DownloadJsons {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str().trim() {
             "none" => {
-                println!("download NONE");
+                println!("downloading NONE (Why?)");
                 DownloadJsons::None
             }
             "id_keys" | "idkeys" | "idkeys.json" | "id_keys.json" => {
-                println!("download ID_KEYS");
+                println!("downloading ID_KEYS");
                 DownloadJsons::IdKeys
             }
             "shiny_stats" | "shinystats" | "shiny_stats.json" | "shinystats.json" => {
-                println!("download SHINY_STATS");
+                println!("downloading SHINY_STATS");
                 DownloadJsons::ShinyStats
             }
+            "gear" | "gear.json" => {
+                println!("downloading GEAR");
+                DownloadJsons::Gear
+            }
             "all" | "everything" | "both" => {
-                println!("download BOTH");
+                println!("downloading ALL jsons");
                 DownloadJsons::All
             }
             _ => {
-                println!("Could not understand what Jsons to download, sorry.");
+                println!("downloading NONE (unable to understand prompt)");
                 DownloadJsons::None
             }
         }
     }
 }
+

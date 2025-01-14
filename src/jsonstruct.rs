@@ -7,7 +7,7 @@ use serde::Deserialize;
 use std::fs;
 
 // structs for the json parsing
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Jsonconfig {
     // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     #[serde(alias = "Debug", alias = "DEBUG")]
@@ -187,7 +187,7 @@ impl TryFrom<&str> for CraftedTypesFr {
         }
     }
 }
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Durability {
     pub effect_strength: Option<u8>,
     pub dura_cur: i32,
@@ -198,24 +198,24 @@ pub struct Shinystruct {
     pub id: u8,
     pub key: String,
 }
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Identificationer {
     pub id: String,
     pub base: i32,
     pub roll: Option<u8>,
 }
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct IdentificationerCrafted {
     pub name: String,
     pub max_roll: i32,
 }
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct PowderFr {
     pub r#type: char,
     pub amount: Option<u8>,
 }
 
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Shinyjson {
     pub key: String,
     pub value: i64,
@@ -229,7 +229,7 @@ pub struct FuncParams<'a> {
     pub fr_ver: EncodingVersion,
 }
 
-#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct DamageDeser {
     pub attack_speed: AttackSpeed
 }
