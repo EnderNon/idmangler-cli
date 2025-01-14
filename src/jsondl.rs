@@ -4,7 +4,8 @@ use crate::gearjson;
 use crate::jsonstruct::Shinystruct;
 use serde::Deserialize;
 use std::collections::HashMap;
-use std::fs;
+use std::{fs, io};
+use std::io::Write;
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
@@ -20,14 +21,21 @@ pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorf
         .map_err(|_| Errorfr::ShinyJsonMissing)?)
         .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
-
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
-    // gear.json (ONLY FOR PERFECT ITEM FUNCTION GEN)
+    // gear.json (ONLY FOR DL gear.json)
     serde_json5::from_reader(
         &mut fs::File::open(executable_path.to_owned() + "/data/gear.json")
         .map_err(|_| Errorfr::GearJsonMissing)?)
         .map_err(Errorfr::GearJsonCorrupt)
 }
+pub fn load_gear_cache(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
+    // gear_cache.json (ONLY FOR PERFECT ITEM FUNCTION GEN)
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/data/gear_cache.json")
+            .map_err(|_| Errorfr::GearJsonMissing)?)
+        .map_err(Errorfr::GearJsonCorrupt)
+}
+
 pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     let jsons = DownloadJsons::from(dlvalue.clone());
     if let Err(e) = fs::create_dir_all(format!("{}{}", executable_path, "/data/")) {
@@ -53,12 +61,23 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
         }
     }
     if jsons == DownloadJsons::All || jsons == DownloadJsons::Gear {
-        if let Err(e) = dl_json(
+        match dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/gear.json"),
         ) {
-            // error handling below
-            println!("{} Filename: {}", e, dlvalue)
+            Err(e) => {
+                // error handling below
+                println!("{} Filename: {}", e, dlvalue);
+            },
+            Ok(t) => {
+                println!("Now generating gear_cache.json (otherwise, when running --perfect it will take ages each time!)");
+                let frfrnocap = serde_json::to_vec(
+                    &load_gear(executable_path)
+                        .unwrap()
+                ).unwrap();
+                let mut outer = fs::File::create(format!("{}{}",executable_path, "/data/gear.json")).map_err(|_| Errorfr::GearJsonCacheCreateFail).unwrap();
+                outer.write_all(&frfrnocap).unwrap();
+            }
         }
     }
 }

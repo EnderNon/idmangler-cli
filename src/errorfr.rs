@@ -31,9 +31,14 @@ pub enum Errorfr {
     #[error("Error 2.5: gear.json is missing. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".")]
     GearJsonMissing,
 
-    /// shiny data json is corrupt
+    /// gear data json is corrupt
     #[error("Error 2.6: gear.json is corrupt. It's only required for the \"perfect mode\" item gen. \nYou should run \"--download Gear\" or \"--download All\".\n{0:?}")]
     GearJsonCorrupt(serde_json5::Error),
+
+    /// gear data json cache could not be created
+    #[error("Error 2.7: unable to create file gear_cache.json.")]
+    GearJsonCacheCreateFail,
+    
 
     /// could not download the file
     #[error("Error 3.1: Download request failed. Check your network settings.")]

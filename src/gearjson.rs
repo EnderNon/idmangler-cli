@@ -1,8 +1,8 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // the struct for the stuff I need in in Hashmap<String, GearJson> gear.json. its a big ass pain
-#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[derive(Deserialize, Serialize, PartialEq, Eq, Debug)]
 pub struct GearJsonItem {
     identifications: Option<
         HashMap<
@@ -10,15 +10,15 @@ pub struct GearJsonItem {
         >
     >
 }
-#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[derive(Deserialize, Serialize, PartialEq, Eq, Debug)]
 #[serde(untagged)]
 pub enum GearJsonItemInner {
     r#Struct(GearJsonItemInnerStruct),
     r#Int(i32)
 }
-#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[derive(Deserialize, Serialize, PartialEq, Eq, Debug)]
 pub struct GearJsonItemInnerStruct {
-    max: i16,
-    min: i16,
-    raw: i16
+    max: i32,
+    min: i32,
+    raw: i32
 }
