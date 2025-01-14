@@ -16,15 +16,7 @@ pub struct Jsonconfig {
     pub item_type: ItemTypeDeser,
 
     // Crafted type for Crafted item types
-    #[serde(
-        alias = "craftedtype",
-        alias = "CRAFTED_TYPE",
-        alias = "CRAFTEDTYPE",
-        alias = "Crafted_Type",
-        alias = "Crafted_type",
-        alias = "CraftedType",
-        alias = "Craftedtype"
-    )]
+    #[serde(alias = "craftedtype", alias = "CRAFTED_TYPE", alias = "CRAFTEDTYPE", alias = "Crafted_Type", alias = "Crafted_type", alias = "CraftedType", alias = "Craftedtype")]
     pub crafted_type: Option<String>,
 
     // name of item
