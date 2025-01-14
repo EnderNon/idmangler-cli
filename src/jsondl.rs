@@ -8,16 +8,25 @@ use std::fs;
 
 pub fn load_idkeys(executable_path: &str) -> Result<HashMap<String, u8>, Errorfr> {
     // id_keys.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json").map_err(|_| Errorfr::IDMapJsonMissing)?).map_err(|_| Errorfr::IDMapJsonCorrupt)
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/data/id_keys.json")
+        .map_err(|_| Errorfr::IDMapJsonMissing)?)
+        .map_err(|_| Errorfr::IDMapJsonCorrupt)
 }
 pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorfr> {
     // shiny_stats.json
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json").map_err(|_| Errorfr::ShinyJsonMissing)?).map_err(|_| Errorfr::ShinyJsonCorrupt)
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/data/shiny_stats.json")
+        .map_err(|_| Errorfr::ShinyJsonMissing)?)
+        .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
 
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // gear.json (ONLY FOR PERFECT ITEM FUNCTION GEN)
-    serde_json5::from_reader(&mut fs::File::open(executable_path.to_owned() + "/data/gear.json").map_err(|_| Errorfr::GearJsonMissing)?).map_err(|_| Errorfr::GearJsonCorrupt)
+    serde_json5::from_reader(
+        &mut fs::File::open(executable_path.to_owned() + "/data/gear.json")
+        .map_err(|_| Errorfr::GearJsonMissing)?)
+        .map_err(Errorfr::GearJsonCorrupt)
 }
 pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
     let jsons = DownloadJsons::from(dlvalue.clone());

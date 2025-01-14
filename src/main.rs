@@ -33,10 +33,7 @@ struct Args {
     #[arg(long)]
     perfect: Option<String>,
 }
-pub enum PerfectStatus {
-    None,
-    Some(String),
-}
+
 
 fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
     let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
@@ -71,6 +68,13 @@ fn main() {
             Ok(loaded_idkeys) => {
                 match load_shinystats(executable_path) {
                     Ok(loaded_shinystats) => {
+
+                        // check if perfect status and change name if so. otherwise blank yep
+                        let mut namefr: String = "".to_string();
+                        if let Some(t1) = args.perfect {
+                            namefr = t1
+                        }
+                        
                         match load_jsonconfig(t) {
                             Ok(loaded_config) => {
                                 // debug mode on if in the loaded config
@@ -86,15 +90,11 @@ fn main() {
                                 let ver = EncodingVersion::Version1;
 
                                 let mut loaded_config_clone = loaded_config.clone();
-                                // check if perfect status and change name if so. otherwise blank yep
-                                let mut namefr: String = "".to_string();
-                                if let Some(t1) = args.perfect {
-                                    namefr = t1
-                                }
+
 
                                 // ENCODE: A Lot Of Stuff
                                 // Also print any mapped errors
-                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr);
+                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
                                 if let Err(e) = cooking {
                                     println!("{}", e); // print error if there is an error
                                 } else {
@@ -113,7 +113,7 @@ fn main() {
     }
 }
 
-fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String) -> Result<String, Errorfr> {
+fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
     let mut fr_params = FuncParams {
         fr_out: out,
         fr_debug_mode: debug_mode,
@@ -139,7 +139,10 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config:
     // ENCODE: NameData, if ItemType is Gear, Tome, Charm
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if let Some(real_name) = &json_config.name {
+            if namefr != *"" {
+                fr_params.encode_namedata(&namefr)?
+            }
+            else if let Some(real_name) = &json_config.name {
                 fr_params.encode_namedata(real_name)?
             } else {
                 return Err(Errorfr::JsonNotFoundName);
@@ -151,7 +154,11 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config:
     // ENCODE: IdentificationData
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if let Some(real_ids) = &json_config.ids {
+            if namefr != *"" {
+                println!("cool tree");
+                let fr_gear = load_gear(executable_path)?;
+            }
+            else if let Some(real_ids) = &json_config.ids {
                 fr_params.encode_iddata(real_ids, idsmap)?
             }
         }

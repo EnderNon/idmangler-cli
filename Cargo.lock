@@ -650,6 +650,7 @@ dependencies = [
  "idmangler-lib",
  "reqwest",
  "serde",
+ "serde_json",
  "serde_json5",
  "thiserror",
 ]
