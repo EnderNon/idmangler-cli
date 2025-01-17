@@ -32,18 +32,38 @@ pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result
         Some(fr_idents) => {
             if let Some(fr_identmap) = &fr_idents.identifications {
                 for i in fr_identmap {
+                    println!("{i:?}");
                     if let &GearJsonItemInner::Struct(e) = &i.1 {
-                        a.push(
-                            Identificationer {
-                                id: i.0.clone(),
-                                base: e.clone().raw,
-                                roll: Some(match &e.clone().raw {
-                                    fr if fr<&0 => 69,
-                                    fr if fr>&0 => 130,
-                                    _ => 0
-                                }),
-                            }
-                        )
+
+                        // hardcoded list of inverts. Don't question why it's like this, blame whatever the fuck wynncraft was smoking.
+                        // I'm going to have to update this list manually too... why the fuck, wynncraft?
+                        let invert_bool: bool = matches!(i.0.to_lowercase().as_str(), 
+                            "4thspellcost" |
+                            "3rdspellcost" |
+                            "2ndspellcost" |
+                            "1stspellcost" |
+                            "raw4thspellcost" |
+                            "raw3rdspellcost" |
+                            "raw2ndspellcost" |
+                            "raw1stSpellCost");
+
+                        let ider: Identificationer = Identificationer {
+                            id: i.0.clone(),
+                            base: {
+                                if invert_bool {-e.clone().raw} // invert value if invert mode true
+                                else {e.clone().raw} // else regular value
+                            },
+                            roll: Some(match &e.clone().raw {
+                                fr if fr<&0 => 70,
+                                fr if fr>&0 => {
+                                    if invert_bool {70} // value 70 if invert mode true
+                                    else {130}// else value 130
+                                },
+                                _ => 0
+                            })
+                        };
+                        println!("ider: {ider:?}");
+                        a.push(ider)
                     }
                 }
             } 
