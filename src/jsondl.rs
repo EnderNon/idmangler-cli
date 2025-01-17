@@ -25,11 +25,19 @@ pub fn load_shinystats(executable_path: &str) -> Result<Vec<Shinystruct>, Errorf
         .map_err(|_| Errorfr::ShinyJsonCorrupt)
 }
 pub fn load_gear(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
-    // gear.json (ONLY FOR DL gear.json)
-    serde_json::from_reader(&mut BufReader::new(
+    // gear.json parse (ONLY FOR DL gear.json)
+    let a: HashMap<String, gearjson::GearJsonItem> = serde_json::from_reader(&mut BufReader::new(
         fs::File::open(executable_path.to_owned() + "/data/gear.json")
             .map_err(|_| Errorfr::GearJsonMissing)?))
-        .map_err(Errorfr::GearJsonCacheCorrupt)
+        .map_err(Errorfr::GearJsonCacheCorrupt)?;
+    // parse the original, "a", into lowercase as "b"
+    let mut b: HashMap<String, gearjson::GearJsonItem> = HashMap::new();
+    for i in &a {
+        let frname = i.0.to_lowercase();
+        let frvalue = i.1.clone();
+        b.insert(frname, frvalue);
+    }
+    Ok(b)
 }
 pub fn load_gear_cache(executable_path: &str) -> Result<HashMap<String, gearjson::GearJsonItem>, Errorfr> {
     // gear_cache.json (ONLY FOR PERFECT ITEM FUNCTION GEN)
@@ -72,14 +80,14 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
                 // error handling below
                 println!("{} Filename: {}", e, dlvalue);
             },
-            Ok(t) => {
-                println!("Now generating gear_cache.json (otherwise, when running --perfect it will take ages each time!)");
+            Ok(_) => {
                 let frfrnocap = serde_json::to_vec(
                     &load_gear(executable_path)
                         .unwrap()
                 ).unwrap();
                 let mut outer = fs::File::create(format!("{}{}",executable_path, "/data/gear_cache.json")).map_err(|_| Errorfr::GearJsonCacheCreateFail).unwrap();
                 outer.write_all(&frfrnocap).unwrap();
+                println!("Making gearcache to {}/data/gear_cache.json", executable_path);
             }
         }
     }
@@ -98,7 +106,7 @@ impl From<String> for DownloadJsons {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str().trim() {
             "none" => {
-                println!("downloading NONE (Why?)");
+                println!("downloading NONE (Why? it's pointless...)");
                 DownloadJsons::None
             }
             "id_keys" | "idkeys" | "idkeys.json" | "id_keys.json" => {

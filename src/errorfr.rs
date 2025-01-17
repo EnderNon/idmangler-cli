@@ -95,4 +95,8 @@ pub enum Errorfr {
     /// Unrecognisable Powder element
     #[error("Error 4.8: Unknown powder element")]
     JsonUnknownPowderElement,
+
+    /// Unrecognisable item for the Perfect gen function
+    #[error("Error 4.9: Unknown item for perfect gen...")]
+    PerfectItemNotFound,
 }

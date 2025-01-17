@@ -12,8 +12,8 @@ use crate::jsonstruct::*;
 use clap::Parser;
 use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 use reqwest::Url;
-use std::{collections::HashMap, env, fs, io, path::PathBuf};
-use std::io::Write;
+use std::{collections::HashMap, env, fs, io::Write, path::PathBuf};
+use crate::gearjson::gen_perfect;
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -157,7 +157,9 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config:
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if namefr != *"" {
                 println!("Overriding IDs with perfect ones!");
-                let fr_gear = load_gear_cache(executable_path)?;
+                let fr_gear_cache = load_gear_cache(executable_path)?;
+                let resultantvec = gen_perfect(&namefr, &fr_gear_cache)?;
+                fr_params.encode_iddata(&resultantvec, idsmap)?
             }
             else if let Some(real_ids) = &json_config.ids {
                 fr_params.encode_iddata(real_ids, idsmap)?
