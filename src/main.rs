@@ -47,6 +47,12 @@ fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
 }
 
 fn main() {
+    if let Err(e) = main_2() {
+        println!("{}", e)
+    }
+}
+
+fn main_2() -> Result<(), Errorfr> {
     let args = Args::parse();
     let mut executable_path = env::current_exe().unwrap();
     PathBuf::pop(&mut executable_path);
@@ -64,54 +70,71 @@ fn main() {
     };
 
     // check if files load properly and all that
-    if let Some(t) = &args.config {
-        match load_idkeys(executable_path) {
-            Ok(loaded_idkeys) => {
-                match load_shinystats(executable_path) {
-                    Ok(loaded_shinystats) => {
-
-                        // check if perfect status and change name if so. otherwise blank yep
-                        let mut namefr: String = "".to_string();
-                        if let Some(t1) = args.perfect {
-                            namefr = t1
-                        }
-                        
-                        match load_jsonconfig(t) {
-                            Ok(loaded_config) => {
-                                // debug mode on if in the loaded config
-                                if let Some(debugconfig) = loaded_config.debug {
-                                    if debugconfig {
-                                        debug_mode = true
-                                    }
-                                }
-                                // main program everything starts here fr
-                                let mut out: Vec<u8> = Vec::new();
-
-                                // create necessary variables
-                                let ver = EncodingVersion::Version1;
-
-                                let mut loaded_config_clone = loaded_config.clone();
-
-
-                                // ENCODE: A Lot Of Stuff
-                                // Also print any mapped errors
-                                let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
-                                if let Err(e) = cooking {
-                                    println!("{}", e); // print error if there is an error
-                                } else {
-                                    // final string print if there is no error
-                                    println!("{}", cooking.unwrap())
-                                }
-                            }
-                            Err(e) => println!("{}", e),
-                        }
-                    }
-                    Err(e) => println!("{}", e),
+    
+    let loaded_config: Jsonconfig = {
+        if let Some(t) = &args.config {
+            match load_jsonconfig(t) {
+                Ok(fr) => {
+                    Ok(fr)
                 }
+                Err(e) => Err(e),
             }
-            Err(e) => println!("{}", e),
+        }
+        else {
+            println!("no config path provided, fallback to empty.");
+            Ok(
+                Jsonconfig {
+                    debug: Some(false),
+                    item_type: ItemTypeDeser::Gear,
+                    crafted_type: None,
+                    name: None,
+                    shiny: None,
+                    ids: None,
+                    powders: None,
+                    rerolls: None,
+                    crafted_durability: None,
+                    crafted_requirements: None,
+                    crafted_ids: None,
+                    crafted_damage: None,
+                }
+            )
+        }
+    }?;
+    let loaded_idkeys = load_idkeys(executable_path)?;
+    let loaded_shinystats = load_shinystats(executable_path)?;
+
+    // check if perfect status and change name if so. otherwise blank yep
+    let mut namefr: String = "".to_string();
+    if let Some(t1) = args.perfect {
+        namefr = t1
+    }
+
+    // debug mode on if in the loaded config
+    if let Some(debugconfig) = loaded_config.debug {
+        if debugconfig {
+            debug_mode = true
         }
     }
+    // main program everything starts here fr
+    let mut out: Vec<u8> = Vec::new();
+
+    // create necessary variables
+    let ver = EncodingVersion::Version1;
+
+    let mut loaded_config_clone = loaded_config.clone();
+
+
+    // ENCODE: A Lot Of Stuff
+    // Also print any mapped errors
+    let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
+    if let Err(e) = cooking {
+        println!("{}", e); // print error if there is an error
+    } else {
+        // final string print if there is no error
+        println!("{}", cooking?)
+    }
+    
+    Ok(())
 }
 
 fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
