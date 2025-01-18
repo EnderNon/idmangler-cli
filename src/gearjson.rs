@@ -25,6 +25,8 @@ pub struct GearJsonItemInnerStruct {
     raw: i32
 }
 
+/// Function to generate a perfect item.  
+/// It returns Result\<Vec\<Identificationer\>, Errorfr\>
 pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result<Vec<Identificationer>, Errorfr> {
     let mut a: Vec<Identificationer> = Vec::new();
     let name = name.to_lowercase();

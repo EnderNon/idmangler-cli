@@ -7,13 +7,15 @@ mod gearjson;
 mod jsondl;
 mod jsonstruct;
 use crate::errorfr::Errorfr;
+use crate::encode::FuncParams;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
+use crate::gearjson::gen_perfect;
 use clap::Parser;
 use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 use reqwest::Url;
 use std::{collections::HashMap, env, fs, io::Write, path::PathBuf};
-use crate::gearjson::gen_perfect;
+
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -122,11 +124,16 @@ fn main_2() -> Result<(), Errorfr> {
     let ver = EncodingVersion::Version1;
 
     let mut loaded_config_clone = loaded_config.clone();
-
+    
+    let mut funcparamsfr: FuncParams = FuncParams {
+        fr_out: &mut out,
+        fr_debug_mode: &debug_mode,
+        fr_ver: ver,
+    };
 
     // ENCODE: A Lot Of Stuff
     // Also print any mapped errors
-    let cooking = cook(&mut out, &debug_mode, ver, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
+    let cooking = cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
     if let Err(e) = cooking {
         println!("{}", e); // print error if there is an error
     } else {
@@ -137,12 +144,8 @@ fn main_2() -> Result<(), Errorfr> {
     Ok(())
 }
 
-fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
-    let mut fr_params = FuncParams {
-        fr_out: out,
-        fr_debug_mode: debug_mode,
-        fr_ver: ver,
-    };
+fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
+
 
     // ENCODE: StartData and TypeData, ALWAYS
     fr_params.encode_startdata()?;
@@ -249,7 +252,7 @@ fn cook(out: &mut Vec<u8>, debug_mode: &bool, ver: EncodingVersion, json_config:
     // ENCODE: EndData, ALWAYS
     fr_params.encode_enddata()?;
 
-    let mut final_string: String = encode_string(out);
+    let mut final_string: String = encode_string(fr_params.fr_out);
 
     // add NameAfter. not actually an encode.
     match json_config.item_type {

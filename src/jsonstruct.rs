@@ -203,14 +203,6 @@ pub struct Shinyjson {
     pub value: i64,
 }
 
-// struct for general parameters for most encode functions
-#[derive(PartialEq, Eq, Hash, Debug)]
-pub struct FuncParams<'a> {
-    pub fr_out: &'a mut Vec<u8>,
-    pub fr_debug_mode: &'a bool,
-    pub fr_ver: EncodingVersion,
-}
-
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct DamageDeser {
     pub attack_speed: AttackSpeed,
