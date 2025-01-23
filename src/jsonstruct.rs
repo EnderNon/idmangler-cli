@@ -235,7 +235,5 @@ impl From<ItemTypeDeser> for ItemType {
 }
 
 pub fn load_jsonconfig(path: &String) -> Result<Jsonconfig, Errorfr> {
-    serde_json5::from_reader(&mut fs::File::open(path)
-        .map_err(|_| Errorfr::ItemJsonMissing)?)
-        .map_err(Errorfr::ItemJsonCorrupt)
+    serde_json5::from_reader(&mut fs::File::open(path).map_err(|_| Errorfr::ItemJsonMissing)?).map_err(Errorfr::ItemJsonCorrupt)
 }

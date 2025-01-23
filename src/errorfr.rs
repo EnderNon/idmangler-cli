@@ -46,7 +46,6 @@ pub enum Errorfr {
     /// gear data json cache could not be created
     #[error("Error 2.8: unable to create file gear_cache.json.")]
     GearJsonCacheCreateFail,
-    
 
     /// could not download the file
     #[error("Error 3.1: Download request failed. Check your network settings.")]

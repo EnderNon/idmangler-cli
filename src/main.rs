@@ -6,16 +6,15 @@ mod errorfr;
 mod gearjson;
 mod jsondl;
 mod jsonstruct;
-use crate::errorfr::Errorfr;
 use crate::encode::FuncParams;
+use crate::errorfr::Errorfr;
+use crate::gearjson::gen_perfect;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
-use crate::gearjson::gen_perfect;
 use clap::Parser;
 use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
 use reqwest::Url;
 use std::{collections::HashMap, env, fs, io::Write, path::PathBuf};
-
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -36,7 +35,6 @@ struct Args {
     #[arg(long)]
     perfect: Option<String>,
 }
-
 
 fn dl_json(url: Url, savename: String) -> Result<(), Errorfr> {
     let resp = reqwest::blocking::get(url).map_err(|_| Errorfr::JsonDlReqFail)?;
@@ -72,34 +70,29 @@ fn main_2() -> Result<(), Errorfr> {
     };
 
     // check if files load properly and all that
-    
+
     let loaded_config: Jsonconfig = {
         if let Some(t) = &args.config {
             match load_jsonconfig(t) {
-                Ok(fr) => {
-                    Ok(fr)
-                }
+                Ok(fr) => Ok(fr),
                 Err(e) => Err(e),
             }
-        }
-        else {
+        } else {
             println!("no config path provided, fallback to empty.");
-            Ok(
-                Jsonconfig {
-                    debug: Some(false),
-                    item_type: ItemTypeDeser::Gear,
-                    crafted_type: None,
-                    name: None,
-                    shiny: None,
-                    ids: None,
-                    powders: None,
-                    rerolls: None,
-                    crafted_durability: None,
-                    crafted_requirements: None,
-                    crafted_ids: None,
-                    crafted_damage: None,
-                }
-            )
+            Ok(Jsonconfig {
+                debug: Some(false),
+                item_type: ItemTypeDeser::Gear,
+                crafted_type: None,
+                name: None,
+                shiny: None,
+                ids: None,
+                powders: None,
+                rerolls: None,
+                crafted_durability: None,
+                crafted_requirements: None,
+                crafted_ids: None,
+                crafted_damage: None,
+            })
         }
     }?;
     let loaded_idkeys = load_idkeys(executable_path)?;
@@ -124,7 +117,7 @@ fn main_2() -> Result<(), Errorfr> {
     let ver = EncodingVersion::Version1;
 
     let mut loaded_config_clone = loaded_config.clone();
-    
+
     let mut funcparamsfr: FuncParams = FuncParams {
         fr_out: &mut out,
         fr_debug_mode: &debug_mode,
@@ -140,16 +133,14 @@ fn main_2() -> Result<(), Errorfr> {
         // final string print if there is no error
         println!("{}", cooking?)
     }
-    
+
     Ok(())
 }
 
 fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
-
-
     // ENCODE: StartData and TypeData, ALWAYS
     fr_params.encode_startdata()?;
-    fr_params.encode_typedata(json_config.item_type)?;
+    fr_params.encode_typedata(&json_config.item_type)?;
 
     // ENCODE: CustomGearTypeData / CustomConsumableTypeData
     match json_config.item_type {
@@ -168,8 +159,7 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if namefr != *"" {
                 fr_params.encode_namedata(&namefr)?
-            }
-            else if let Some(real_name) = &json_config.name {
+            } else if let Some(real_name) = &json_config.name {
                 fr_params.encode_namedata(real_name)?
             } else {
                 return Err(Errorfr::JsonNotFoundName);
@@ -185,10 +175,9 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
                 println!("Overriding IDs with perfect ones!");
                 let fr_gear_cache = load_gear_cache(executable_path)?;
                 let resultantvec = gen_perfect(&namefr, &fr_gear_cache)?;
-                fr_params.encode_iddata(&resultantvec, idsmap)?
-            }
-            else if let Some(real_ids) = &json_config.ids {
-                fr_params.encode_iddata(real_ids, idsmap)?
+                fr_params.encode_iddata(&resultantvec, &idsmap)?
+            } else if let Some(real_ids) = &json_config.ids {
+                fr_params.encode_iddata(real_ids, &idsmap)?
             }
         }
         _ => {}
@@ -210,7 +199,7 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
     match json_config.item_type {
         ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
             if let Some(real_reqs) = json_config.crafted_requirements {
-                fr_params.encode_reqdata(real_reqs)?
+                fr_params.encode_reqdata(&real_reqs)?
             } else {
                 return Err(Errorfr::JsonNotFoundReqs);
             }
@@ -233,7 +222,7 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
             if let Some(rerollcount) = json_config.rerolls {
                 // rerolldata
-                fr_params.encode_rerolldata(rerollcount)?
+                fr_params.encode_rerolldata(&rerollcount)?
             }
         }
         _ => {}

@@ -1,12 +1,12 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::{CraftedTypesFr, Durability, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::encoding::DataEncoder;
+use idmangler_lib::types::EncodingVersion;
 use idmangler_lib::{
     block::{CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData},
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
 use std::collections::HashMap;
-use idmangler_lib::types::EncodingVersion;
 
 /// FuncParams struct, used for the three most important parameters for encoding.  
 /// Also, all the encode functions are stored here, seeing as I require these three params most of the time when encoding.
@@ -28,11 +28,11 @@ impl FuncParams<'_> {
     }
     /// ENCODE: TypeData  
     /// (REQUIRED)
-    pub fn encode_typedata(&mut self, item_type_deser: ItemTypeDeser) -> Result<(), Errorfr> {
+    pub fn encode_typedata(&mut self, item_type_deser: &ItemTypeDeser) -> Result<(), Errorfr> {
         if *self.fr_debug_mode {
             println!("Encoding TypeData: {:?}", item_type_deser);
         }
-        TypeData(ItemType::from(item_type_deser)).encode(self.fr_ver, self.fr_out).unwrap();
+        TypeData(ItemType::from(*item_type_deser)).encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
     /// ENCODE: NameData
@@ -44,7 +44,7 @@ impl FuncParams<'_> {
         Ok(())
     }
     /// ENCODE: IdentificationData
-    pub fn encode_iddata(&mut self, real_ids: &Vec<Identificationer>, idsmap: HashMap<String, u8>) -> Result<(), Errorfr> {
+    pub fn encode_iddata(&mut self, real_ids: &Vec<Identificationer>, idsmap: &HashMap<String, u8>) -> Result<(), Errorfr> {
         let mut idvec = Vec::new();
         for eachid in real_ids {
             let id_id = idsmap.get(eachid.id.trim());
@@ -101,7 +101,7 @@ impl FuncParams<'_> {
         }
 
         let powderlimitfr: u8 = powdervec.len() as u8; // min of the current number of powders and 255 (if you have over 255 powders stuff breaks)
-        
+
         PowderData {
             powder_slots: powderlimitfr,
             powders: powdervec,
@@ -111,9 +111,9 @@ impl FuncParams<'_> {
         Ok(())
     }
     /// ENCODE: RerollData
-    pub fn encode_rerolldata(&mut self, rerollcount: u8) -> Result<(), Errorfr> {
-        if rerollcount != 0 {
-            RerollData(rerollcount).encode(self.fr_ver, self.fr_out).unwrap();
+    pub fn encode_rerolldata(&mut self, rerollcount: &u8) -> Result<(), Errorfr> {
+        if rerollcount != &0 {
+            RerollData(*rerollcount).encode(self.fr_ver, self.fr_out).unwrap();
             if *self.fr_debug_mode {
                 dbg!(rerollcount);
             }
@@ -237,12 +237,12 @@ impl FuncParams<'_> {
             current: real_dura.dura_cur,
             max: real_dura.dura_max,
         }
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        .encode(self.fr_ver, self.fr_out)
+        .unwrap();
         Ok(())
     }
     /// ENCODE: RequirementsData
-    pub fn encode_reqdata(&mut self, real_reqdata: RequirementsDeser) -> Result<(), Errorfr> {
+    pub fn encode_reqdata(&mut self, real_reqdata: &RequirementsDeser) -> Result<(), Errorfr> {
         if *self.fr_debug_mode {
             println!("Encoding RequirementData.Level: {:?}", real_reqdata.level.clone())
         }
@@ -268,9 +268,8 @@ impl FuncParams<'_> {
             class: fr_class,
             skills: spvec,
         }
-            .encode(self.fr_ver, self.fr_out)
-            .unwrap();
+        .encode(self.fr_ver, self.fr_out)
+        .unwrap();
         Ok(())
     }
-
 }
