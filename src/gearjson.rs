@@ -36,7 +36,14 @@ pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result
                         // I'm going to have to update this list manually too... why the fuck, wynncraft?
                         let invert_bool: bool = matches!(
                             i.0.to_lowercase().as_str(),
-                            "4thspellcost" | "3rdspellcost" | "2ndspellcost" | "1stspellcost" | "raw4thspellcost" | "raw3rdspellcost" | "raw2ndspellcost" | "raw1stSpellCost"
+                            "4thspellcost" | 
+                            "3rdspellcost" | 
+                            "2ndspellcost" | 
+                            "1stspellcost" | 
+                            "raw4thspellcost" | 
+                            "raw3rdspellcost" | 
+                            "raw2ndspellcost" | 
+                            "raw1stspellcost"
                         );
 
                         let ider: Identificationer = Identificationer {
@@ -51,7 +58,15 @@ pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result
                                 } // else regular value
                             },
                             roll: Some(match &e.clone().raw {
-                                fr if fr < &0 => 70,
+                                fr if fr < &0 => {
+                                    if invert_bool {
+                                        130
+                                    }
+                                    // value 70 if invert mode true
+                                    else {
+                                        70
+                                    } // else value 130
+                                },
                                 fr if fr > &0 => {
                                     if invert_bool {
                                         70
