@@ -2,6 +2,7 @@ use crate::errorfr::Errorfr;
 use crate::jsonstruct::Identificationer;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use crate::encode::FuncParams;
 
 // the struct for the stuff I need in in Hashmap<String, GearJson> gear.json. its a big ass pain
 #[derive(Deserialize, Serialize, PartialEq, Eq, Debug, Clone)]
@@ -23,14 +24,16 @@ pub struct GearJsonItemInnerStruct {
 
 /// Function to generate a perfect item.  
 /// It returns Result\<Vec\<Identificationer\>, Errorfr\>
-pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result<Vec<Identificationer>, Errorfr> {
+pub fn gen_perfect(fr_params: &FuncParams, name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result<Vec<Identificationer>, Errorfr> {
     let mut a: Vec<Identificationer> = Vec::new();
     let name = name.to_lowercase();
     match frjson.get(&name) {
         Some(fr_idents) => {
             if let Some(fr_identmap) = &fr_idents.identifications {
                 for i in fr_identmap {
-                    println!("{i:?}");
+                    if *fr_params.fr_debug_mode {
+                        println!("{i:?}");
+                    }
                     if let &GearJsonItemInner::Struct(e) = &i.1 {
                         // hardcoded list of inverts. Don't question why it's like this, blame whatever the fuck wynncraft was smoking.
                         // I'm going to have to update this list manually too... why the fuck, wynncraft?
@@ -79,7 +82,9 @@ pub fn gen_perfect(name: &str, frjson: &HashMap<String, GearJsonItem>) -> Result
                                 _ => 0,
                             }),
                         };
-                        println!("ider: {ider:?}");
+                        if *fr_params.fr_debug_mode {
+                            println!("ider: {ider:?}");
+                        }
                         a.push(ider)
                     }
                 }
