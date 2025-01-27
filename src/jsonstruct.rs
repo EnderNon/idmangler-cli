@@ -14,11 +14,13 @@ pub struct Jsonconfig {
     pub debug: Option<bool>,
 
     // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
-    #[serde(alias = "itemtype", alias = "ITEM_TYPE", alias = "ITEMTYPE", alias = "Item_Type", alias = "Item_type", alias = "ItemType", alias = "Itemtype")]
+    #[serde(alias = "ITEMTYPE", alias = "ItemType", alias = "Itemtype", alias = "itemtype")]
+    #[serde(alias = "ITEM_TYPE", alias = "Item_Type", alias = "Item_type")]
     pub item_type: ItemTypeDeser,
 
     // Crafted type for Crafted item types
-    #[serde(alias = "craftedtype", alias = "CRAFTED_TYPE", alias = "CRAFTEDTYPE", alias = "Crafted_Type", alias = "Crafted_type", alias = "CraftedType", alias = "Craftedtype")]
+    #[serde(alias = "CRAFTEDTYPE", alias = "CraftedType", alias = "Craftedtype", alias = "craftedtype")]
+    #[serde(alias = "CRAFTED_TYPE", alias = "Crafted_Type", alias = "Crafted_type")]
     pub crafted_type: Option<String>,
 
     // name of item
@@ -30,43 +32,36 @@ pub struct Jsonconfig {
     pub shiny: Option<Shinyjson>,
 
     // identifications
-    #[serde(alias = "Ids", alias = "IDS", alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
+    #[serde(alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
+    #[serde(alias = "Ids", alias = "IDS")]
     pub ids: Option<Vec<Identificationer>>,
 
     // powders stuff
-    #[serde(alias = "Powders", alias = "POWDERS", alias = "powder", alias = "Powder", alias = "POWDER")]
+    #[serde(alias = "powder", alias = "Powder", alias = "POWDER")]
+    #[serde(alias = "Powders", alias = "POWDERS")]
     pub powders: Option<Vec<PowderFr>>,
 
     // rerolls
-    #[serde(alias = "Rerolls", alias = "REROLLS", alias = "reroll", alias = "Reroll", alias = "REROLL")]
+    #[serde(alias = "reroll", alias = "Reroll", alias = "REROLL")]
+    #[serde(alias = "Rerolls", alias = "REROLLS")]
     pub rerolls: Option<u8>,
 
     // durability data (Crafted Gear)
-    #[serde(alias = "durability", alias = "Durability", alias = "DURABILITY", alias = "dura", alias = "Dura", alias = "DURA")]
+    #[serde(alias = "durability", alias = "Durability", alias = "DURABILITY")]
+    #[serde(alias = "dura", alias = "Dura", alias = "DURA")]
     pub crafted_durability: Option<Durability>,
 
     // requirements data (Crafted)
-    #[serde(alias = "requirement", alias = "Requirement", alias = "REQUIREMENT", alias = "requirements", alias = "Requirements", alias = "REQUIREMENTS")]
+    #[serde(alias = "requirement", alias = "Requirement", alias = "REQUIREMENT")]
+    #[serde(alias = "requirements", alias = "Requirements", alias = "REQUIREMENTS")]
     pub crafted_requirements: Option<RequirementsDeser>,
 
     // identifications (Crafted)
     // to be honest i wish there was a better way instead of too many aliases
-    #[serde(
-        alias = "craftedids",
-        alias = "CRAFTED_IDS",
-        alias = "CRAFTEDIDS",
-        alias = "Crafted_Ids",
-        alias = "Crafted_ids",
-        alias = "CraftedIds",
-        alias = "Craftedids",
-        alias = "craftedidentifications",
-        alias = "CRAFTED_IDENTIFICATIONS",
-        alias = "CRAFTEDIDENTIFICATIONS",
-        alias = "Crafted_Identifications",
-        alias = "Crafted_identifications",
-        alias = "CraftedIdentifications",
-        alias = "Craftedidentifications"
-    )]
+    #[serde(alias = "CRAFTEDIDS", alias = "CraftedIds", alias = "Craftedids", alias = "craftedids")]
+    #[serde(alias = "CRAFTED_IDS", alias = "Crafted_Ids", alias = "Crafted_ids")]
+    #[serde(alias = "CRAFTED_IDENTIFICATIONS", alias = "Crafted_Identifications", alias = "Crafted_identifications", alias = "crafted_identifications")]
+    #[serde(alias = "CRAFTEDIDENTIFICATIONS", alias = "CraftedIdentifications", alias = "Craftedidentifications", alias = "craftedidentifications")]
     pub crafted_ids: Option<Vec<IdentificationerCrafted>>,
 
     pub crafted_damage: Option<DamageDeser>,
@@ -101,15 +96,15 @@ impl From<ClassDeser> for ClassType {
 }
 #[derive(Deserialize, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct SkillPointDeser {
-    #[serde(alias = "Str", alias = "str", alias = "strength")]
+    #[serde(alias = "Str", alias = "str", alias = "Strength")]
     pub strength: Option<i32>,
-    #[serde(alias = "Dex", alias = "dex", alias = "dexterity")]
+    #[serde(alias = "Dex", alias = "dex", alias = "Dexterity")]
     pub dexterity: Option<i32>,
-    #[serde(alias = "Def", alias = "def", alias = "defense")]
+    #[serde(alias = "Def", alias = "def", alias = "Defense")]
     pub defense: Option<i32>,
-    #[serde(alias = "Int", alias = "int", alias = "intelligence")]
+    #[serde(alias = "Int", alias = "int", alias = "Intelligence")]
     pub intelligence: Option<i32>,
-    #[serde(alias = "Agi", alias = "agi", alias = "agility")]
+    #[serde(alias = "Agi", alias = "agi", alias = "Agility")]
     pub agility: Option<i32>,
 }
 
