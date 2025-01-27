@@ -194,6 +194,18 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
         }
         _ => {}
     }
+    
+    // ENCODE: DamageData (REQUIRED for CraftedGear)
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear => {
+            if let Some(real_damagedata) = &json_config.crafted_damage {
+                fr_params.encode_damagedata(real_damagedata)?
+            } else {
+                return Err(Errorfr::JsonNotFoundDmg)
+            }
+        }
+        _ => {}
+    }
 
     // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
     match json_config.item_type {
