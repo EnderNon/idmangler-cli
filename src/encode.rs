@@ -8,7 +8,7 @@ use idmangler_lib::{
 };
 use std::collections::HashMap;
 
-/// FuncParams struct, used for the three most important parameters for encoding.  
+/// FuncParams struct, used for the three most important parameters for encoding.
 /// Also, all the encode functions are stored here, seeing as I require these three params most of the time when encoding.
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct FuncParams<'a> {
@@ -173,7 +173,7 @@ impl FuncParams<'_> {
     /// (CRAFTED ONLY)
     pub fn encode_damagedata(&mut self, real_damage: &DamageDeser) -> Result<(), Errorfr> {
         let fr: DamageData = DamageData::try_from(real_damage)?;
-        fr.encode(self.fr_ver, &mut self.fr_out).unwrap();
+        fr.encode(self.fr_ver, self.fr_out).unwrap();
         Ok(())
     }
     /// ENCODE: DefenseData  
