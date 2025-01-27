@@ -1,9 +1,9 @@
 use crate::errorfr::Errorfr;
-use crate::jsonstruct::{CraftedTypesFr, Durability, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
+use crate::jsonstruct::{CraftedTypesFr, DamageDeser, Durability, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
 use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::types::EncodingVersion;
 use idmangler_lib::{
-    block::{CraftedConsumableTypeData, CraftedGearTypeData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData},
+    block::{CraftedConsumableTypeData, CraftedGearTypeData, DamageData, DurabilityData, EndData, IdentificationData, NameData, PowderData, RequirementsData, RerollData, ShinyData, StartData, TypeData},
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
 use std::collections::HashMap;
@@ -171,8 +171,10 @@ impl FuncParams<'_> {
     }
     /// ENCODE: DamageData  
     /// (CRAFTED ONLY)
-    pub fn encode_damagedata(&mut self) -> Result<(), Errorfr> {
-        unimplemented!();
+    pub fn encode_damagedata(&mut self, real_damage: &DamageDeser) -> Result<(), Errorfr> {
+        let fr: DamageData = DamageData::try_from(real_damage)?;
+        fr.encode(self.fr_ver, &mut self.fr_out).unwrap();
+        Ok(())
     }
     /// ENCODE: DefenseData  
     /// (CRAFTED ONLY)

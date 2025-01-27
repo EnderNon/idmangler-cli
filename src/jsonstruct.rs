@@ -1,8 +1,10 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::types::{AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, EncodingVersion, ItemType, SkillType};
+use idmangler_lib::types::{AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, Element, ItemType, SkillType};
 use serde::Deserialize;
 use std::fs;
+use std::ops::Range;
+use idmangler_lib::block::DamageData;
 
 // structs for the json parsing
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
@@ -203,9 +205,64 @@ pub struct Shinyjson {
     pub value: i64,
 }
 
+// this one isn't even because it can't deser, it's because I want to restructure and add alias for the fields
+#[derive(Deserialize, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub struct DamageDeserElement {
+    #[serde(alias = "min", alias = "Min", alias = "MIN")]
+    #[serde(alias = "Lower", alias = "LOWER")]
+    lower: i32,
+    #[serde(alias = "max", alias = "Max", alias = "MAX")]
+    #[serde(alias = "Upper", alias = "UPPER")]
+    upper: i32
+}
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct DamageDeser {
+    #[serde(alias = "AttackSpeed", alias = "ATTACKSPEED", alias = "attackspeed")]
+    #[serde(alias = "Attack_Speed", alias = "ATTACK_SPEED")]
+    #[serde(alias = "atkspd", alias = "AtkSpd", alias = "ATKSPD")]
+    #[serde(alias = "atk_spd", alias = "Atk_Spd", alias = "ATKSPD")]
     pub attack_speed: AttackSpeed,
+    #[serde(alias = "N", alias = "Neutral", alias = "NEUTRAL")]
+    #[serde(alias = "normal", alias = "Normal", alias = "NORMAL")]
+    pub neutral: Option<DamageDeserElement>,
+    #[serde(alias = "E", alias = "Earth", alias = "EARTH")]
+    pub earth: Option<DamageDeserElement>,
+    #[serde(alias = "T", alias = "Thunder", alias = "THUNDER")]
+    pub thunder: Option<DamageDeserElement>,
+    #[serde(alias = "W", alias = "Water", alias = "WATER")]
+    pub water: Option<DamageDeserElement>,
+    #[serde(alias = "F", alias = "Fire", alias = "FIRE")]
+    pub fire: Option<DamageDeserElement>,
+    #[serde(alias = "A", alias = "Air", alias = "AIR")]
+    pub air: Option<DamageDeserElement>
+}
+impl TryFrom<&DamageDeser> for DamageData {
+    type Error = Errorfr;
+    fn try_from(value: &DamageDeser) -> Result<Self, Self::Error> {
+        let mut damagesfr: Vec<(Option<Element>, Range<i32>)> = Vec::new();
+        if let Some(T) = value.neutral {
+            damagesfr.push((None, Range {start: T.lower, end: T.upper+1}))
+        };
+        if let Some(T) = value.earth {
+            damagesfr.push((Some(Element::Earth), Range {start: T.lower, end: T.upper+1}))
+        };
+        if let Some(T) = value.thunder {
+            damagesfr.push((Some(Element::Thunder), Range {start: T.lower, end: T.upper+1}))
+        };
+        if let Some(T) = value.water {
+            damagesfr.push((Some(Element::Water), Range {start: T.lower, end: T.upper+1}))
+        };
+        if let Some(T) = value.fire {
+            damagesfr.push((Some(Element::Fire), Range {start: T.lower, end: T.upper+1}))
+        };
+        if let Some(T) = value.air {
+            damagesfr.push((Some(Element::Air), Range {start: T.lower, end: T.upper+1}))
+        };
+        Ok(Self {
+            attack_speed: value.attack_speed,
+            damages: damagesfr,
+        })
+    }
 }
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not
 #[repr(u8)]
