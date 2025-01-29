@@ -1,6 +1,6 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::CraftedTypesFr::{Consu, Gear};
-use idmangler_lib::block::DamageData;
+use idmangler_lib::block::{DamageData, DefenseData};
 use idmangler_lib::types::{AttackSpeed, ClassType, ConsumableType, ConsumableType::*, CraftedGearType, CraftedGearType::*, Element, ItemType, SkillType};
 use serde::Deserialize;
 use std::fs;
@@ -65,6 +65,8 @@ pub struct Jsonconfig {
     pub crafted_ids: Option<Vec<IdentificationerCrafted>>,
 
     pub crafted_damage: Option<DamageDeser>,
+    
+    pub crafted_defence: Option<DefenceDeser>
 }
 // reimplementing this because it doesnt have Deserialize.
 // Also, changing the SkillPoint stuff into NOT a vec.
@@ -257,6 +259,46 @@ impl TryFrom<&DamageDeser> for DamageData {
             attack_speed: value.attack_speed,
             damages: damagesfr,
         })
+    }
+}
+#[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
+pub struct DefenceDeser {
+    #[serde(alias = "HP", alias = "Hp", alias = "hP", alias = "hp")]
+    #[serde(alias = "Health", alias = "HEALTH")]
+    pub health: i32,
+    #[serde(alias = "E", alias = "Earth", alias = "EARTH")]
+    pub earth: Option<i32>,
+    #[serde(alias = "T", alias = "Thunder", alias = "THUNDER")]
+    pub thunder: Option<i32>,
+    #[serde(alias = "W", alias = "Water", alias = "WATER")]
+    pub water: Option<i32>,
+    #[serde(alias = "F", alias = "Fire", alias = "FIRE")]
+    pub fire: Option<i32>,
+    #[serde(alias = "A", alias = "Air", alias = "AIR")]
+    pub air: Option<i32>,
+}
+impl From<&DefenceDeser> for DefenseData {
+    fn from(value: &DefenceDeser) -> Self {
+        let mut defencesfr: Vec<(Element, i32)> = Vec::new();
+        if let Some(T) = value.air {
+            defencesfr.push((Element::Air, T));
+        }
+        if let Some(T) = value.earth {
+            defencesfr.push((Element::Earth, T));
+        }
+        if let Some(T) = value.thunder {
+            defencesfr.push((Element::Thunder, T));
+        }
+        if let Some(T) = value.water {
+            defencesfr.push((Element::Water, T));
+        }
+        if let Some(T) = value.fire {
+            defencesfr.push((Element::Fire, T));
+        }
+        DefenseData {
+            health: value.health,
+            defences: defencesfr
+        }
     }
 }
 // I had to clone this and add Deserialize because the original idmangler_lib::types::ItemType does not

@@ -84,22 +84,26 @@ pub enum Errorfr {
     JsonNotFoundDura,
 
     /// Damage was not found but is necessary
-    #[error("Error 4.5: \"damage\" was not found (necessary for Crafted Gear item type)")]
+    #[error("Error 4.6: \"damage\" was not found (necessary for Crafted Gear item type)")]
     JsonNotFoundDmg,
 
+    /// Defence was not found but is necessary
+    #[error("Error 4.7: \"defence\" was not found (necessary for Crafted Gear item type)")]
+    JsonNotFoundDef,
+
     /// Requirements not found but is necessary
-    #[error("Error 4.6: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)")]
+    #[error("Error 4.8: \"requirements\" was not found (necessary for Crafted Gear / Consumable items)")]
     JsonNotFoundReqs,
 
     /// Unrecognisable Powder tier
-    #[error("Error 4.7: Unknown powder tier")]
+    #[error("Error 4.9: Unknown powder tier")]
     JsonUnknownPowderTier,
 
     /// Unrecognisable Powder element
-    #[error("Error 4.8: Unknown powder element")]
+    #[error("Error 4.10: Unknown powder element")]
     JsonUnknownPowderElement,
 
     /// Unrecognisable item for the Perfect gen function
-    #[error("Error 4.9: Unknown item for perfect gen...")]
+    #[error("Error 4.11: Unknown item for perfect gen...")]
     PerfectItemNotFound,
 }

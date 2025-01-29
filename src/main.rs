@@ -92,6 +92,7 @@ fn main_2() -> Result<(), Errorfr> {
                 crafted_requirements: None,
                 crafted_ids: None,
                 crafted_damage: None,
+                crafted_defence: None,
             })
         }
     }?;
@@ -204,6 +205,18 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
                 return Err(Errorfr::JsonNotFoundDmg)
             }
         }
+        _ => {}
+    }
+    
+    // ENCODE: DefenseData (REQUIRED for CraftedGear)
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear => {
+            if let Some(real_defencedata) = &json_config.crafted_defence {
+                fr_params.encode_defensedata(real_defencedata)?
+            } else {
+                return Err(Errorfr::JsonNotFoundDef)
+            }
+        },
         _ => {}
     }
 
