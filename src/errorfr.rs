@@ -3,6 +3,11 @@ use thiserror::Error;
 /// Errors yep
 #[derive(Error, Debug)]
 pub enum Errorfr {
+    /// Blank error (theres probably a better way but I can't be assed)  
+    /// Currently unused and shouldn't be used.
+    #[error("No errors, but if youre seeing this text something is wrong.")]
+    NoErrWhatsoever,
+    
     /// item config json is missing
     #[error("Error 1.1: item config json is missing.")]
     ItemJsonMissing,

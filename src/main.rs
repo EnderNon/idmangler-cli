@@ -53,7 +53,8 @@ fn main() {
 }
 
 fn main_2() -> Result<(), Errorfr> {
-    let args = Args::parse();
+    let args: &Args = &Args::parse();
+    let do_not_cook = do_not_cook(args);
     let mut executable_path = env::current_exe().unwrap();
     PathBuf::pop(&mut executable_path);
     let executable_path = executable_path.to_str().unwrap();
@@ -78,7 +79,9 @@ fn main_2() -> Result<(), Errorfr> {
                 Err(e) => Err(e),
             }
         } else {
-            println!("no config path provided, fallback to empty.");
+            if !do_not_cook {
+                println!("no config path provided, fallback to empty.");
+            }
             Ok(Jsonconfig {
                 debug: Some(false),
                 item_type: ItemTypeDeser::Gear,
@@ -100,8 +103,8 @@ fn main_2() -> Result<(), Errorfr> {
     let loaded_shinystats = load_shinystats(executable_path)?;
 
     // check if perfect status and change name if so. otherwise blank yep
-    let mut namefr: String = "".to_string();
-    if let Some(t1) = args.perfect {
+    let mut namefr: &str = "";
+    if let Some(t1) = &args.perfect {
         namefr = t1
     }
 
@@ -111,34 +114,52 @@ fn main_2() -> Result<(), Errorfr> {
             debug_mode = true
         }
     }
-    // main program everything starts here fr
-    let mut out: Vec<u8> = Vec::new();
+    
+    if !do_not_cook {
 
-    // create necessary variables
-    let ver = EncodingVersion::Version1;
+        // main program everything starts here fr
+        let mut out: Vec<u8> = Vec::new();
 
-    let mut loaded_config_clone = loaded_config.clone();
+        // create necessary variables
+        let ver = EncodingVersion::Version1;
 
-    let mut funcparamsfr: FuncParams = FuncParams {
-        fr_out: &mut out,
-        fr_debug_mode: &debug_mode,
-        fr_ver: ver,
-    };
+        let mut loaded_config_clone = loaded_config.clone();
 
-    // ENCODE: A Lot Of Stuff
-    // Also print any mapped errors
-    let cooking = cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
-    if let Err(e) = cooking {
-        println!("{}", e); // print error if there is an error
-    } else {
-        // final string print if there is no error
-        println!("{}", cooking?)
+        let mut funcparamsfr: FuncParams = FuncParams {
+            fr_out: &mut out,
+            fr_debug_mode: &debug_mode,
+            fr_ver: ver,
+        };
+
+
+        // ENCODE: A Lot Of Stuff
+        // Also print any mapped errors
+        let cooking = cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
+        if let Err(e) = cooking {
+            println!("{}", e); // print error if there is an error
+        } else {
+            // final string print if there is no error
+            println!("{}", cooking?)
+        }
     }
-
     Ok(())
 }
+// Checks for if you should actually do any encoding with the function. 
+// There's a few cases to account for:
+// - If config flag is passed, then do it
+// - If perfect flag is passed, then do it
+// - If only download flag is passed, then don't do it
+// - If none of these flags are passed then don't do it
+// - Fallback: try and do it
+fn do_not_cook(args: &Args) -> bool {
+    if args.config.is_some() {
+        false
+    }
+    else { args.perfect.is_none() }
 
-fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: String, executable_path: &str) -> Result<String, Errorfr> {
+}
+
+fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: &str, executable_path: &str) -> Result<String, Errorfr> {
     // ENCODE: StartData and TypeData, ALWAYS
     fr_params.encode_startdata()?;
     fr_params.encode_typedata(&json_config.item_type)?;
@@ -158,8 +179,8 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
     // ENCODE: NameData, if ItemType is Gear, Tome, Charm
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if namefr != *"" {
-                fr_params.encode_namedata(&namefr)?
+            if !namefr.is_empty() {
+                fr_params.encode_namedata(namefr)?
             } else if let Some(real_name) = &json_config.name {
                 fr_params.encode_namedata(real_name)?
             } else {
@@ -172,10 +193,10 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
     // ENCODE: IdentificationData
     match json_config.item_type {
         ItemTypeDeser::Gear | ItemTypeDeser::Tome | ItemTypeDeser::Charm => {
-            if namefr != *"" {
+            if !namefr.is_empty() {
                 println!("Overriding IDs with perfect ones!");
                 let fr_gear_cache = load_gear_cache(executable_path)?;
-                let resultantvec = gen_perfect(fr_params, &namefr, &fr_gear_cache)?;
+                let resultantvec = gen_perfect(fr_params, namefr, &fr_gear_cache)?;
                 fr_params.encode_iddata(&resultantvec, &idsmap)?
             } else if let Some(real_ids) = &json_config.ids {
                 fr_params.encode_iddata(real_ids, &idsmap)?
