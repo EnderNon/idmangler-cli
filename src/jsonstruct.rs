@@ -62,8 +62,16 @@ pub struct Jsonconfig {
     #[serde(alias = "CRAFTED_IDS", alias = "Crafted_Ids", alias = "Crafted_ids")]
     #[serde(alias = "CRAFTED_IDENTIFICATIONS", alias = "Crafted_Identifications", alias = "Crafted_identifications", alias = "crafted_identifications")]
     #[serde(alias = "CRAFTEDIDENTIFICATIONS", alias = "CraftedIdentifications", alias = "Craftedidentifications", alias = "craftedidentifications")]
+    #[serde(alias = "CIDS", alias = "CIds", alias = "cids")]
+    #[serde(alias = "CIDS", alias = "Cids")]
     pub crafted_ids: Option<Vec<IdentificationerCrafted>>,
 
+    #[serde(alias = "CRAFTEDDMG", alias = "CraftedDmg", alias = "Crafteddmg", alias = "crafteddmg")]
+    #[serde(alias = "CRAFTED_DMG", alias = "Crafted_Dmg", alias = "Crafted_dmg")]
+    #[serde(alias = "CRAFTED_DAMAGE", alias = "Crafted_Damage", alias = "Crafted_damage", alias = "crafted_damage")]
+    #[serde(alias = "CRAFTEDDAMAGE", alias = "CraftedDamage", alias = "Crafteddamage", alias = "crafteddamage")]
+    #[serde(alias = "DMG", alias = "Dmg", alias = "dmg")]
+    #[serde(alias = "DAMAGE", alias = "Damage", alias = "damage")]
     pub crafted_damage: Option<DamageDeser>,
     
     pub crafted_defence: Option<DefenceDeser>

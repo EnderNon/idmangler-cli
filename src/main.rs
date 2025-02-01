@@ -222,8 +222,6 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
         ItemTypeDeser::CraftedGear => {
             if let Some(real_damagedata) = &json_config.crafted_damage {
                 fr_params.encode_damagedata(real_damagedata)?
-            } else {
-                return Err(Errorfr::JsonNotFoundDmg)
             }
         }
         _ => {}
@@ -234,8 +232,6 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
         ItemTypeDeser::CraftedGear => {
             if let Some(real_defencedata) = &json_config.crafted_defence {
                 fr_params.encode_defensedata(real_defencedata)?
-            } else {
-                return Err(Errorfr::JsonNotFoundDef)
             }
         },
         _ => {}
