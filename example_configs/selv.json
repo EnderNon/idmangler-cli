@@ -1,18 +1,38 @@
 {
     "item_type": "CGear",
     "crafted_type": "Wand",
-    "name": "1 Selv of DPS",
+    "name": "6 Selv of DPS",
     "crafted_durability": {
-        "dura_cur": 69,
-        "dura_max": 420
+        "dura_cur": 19,
+        "dura_max": 84
     },
     "crafted_requirements": {
-        "level": 106,
+        "level": 69,
         "class": "Mage"
     },
     "crafted_damage": {
         "attack_speed": "Slow",
         "neutral": {
+            "lower": 80000,
+            "upper": 80000
+        },
+        "earth": {
+            "lower": 80000,
+            "upper": 80000
+        },
+        "thunder": {
+            "lower": 80000,
+            "upper": 80000
+        },
+        "water": {
+            "lower": 80000,
+            "upper": 80000
+        },
+        "fire": {
+            "lower": 80000,
+            "upper": 80000
+        },
+        "air": {
             "lower": 80000,
             "upper": 80000
         }
