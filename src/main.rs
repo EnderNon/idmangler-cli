@@ -221,7 +221,15 @@ fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMa
     match json_config.item_type {
         ItemTypeDeser::CraftedGear => {
             if let Some(real_damagedata) = &json_config.crafted_damage {
-                fr_params.encode_damagedata(real_damagedata)?
+                // bandaid fix because the damage max is displayed as 1 more than what is encoded for some reason...
+                let fr_attack_speed = real_damagedata.attack_speed;
+                let fr_neutral = real_damagedata.neutral.map(|mut T| {T.upper += 1; T} );
+                let fr_earth = real_damagedata.earth.map(|mut T| {T.upper += 1; T} );
+                let fr_thunder = real_damagedata.thunder.map(|mut T| {T.upper += 1; T} );
+                let fr_water = real_damagedata.water.map(|mut T| {T.upper += 1; T} );
+                let fr_fire = real_damagedata.fire.map(|mut T| {T.upper += 1; T} );
+                let fr_air = real_damagedata.air.map(|mut T| {T.upper += 1; T} );
+                fr_params.encode_damagedata(&DamageDeser { attack_speed: (fr_attack_speed), neutral: (fr_neutral), earth: (fr_earth), thunder: (fr_thunder), water: (fr_water), fire: (fr_fire), air: (fr_air) })?
             }
         }
         _ => {}

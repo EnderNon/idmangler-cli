@@ -215,10 +215,10 @@ pub struct Shinyjson {
 pub struct DamageDeserElement {
     #[serde(alias = "min", alias = "Min", alias = "MIN")]
     #[serde(alias = "Lower", alias = "LOWER")]
-    lower: i32,
+    pub lower: i32,
     #[serde(alias = "max", alias = "Max", alias = "MAX")]
     #[serde(alias = "Upper", alias = "UPPER")]
-    upper: i32,
+    pub upper: i32,
 }
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct DamageDeser {
