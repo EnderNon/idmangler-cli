@@ -1,13 +1,13 @@
 {
     "item_type": "CGear",
     "crafted_type": "Wand",
-    "name": "6 Selv of DPS",
+    "name": "1984 Selv of DPS",
     "crafted_durability": {
         "dura_cur": 19,
         "dura_max": 84
     },
     "crafted_requirements": {
-        "level": 69,
+        "level": 1,
         "class": "Mage"
     },
     "crafted_damage": {
