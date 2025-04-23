@@ -246,22 +246,22 @@ impl TryFrom<&DamageDeser> for DamageData {
     fn try_from(value: &DamageDeser) -> Result<Self, Self::Error> {
         let mut damagesfr: Vec<(Option<Element>, Range<i32>)> = Vec::new();
         if let Some(T) = value.neutral {
-            damagesfr.push((None, Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((None, Range { start: T.lower, end: T.upper }))
         };
         if let Some(T) = value.earth {
-            damagesfr.push((Some(Element::Earth), Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((Some(Element::Earth), Range { start: T.lower, end: T.upper }))
         };
         if let Some(T) = value.thunder {
-            damagesfr.push((Some(Element::Thunder), Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((Some(Element::Thunder), Range { start: T.lower, end: T.upper }))
         };
         if let Some(T) = value.water {
-            damagesfr.push((Some(Element::Water), Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((Some(Element::Water), Range { start: T.lower, end: T.upper }))
         };
         if let Some(T) = value.fire {
-            damagesfr.push((Some(Element::Fire), Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((Some(Element::Fire), Range { start: T.lower, end: T.upper }))
         };
         if let Some(T) = value.air {
-            damagesfr.push((Some(Element::Air), Range { start: T.lower, end: T.upper + 1 }))
+            damagesfr.push((Some(Element::Air), Range { start: T.lower, end: T.upper }))
         };
         Ok(Self {
             attack_speed: value.attack_speed,
