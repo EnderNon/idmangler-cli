@@ -1,0 +1,20 @@
+{
+    "item_type": "CGear",
+    "crafted_type": "Wand",
+    "name": "One Selv of DPS",
+    "crafted_durability": {
+        "dura_cur": 69,
+        "dura_max": 420
+    },
+    "crafted_requirements": {
+        "level": 106,
+        "class": "Mage"
+    },
+    "crafted_damage": {
+        "attack_speed": "Slow",
+        "neutral": {
+            "lower": 80000,
+            "upper": 80000
+        }
+    }
+}
