@@ -14,7 +14,7 @@
         "attack_speed": "Slow",
         "neutral": {
             "lower": 80000,
-            "upper": 79999
+            "upper": 80000
         }
     }
 }
