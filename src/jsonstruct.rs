@@ -9,55 +9,56 @@ use std::ops::Range;
 // structs for the json parsing
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Jsonconfig {
-    // not a thing to be encoded, this just toggles debug prints. Also settable using --debug
+    /// not a thing to be encoded, this just toggles debug prints. Also settable using --debug
     #[serde(alias = "Debug", alias = "DEBUG")]
     pub debug: Option<bool>,
 
-    // Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
+    /// Item Types (Gear, Tome, Charm, Crafted Gear, Crafted Consum)
     #[serde(alias = "ITEMTYPE", alias = "ItemType", alias = "Itemtype", alias = "itemtype")]
     #[serde(alias = "ITEM_TYPE", alias = "Item_Type", alias = "Item_type")]
     pub item_type: ItemTypeDeser,
 
-    // Crafted type for Crafted item types
+    /// Crafted type for Crafted item types
     #[serde(alias = "CRAFTEDTYPE", alias = "CraftedType", alias = "Craftedtype", alias = "craftedtype")]
     #[serde(alias = "CRAFTED_TYPE", alias = "Crafted_Type", alias = "Crafted_type")]
     pub crafted_type: Option<String>,
 
-    // name of item
+    /// name of item
     #[serde(alias = "Name", alias = "NAME")]
     pub name: Option<String>,
 
-    // shiny data
+    /// shiny data
     #[serde(alias = "Shiny", alias = "SHINY")]
     pub shiny: Option<Shinyjson>,
 
-    // identifications
+    /// identifications
     #[serde(alias = "identifications", alias = "Identifications", alias = "IDENTIFICATIONS")]
     #[serde(alias = "Ids", alias = "IDS")]
     pub ids: Option<Vec<Identificationer>>,
 
-    // powders stuff
+    /// powders stuff
     #[serde(alias = "powder", alias = "Powder", alias = "POWDER")]
     #[serde(alias = "Powders", alias = "POWDERS")]
     pub powders: Option<Vec<PowderFr>>,
 
-    // rerolls
+    /// rerolls
     #[serde(alias = "reroll", alias = "Reroll", alias = "REROLL")]
     #[serde(alias = "Rerolls", alias = "REROLLS")]
     pub rerolls: Option<u8>,
 
-    // durability data (Crafted Gear)
+    /// durability data (Crafted Gear)
     #[serde(alias = "durability", alias = "Durability", alias = "DURABILITY")]
     #[serde(alias = "dura", alias = "Dura", alias = "DURA")]
     pub crafted_durability: Option<Durability>,
 
-    // requirements data (Crafted)
+    /// requirements data (Crafted)
     #[serde(alias = "requirement", alias = "Requirement", alias = "REQUIREMENT")]
     #[serde(alias = "requirements", alias = "Requirements", alias = "REQUIREMENTS")]
     pub crafted_requirements: Option<RequirementsDeser>,
 
-    // identifications (Crafted)
-    // to be honest i wish there was a better way instead of too many aliases
+    /// identifications (Crafted)  
+    /// 
+    /// to be honest i wish there was a better way instead of too many aliases
     #[serde(alias = "CRAFTEDIDS", alias = "CraftedIds", alias = "Craftedids", alias = "craftedids")]
     #[serde(alias = "CRAFTED_IDS", alias = "Crafted_Ids", alias = "Crafted_ids")]
     #[serde(alias = "CRAFTED_IDENTIFICATIONS", alias = "Crafted_Identifications", alias = "Crafted_identifications", alias = "crafted_identifications")]
@@ -76,9 +77,9 @@ pub struct Jsonconfig {
     
     pub crafted_defence: Option<DefenceDeser>
 }
-// reimplementing this because it doesnt have Deserialize.
-// Also, changing the SkillPoint stuff into NOT a vec.
-// This avoids confusing end user.
+/// reimplementing this because it doesnt have Deserialize.
+/// Also, changing the SkillPoint stuff into NOT a vec.
+/// This avoids confusing end user.
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
 pub struct RequirementsDeser {
     pub level: u8,
