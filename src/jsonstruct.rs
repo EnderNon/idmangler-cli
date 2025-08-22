@@ -208,7 +208,7 @@ pub struct PowderFr {
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Shinyjson {
     pub key: String,
-    pub rr: Option<u8>,
+    pub reroll: Option<u8>,
     pub value: i64
 }
 

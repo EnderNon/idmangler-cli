@@ -126,7 +126,7 @@ impl FuncParams<'_> {
         let mut realshinykey: u8;
         let _shinykey = &shiny.key;
         let shinyvalue = shiny.value;
-        let shinyrr = shiny.rr.unwrap_or(0);
+        let shinyrr = shiny.reroll.unwrap_or(0);
         realshinykey = 1;
         for i in json_shiny {
             if i.key == shiny.key {
