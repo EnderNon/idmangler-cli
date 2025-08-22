@@ -1,7 +1,7 @@
 {
     "item_type": "CGear",
     "crafted_type": "Wand",
-    "name": "1984 Selv of DPS",
+    "name": "1 Ultra Selv of DPS",
     "crafted_durability": {
         "dura_cur": 19,
         "dura_max": 84
@@ -10,6 +10,12 @@
         "level": 1,
         "class": "Mage"
     },
+    "crafted_ids": [
+        {
+            "name": "walkSpeed",
+            "max_roll": -100
+        }
+    ],
     "crafted_damage": {
         "attack_speed": "Slow",
         "neutral": {
