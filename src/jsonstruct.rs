@@ -208,7 +208,8 @@ pub struct PowderFr {
 #[derive(Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone)]
 pub struct Shinyjson {
     pub key: String,
-    pub value: i64,
+    pub rr: Option<u8>,
+    pub value: i64
 }
 
 // this one isn't even because it can't deser, it's because I want to restructure and add alias for the fields

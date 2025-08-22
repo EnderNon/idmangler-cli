@@ -121,7 +121,7 @@ fn main_2() -> Result<(), Errorfr> {
         let mut out: Vec<u8> = Vec::new();
 
         // create necessary variables
-        let ver = EncodingVersion::Version1;
+        let ver = EncodingVersion::V1;
 
         let mut loaded_config_clone = loaded_config.clone();
 
