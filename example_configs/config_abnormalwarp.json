@@ -1,0 +1,32 @@
+{
+  "READMEFIRST": [
+    "Refer to config.md to understand how to apply the data shown here.",
+    "There are also some values you cannot increase beyond a limit."
+  ],
+  "name":"Warp",
+  "item_type": "Gear",
+  "shiny": {
+    "key": "guildRaidsWon",
+    "value": 69420,
+    "reroll": 256
+  },
+  "ids": [
+    {"id": "airDamage","base": 15,"roll": 130},
+    {"id": "exploding", "base":50 , "roll":130 },
+    {"id": "healingEfficiency", "base":-30 , "roll":110 },
+    {"id": "healthRegen", "base":-200 , "roll":70 },
+    {"id": "healthRegenRaw", "base":-600 , "roll":120 },
+    {"id": "manaRegen", "base":-45 , "roll":120 },
+    {"id": "raw2ndSpellCost", "base":299 , "roll":70 },
+    {"id": "rawAgility", "base":2500 },
+    {"id": "reflection", "base":90 , "roll":70 },
+    {"id": "walkSpeed", "base":180 , "roll":80 }
+  ],
+  "powders": [
+    {"type":"A"},
+    {"type":"A"},
+    {"type":"A"},
+    {"type":"A"}
+  ],
+  "rerolls": 6
+}
