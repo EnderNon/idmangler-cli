@@ -2,7 +2,7 @@
 name = "idmangler-cli"
 authors = ["endernon"]
 version = "0.6.1"
-edition = "2021"
+edition = "2024"
 readme = "README.md"
 license = "MIT"
 description = "A cli tool to generate fake wynntils items"
