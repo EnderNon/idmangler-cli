@@ -109,11 +109,10 @@ fn main_2() -> Result<(), Errorfr> {
     }
 
     // debug mode on if in the loaded config
-    if let Some(debugconfig) = loaded_config.debug {
-        if debugconfig {
+    if let Some(debugconfig) = loaded_config.debug
+        && debugconfig {
             debug_mode = true
         }
-    }
 
     if !do_not_cook {
         // main program everything starts here fr

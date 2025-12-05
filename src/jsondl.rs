@@ -41,24 +41,22 @@ pub fn dl_json_fr(dlvalue: &String, executable_path: &str) {
         println!("Unable to create path. Path: {} ", e)
     }
 
-    if jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats {
-        if let Err(e) = dl_json(
+    if (jsons == DownloadJsons::All || jsons == DownloadJsons::ShinyStats)
+        && let Err(e) = dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Data-Storage/shiny_stats.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/shiny_stats.json"),
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
         }
-    }
-    if jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys {
-        if let Err(e) = dl_json(
+    if (jsons == DownloadJsons::All || jsons == DownloadJsons::IdKeys)
+        && let Err(e) = dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/id_keys.json".parse().unwrap(),
             format!("{}{}", executable_path, "/data/id_keys.json"),
         ) {
             // error handling below
             println!("{} Filename: {}", e, dlvalue)
         }
-    }
     if jsons == DownloadJsons::All || jsons == DownloadJsons::Gear {
         match dl_json(
             "https://raw.githubusercontent.com/Wynntils/Static-Storage/main/Reference/gear.json".parse().unwrap(),
