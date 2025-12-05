@@ -6,6 +6,7 @@ edition = "2021"
 readme = "README.md"
 license = "MIT"
 description = "A cli tool to generate fake wynntils items"
+repository = "https://git.frfrnocap.men/endernon/idmangler-cli"
 
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
