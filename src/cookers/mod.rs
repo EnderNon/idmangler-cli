@@ -9,7 +9,7 @@ mod gear;
 mod tome;
 
 use crate::{
-    encode::FuncParams, gearjson::gen_perfect, jsondl::load_gear_cache, jsonstruct::ItemTypeDeser, Errorfr, Jsonconfig, Shinystruct,
+    encode::FuncParams, jsonstruct::ItemTypeDeser, Errorfr, Jsonconfig, Shinystruct,
     cookers::{
         gear::cook_gear,
         tome::cook_tome,

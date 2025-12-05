@@ -1,8 +1,6 @@
-use std::collections::HashMap;
 
-use idmangler_lib::encoding::string::encode_string;
 
-use crate::{encode::FuncParams, gearjson::gen_perfect, jsondl::load_gear_cache, jsonstruct::ItemTypeDeser, Errorfr, Jsonconfig, Shinystruct};
+use crate::{encode::FuncParams, Errorfr, Jsonconfig};
 
 pub fn cook_cconsu(fr_params: &mut FuncParams, json_config: &mut Jsonconfig) -> Result<(), Errorfr> {
     // ENCODE: CustomGearTypeData / CustomConsumableTypeData

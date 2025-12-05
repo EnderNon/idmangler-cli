@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
-use idmangler_lib::encoding::string::encode_string;
 
-use crate::{encode::FuncParams, gearjson::gen_perfect, jsondl::load_gear_cache, jsonstruct::ItemTypeDeser, Errorfr, Jsonconfig, Shinystruct};
+use crate::{encode::FuncParams, gearjson::gen_perfect, jsondl::load_gear_cache, Errorfr, Jsonconfig};
 
 pub fn cook_charm(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, namefr: &str, executable_path: &str) -> Result<(), Errorfr> {
     // ENCODE: NameData
