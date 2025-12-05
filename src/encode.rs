@@ -1,5 +1,6 @@
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::{CraftedTypesFr, DamageDeser, DefenceDeser, Durability, Identificationer, ItemTypeDeser, PowderFr, RequirementsDeser, Shinyjson, Shinystruct};
+use idmangler_lib::block::DefenseData;
 use idmangler_lib::encoding::DataEncoder;
 use idmangler_lib::types::EncodingVersion;
 use idmangler_lib::{
@@ -7,7 +8,6 @@ use idmangler_lib::{
     types::{ClassType, Element, ItemType, Powder, RollType, SkillType, Stat},
 };
 use std::collections::HashMap;
-use idmangler_lib::block::DefenseData;
 
 /// FuncParams struct, used for the three most important parameters for encoding.
 /// Also, all the encode functions are stored here, seeing as I require these three params most of the time when encoding.
@@ -140,7 +140,13 @@ impl FuncParams<'_> {
             dbg!(&realshinykey);
             dbg!(&shinyvalue);
         }
-        ShinyData { id: realshinykey, val: shinyvalue, rr: shinyrr }.encode(self.fr_ver, self.fr_out).unwrap();
+        ShinyData {
+            id: realshinykey,
+            val: shinyvalue,
+            rr: shinyrr,
+        }
+        .encode(self.fr_ver, self.fr_out)
+        .unwrap();
         Ok(())
     }
     /// ENCODE: EndData  

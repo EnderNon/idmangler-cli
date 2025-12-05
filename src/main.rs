@@ -1,21 +1,20 @@
 #![allow(clippy::single_match)]
 #![allow(non_camel_case_types, non_snake_case)]
 
+mod cookers;
 mod encode;
 mod errorfr;
 mod gearjson;
 mod jsondl;
 mod jsonstruct;
-mod cookers;
 use crate::encode::FuncParams;
 use crate::errorfr::Errorfr;
-use crate::gearjson::gen_perfect;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
 use clap::Parser;
-use idmangler_lib::{encoding::string::encode_string, types::EncodingVersion};
+use idmangler_lib::types::EncodingVersion;
 use reqwest::Url;
-use std::{collections::HashMap, env, fs, io::Write, path::PathBuf};
+use std::{env, fs, io::Write, path::PathBuf};
 
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None, arg_required_else_help(true))]
@@ -115,9 +114,8 @@ fn main_2() -> Result<(), Errorfr> {
             debug_mode = true
         }
     }
-    
-    if !do_not_cook {
 
+    if !do_not_cook {
         // main program everything starts here fr
         let mut out: Vec<u8> = Vec::new();
 
@@ -132,7 +130,6 @@ fn main_2() -> Result<(), Errorfr> {
             fr_ver: ver,
         };
 
-
         // ENCODE: A Lot Of Stuff
         // Also print any mapped errors
         let cooking = cookers::cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
@@ -145,7 +142,7 @@ fn main_2() -> Result<(), Errorfr> {
     }
     Ok(())
 }
-// Checks for if you should actually do any encoding with the function. 
+// Checks for if you should actually do any encoding with the function.
 // There's a few cases to account for:
 // - If config flag is passed, then do it
 // - If perfect flag is passed, then do it
@@ -155,7 +152,7 @@ fn main_2() -> Result<(), Errorfr> {
 fn do_not_cook(args: &Args) -> bool {
     if args.config.is_some() {
         false
+    } else {
+        args.perfect.is_none()
     }
-    else { args.perfect.is_none() }
-
 }

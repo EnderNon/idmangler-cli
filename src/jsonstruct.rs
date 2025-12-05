@@ -57,7 +57,7 @@ pub struct Jsonconfig {
     pub crafted_requirements: Option<RequirementsDeser>,
 
     /// identifications (Crafted)  
-    /// 
+    ///
     /// to be honest i wish there was a better way instead of too many aliases
     #[serde(alias = "CRAFTEDIDS", alias = "CraftedIds", alias = "Craftedids", alias = "craftedids")]
     #[serde(alias = "CRAFTED_IDS", alias = "Crafted_Ids", alias = "Crafted_ids")]
@@ -74,8 +74,8 @@ pub struct Jsonconfig {
     #[serde(alias = "DMG", alias = "Dmg", alias = "dmg")]
     #[serde(alias = "DAMAGE", alias = "Damage", alias = "damage")]
     pub crafted_damage: Option<DamageDeser>,
-    
-    pub crafted_defence: Option<DefenceDeser>
+
+    pub crafted_defence: Option<DefenceDeser>,
 }
 /// reimplementing this because it doesnt have Deserialize.
 /// Also, changing the SkillPoint stuff into NOT a vec.
@@ -209,7 +209,7 @@ pub struct PowderFr {
 pub struct Shinyjson {
     pub key: String,
     pub reroll: Option<u8>,
-    pub value: i64
+    pub value: i64,
 }
 
 // this one isn't even because it can't deser, it's because I want to restructure and add alias for the fields
@@ -307,7 +307,7 @@ impl From<&DefenceDeser> for DefenseData {
         }
         DefenseData {
             health: value.health,
-            defences: defencesfr
+            defences: defencesfr,
         }
     }
 }

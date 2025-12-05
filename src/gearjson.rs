@@ -1,8 +1,8 @@
+use crate::encode::FuncParams;
 use crate::errorfr::Errorfr;
 use crate::jsonstruct::Identificationer;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::encode::FuncParams;
 
 // the struct for the stuff I need in in Hashmap<String, GearJson> gear.json. its a big ass pain
 #[derive(Deserialize, Serialize, PartialEq, Eq, Debug, Clone)]
@@ -39,14 +39,7 @@ pub fn gen_perfect(fr_params: &FuncParams, name: &str, frjson: &HashMap<String, 
                         // I'm going to have to update this list manually too... why the fuck, wynncraft?
                         let invert_bool: bool = matches!(
                             i.0.to_lowercase().as_str(),
-                            "4thspellcost" | 
-                            "3rdspellcost" | 
-                            "2ndspellcost" | 
-                            "1stspellcost" | 
-                            "raw4thspellcost" | 
-                            "raw3rdspellcost" | 
-                            "raw2ndspellcost" | 
-                            "raw1stspellcost"
+                            "4thspellcost" | "3rdspellcost" | "2ndspellcost" | "1stspellcost" | "raw4thspellcost" | "raw3rdspellcost" | "raw2ndspellcost" | "raw1stspellcost"
                         );
 
                         let ider: Identificationer = Identificationer {
@@ -69,7 +62,7 @@ pub fn gen_perfect(fr_params: &FuncParams, name: &str, frjson: &HashMap<String, 
                                     else {
                                         70
                                     } // else value 130
-                                },
+                                }
                                 fr if fr > &0 => {
                                     if invert_bool {
                                         70
