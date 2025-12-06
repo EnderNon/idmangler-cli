@@ -9,38 +9,38 @@ use crate::{ItemTypeDeser::*, encode::FuncParams, errorfr::Errorfr, gearjson::ge
 /// Operations for encoding because thats actually the least stupid way to do this
 #[derive(Deserialize,Clone)]
 pub enum EncodeOps {
-    StartData,
-    TypeData,
-    NameData,
-    IdentificationData,
-    PowderData,
-    RerollData,
-    ShinyData,
-    EndData,
-    CustomTypeData,
-    DamageData,
-    DefenseData,
-    DurabilityData,
-    RequirementsData,
+    Start,
+    Type,
+    Name,
+    Identification,
+    Powder,
+    Reroll,
+    Shiny,
+    End,
+    CustomType,
+    Damage,
+    Defense,
+    Durability,
+    Requirements,
 }
 
 impl ItemTypeDeser {
     pub fn get_ops(&self) -> &[EncodeOps] {
         let s: &[EncodeOps] = match self {
             Gear => {
-                &[StartData,TypeData,NameData,IdentificationData,PowderData,RerollData,ShinyData,EndData]
+                &[Start,Type,Name,Identification,Powder,Reroll,Shiny,End]
             },
             Tome => {
-                &[StartData,TypeData,NameData,IdentificationData,RerollData,EndData]
+                &[Start,Type,Name,Identification,Reroll,End]
             },
             Charm => {
-                &[StartData,TypeData,NameData,IdentificationData,RerollData,EndData]
+                &[Start,Type,Name,Identification,Reroll,End]
             },
             CraftedGear => {
-                &[StartData,CustomTypeData,DurabilityData,DamageData,DefenseData,RequirementsData,PowderData,EndData]
+                &[Start,CustomType,Durability,Damage,Defense,Requirements,Powder,End]
             },
             CraftedConsu => {
-                &[StartData,CustomTypeData,RequirementsData,EndData]
+                &[Start,CustomType,Requirements,End]
             }
         };
         s
@@ -49,17 +49,17 @@ impl ItemTypeDeser {
 
 impl FuncParams<'_> {
     pub fn encode_from_arr(&mut self, ops: &[EncodeOps], json_config: Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: &str, executable_path: &str) -> Result<(), Errorfr> {
-        for i in ops.into_iter() {
+        for i in ops.iter() {
             match i {
-                StartData => {
+                Start => {
                     // ENCODE: StartData (literally always)
                     self.encode_startdata()?;
                 },
-                TypeData => {
+                Type => {
                     // ENCODE: TypeData (only on non crafted)
                     self.encode_typedata(&json_config.item_type)?;
                 },
-                NameData => {
+                Name => {
                     // ENCODE: NameData
                     if !namefr.is_empty() {
                         self.encode_namedata(namefr)?
@@ -69,7 +69,7 @@ impl FuncParams<'_> {
                         return Err(Errorfr::JsonNotFoundName);
                     }
                 },
-                IdentificationData => {
+                Identification => {
                     // ENCODE: IdentificationData
                     if !namefr.is_empty() {
                         println!("Overriding IDs with perfect ones!");
@@ -80,26 +80,26 @@ impl FuncParams<'_> {
                         self.encode_iddata(real_ids, &idsmap)?
                     }
                 },
-                PowderData => {
+                Powder => {
                     // ENCODE: PowderData if ItemType is Gear, CraftedGear
                     if let Some(real_powders) = &json_config.powders {
                         self.encode_powderdata(real_powders)?
                     }
                 },
-                RerollData => {
+                Reroll => {
                     // ENCODE: RerollData if ItemType is Gear, Tome, Charm
                     if let Some(rerollcount) = json_config.rerolls {
                         // rerolldata
                         self.encode_rerolldata(&rerollcount)?
                     }
                 },
-                ShinyData => {
+                Shiny => {
                     // ENCODE: ShinyData if ItemType is Gear
                     if let Some(shiny) = &json_config.shiny {
                         self.encode_shinydata(shiny, &json_shiny)?
                     }
                 },
-                CustomTypeData => {
+                CustomType => {
                     // ENCODE: CustomGearTypeData / CustomConsumableTypeData
                     if let Some(real_crafted_type) = &json_config.crafted_type {
                         self.encode_typedata_custom(real_crafted_type)?;
@@ -107,19 +107,19 @@ impl FuncParams<'_> {
                         return Err(Errorfr::JsonNotFoundCraftedType);
                     };
                 },
-                DamageData => {
+                Damage => {
                     // ENCODE: DamageData (REQUIRED for CraftedGear)
                     if let Some(real_damagedata) = &json_config.crafted_damage {
                         self.encode_damagedata(real_damagedata)?
                     }
                 },
-                DefenseData => {
+                Defense => {
                     // ENCODE: DefenseData (REQUIRED for CraftedGear)
                     if let Some(real_defencedata) = &json_config.crafted_defence {
                         self.encode_defensedata(real_defencedata)?
                     }
                 },
-                DurabilityData => {
+                Durability => {
                     // ENCODE: DurabilityData (REQUIRED for CraftedGear)
                     if let Some(real_dura) = &json_config.crafted_durability {
                         self.encode_duradata(real_dura)?;
@@ -127,7 +127,7 @@ impl FuncParams<'_> {
                         return Err(Errorfr::JsonNotFoundDura);
                     }
                 },
-                RequirementsData => {
+                Requirements => {
                     // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
                     if let Some(real_reqs) = json_config.crafted_requirements {
                         self.encode_reqdata(&real_reqs)?
@@ -135,7 +135,7 @@ impl FuncParams<'_> {
                         return Err(Errorfr::JsonNotFoundReqs);
                     }
                 },
-                EndData => {
+                End => {
                     // ENCODE: EndData (literally always)
                     self.encode_enddata()?;
                 },
