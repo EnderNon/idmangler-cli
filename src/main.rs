@@ -15,7 +15,6 @@ use clap::Parser;
 use idmangler_lib::encoding::string::encode_string;
 use idmangler_lib::types::EncodingVersion;
 use reqwest::Url;
-use serde::Deserialize;
 use std::collections::HashMap;
 use std::{env, fs, io::Write, path::PathBuf};
 
