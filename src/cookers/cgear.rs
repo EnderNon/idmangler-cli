@@ -10,22 +10,9 @@ pub fn cook_cgear(fr_params: &mut FuncParams, json_config: &mut Jsonconfig) -> R
         return Err(Errorfr::JsonNotFoundCraftedType);
     };
 
-    // ENCODE: DurabilityData (REQUIRED for CraftedGear)
-    if let Some(real_dura) = &json_config.crafted_durability {
-        fr_params.encode_duradata(real_dura)?;
-    } else {
-        return Err(Errorfr::JsonNotFoundDura);
-    }
 
-    // ENCODE: DamageData (REQUIRED for CraftedGear)
-    if let Some(real_damagedata) = &json_config.crafted_damage {
-        fr_params.encode_damagedata(real_damagedata)?
-    }
 
-    // ENCODE: DefenseData (REQUIRED for CraftedGear)
-    if let Some(real_defencedata) = &json_config.crafted_defence {
-        fr_params.encode_defensedata(real_defencedata)?
-    }
+
 
     // ENCODE: RequirementsData if ItemType is CraftedGear, CraftedConsu
     if let Some(real_reqs) = json_config.crafted_requirements {

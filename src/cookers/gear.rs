@@ -13,31 +13,13 @@ pub fn cook_gear(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsma
         return Err(Errorfr::JsonNotFoundName);
     }
 
-    // ENCODE: IdentificationData
-    if !namefr.is_empty() {
-        println!("Overriding IDs with perfect ones!");
-        let fr_gear_cache = load_gear_cache(executable_path)?;
-        let resultantvec = gen_perfect(fr_params, namefr, &fr_gear_cache)?;
-        fr_params.encode_iddata(&resultantvec, &idsmap)?
-    } else if let Some(real_ids) = &json_config.ids {
-        fr_params.encode_iddata(real_ids, &idsmap)?
-    }
 
-    // ENCODE: PowderData if ItemType is Gear, CraftedGear
-    if let Some(real_powders) = &json_config.powders {
-        fr_params.encode_powderdata(real_powders)?
-    }
 
-    // ENCODE: RerollData if ItemType is Gear, Tome, Charm
-    if let Some(rerollcount) = json_config.rerolls {
-        // rerolldata
-        fr_params.encode_rerolldata(&rerollcount)?
-    }
 
-    // ENCODE: ShinyData if ItemType is Gear
-    if let Some(shiny) = &json_config.shiny {
-        fr_params.encode_shinydata(shiny, &json_shiny)?
-    }
+
+
+
+
 
     Ok(())
 }

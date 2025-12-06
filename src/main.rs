@@ -12,8 +12,11 @@ use crate::errorfr::Errorfr;
 use crate::jsondl::*;
 use crate::jsonstruct::*;
 use clap::Parser;
+use idmangler_lib::encoding::string::encode_string;
 use idmangler_lib::types::EncodingVersion;
 use reqwest::Url;
+use serde::Deserialize;
+use std::collections::HashMap;
 use std::{env, fs, io::Write, path::PathBuf};
 
 #[derive(Parser, Debug, Clone)]
@@ -131,7 +134,7 @@ fn main_2() -> Result<(), Errorfr> {
 
         // ENCODE: A Lot Of Stuff
         // Also print any mapped errors
-        let cooking = cookers::cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
+        let cooking = cook(&mut funcparamsfr, &mut loaded_config_clone, loaded_idkeys, loaded_shinystats, namefr, executable_path);
         if let Err(e) = cooking {
             println!("{}", e); // print error if there is an error
         } else {
@@ -154,4 +157,34 @@ fn do_not_cook(args: &Args) -> bool {
     } else {
         args.perfect.is_none()
     }
+}
+
+
+pub(crate) fn cook(fr_params: &mut FuncParams, json_config: &mut Jsonconfig, idsmap: HashMap<String, u8>, json_shiny: Vec<Shinystruct>, namefr: &str, executable_path: &str) -> Result<String, Errorfr> {
+    // ENCODE: StartData and TypeData, ALWAYS
+
+    
+    let temp_jsonconfig = json_config.clone();
+    let ops = temp_jsonconfig.item_type.get_ops();
+
+    fr_params.encode_from_arr(ops, json_config.clone(), idsmap, json_shiny, namefr, executable_path)?;
+
+    let mut final_string: String = encode_string(fr_params.fr_out);
+
+    // to fix an extremely funny newline exploit and prevent future trolling,
+    // wynntils made it so crafteds have their name block seperately.
+    // as: ` [][][][] "Crafted Item Name" `
+    // this is not really an encode and it comes AFTER its all been encoded already.
+    match json_config.item_type {
+        ItemTypeDeser::CraftedGear | ItemTypeDeser::CraftedConsu => {
+            if let Some(real_name) = &json_config.name {
+                final_string = format!("{} \"{}\"", final_string, real_name)
+            } else {
+                return Err(Errorfr::JsonNotFoundName);
+            }
+        }
+        _ => {}
+    }
+
+    Ok(final_string)
 }
